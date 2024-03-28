@@ -1,6 +1,8 @@
 package nl.workingtalent.WTAcademy.Book;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional; 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +12,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import nl.workingtalent.WTAcademy.Author.AuthorService;
+
 @RestController
 public class BookController {
 	
 	@Autowired
 	private BookService service;
+	
+	@Autowired
+	private AuthorService authorService;
 	
 	@RequestMapping("books/all")
 	public List<Books> getAllBooks(){
@@ -28,8 +38,22 @@ public class BookController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "books/create")
-	public void addBook(@RequestBody Books book) {
-		service.addBook(book);
+	public void addBook(@RequestBody ObjectNode bookData) {
+		
+		JsonNode newBook = bookData.get("book");
+		
+		String author = bookData.get("author").asText();
+		Books dbBook = new Books();
+		
+		dbBook.setTitle(newBook.get("title").asText());
+		dbBook.setDescription(newBook.get("description").asText());
+		dbBook.setImageLink(newBook.get("imageLink").asText());
+		dbBook.setPublisherId(newBook.get("publisherId").asInt());
+		dbBook.setPublishingDate(LocalDateTime.parse(newBook.get("publishingDate").asText()));
+		
+		authorService.addAuthor(author);
+		
+		service.addBook(dbBook);
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, value = "books/update/{id}")

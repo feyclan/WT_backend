@@ -13,8 +13,7 @@ public class Books {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int bookId;
-	
+	private int bookId;	
 	
 	private String description;
 	
@@ -27,7 +26,7 @@ public class Books {
 	private LocalDateTime publishingDate;
 	
 	@Column(length = 450)
-	private String title;
+	private String title;	
 
 	public int getBookId() {
 		return bookId;
