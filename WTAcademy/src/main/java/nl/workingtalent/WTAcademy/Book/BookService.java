@@ -24,4 +24,12 @@ public class BookService {
 	public void addBook(Books book) {
 		repository.save(book);
 	}
+	
+	public void updateBook(Books book) {
+		repository.save(book);
+	}
+	
+	public void deleteBookById(int id) {
+		repository.deleteById(id);
+	}
 }

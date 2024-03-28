@@ -31,5 +31,31 @@ public class BookController {
 	public void addBook(@RequestBody Books book) {
 		service.addBook(book);
 	}
+	
+	@RequestMapping(method = RequestMethod.PUT, value = "books/update/{id}")
+	public boolean updateBook(@RequestBody Books newBook, @PathVariable("id") int id) {
+		
+		Optional<Books> optional = service.getBookById(id);
+		
+		if(optional.isEmpty()) {
+			return false;
+		}
+		
+		Books book = optional.get();
+		
+		//Check whether all data is filled
+		book.setDescription(newBook.getDescription());
+		book.setImageLink(newBook.getImageLink());
+		book.setPublisherId(newBook.getPublisherId());
+		book.setPublishingDate(newBook.getPublishingDate());
+		book.setTitle(newBook.getTitle());
+		
+		service.updateBook(book);
+		return true;
+	}
 
+	@RequestMapping(method = RequestMethod.DELETE, value = "books/delete/{id}")
+	public void deleteBookById(@PathVariable("id") int id) {
+		service.deleteBookById(id);
+	}
 }
