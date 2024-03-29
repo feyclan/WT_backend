@@ -1,4 +1,4 @@
-package nl.workingtalent.WTAcademy.Book;
+package nl.workingtalent.wtacademy.book;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,23 +13,23 @@ public class BookService {
 	private IBookRepository repository;
 	
 	
-	public List<Books> getAllBooks(){
+	public List<Book> getAllBooks(){
 		return repository.findAll();
 	}
 	
-	public Optional<Books> getBookById(int id){
+	public Optional<Book> getBookById(long id){
 		return repository.findById(id);
 	}
 	
-	public void addBook(Books book) {
+	public void addBook(Book book) {
 		repository.save(book);
 	}
 	
-	public void updateBook(Books book) {
+	public void updateBook(Book book) {
 		repository.save(book);
 	}
 	
-	public void deleteBookById(int id) {
+	public void deleteBookById(long id) {
 		repository.deleteById(id);
 	}
 }

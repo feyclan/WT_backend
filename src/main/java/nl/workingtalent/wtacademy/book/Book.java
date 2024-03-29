@@ -1,4 +1,4 @@
-package nl.workingtalent.WTAcademy.Book;
+package nl.workingtalent.wtacademy.book;
 
 import java.time.LocalDateTime;
 
@@ -9,11 +9,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class Books {
+public class Book {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int bookId;	
+	private long id;
 	
 	private String description;
 	
@@ -26,14 +26,14 @@ public class Books {
 	private LocalDateTime publishingDate;
 	
 	@Column(length = 450)
-	private String title;	
+	private String title;
 
-	public int getBookId() {
-		return bookId;
+	public long getId() {
+		return id;
 	}
 
-	public void setBookId(int bookId) {
-		this.bookId = bookId;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getDescription() {
@@ -74,6 +74,6 @@ public class Books {
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
+	}	
 
 }

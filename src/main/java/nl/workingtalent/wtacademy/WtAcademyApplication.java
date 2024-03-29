@@ -1,4 +1,4 @@
-package nl.workingtalent.WTAcademy;
+package nl.workingtalent.wtacademy;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

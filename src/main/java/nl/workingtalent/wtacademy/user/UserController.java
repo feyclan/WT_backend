@@ -1,4 +1,4 @@
-package nl.workingtalent.WTAcademy.user;
+package nl.workingtalent.wtacademy.user;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,8 +53,8 @@ public class UserController {
 		dbUser.setEmailaddress(newUser.getEmailaddress());
 		dbUser.setPassword(newUser.getPassword());
 		dbUser.setAddressId(newUser.getAddressId());
-		dbUser.setRoleId(newUser.getRoleId());
-		
+		dbUser.setRole(newUser.getRole());
+
 		// opslaan
 		service.update(dbUser);
 		

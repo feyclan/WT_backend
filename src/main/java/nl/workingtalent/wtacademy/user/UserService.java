@@ -1,4 +1,4 @@
-package nl.workingtalent.WTAcademy.user;
+package nl.workingtalent.wtacademy.user;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +17,7 @@ public class UserService {
 		return repository.findAll();
 	}
 	
-	public Optional<User> findUserWithId(int id) {
+	public Optional<User> findUserWithId(long id) {
 		return repository.findById(id);
 	}
 
@@ -32,7 +32,7 @@ public class UserService {
 	}
 	
 	// DELETE
-	public void delete(int id) {
+	public void delete(long id) {
 		repository.deleteById(id);
 	}
 

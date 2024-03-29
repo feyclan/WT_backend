@@ -1,7 +1,9 @@
-package nl.workingtalent.WTAcademy.user;
+package nl.workingtalent.wtacademy.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,7 +13,7 @@ public class User {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int userId;
+	private long id;
 	
 	@Column(length = 50, nullable = false)
 	private String firstName;
@@ -27,14 +29,15 @@ public class User {
 	
 	private int addressId;
 	
-	private int roleId;
+	@Enumerated(EnumType.STRING)
+	private Role role;
 
-	public int getUserId() {
-		return userId;
+	public long getId() {
+		return id;
 	}
 
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getFirstName() {
@@ -77,12 +80,12 @@ public class User {
 		this.addressId = addressId;
 	}
 
-	public int getRoleId() {
-		return roleId;
+	public Role getRole() {
+		return role;
 	}
 
-	public void setRoleId(int roleId) {
-		this.roleId = roleId;
-	} 
+	public void setRole(Role role) {
+		this.role = role;
+	}
 
 }

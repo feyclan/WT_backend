@@ -1,9 +1,8 @@
-package nl.workingtalent.WTAcademy.Book;
+package nl.workingtalent.wtacademy.book;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional; 
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import nl.workingtalent.WTAcademy.Author.AuthorService;
+import nl.workingtalent.wtacademy.author.AuthorService;
 
 @RestController
 public class BookController {
@@ -27,13 +26,13 @@ public class BookController {
 	private AuthorService authorService;
 	
 	@RequestMapping("books/all")
-	public List<Books> getAllBooks(){
+	public List<Book> getAllBooks(){
 		
 		return service.getAllBooks();
 	}
 	
 	@RequestMapping("books/{id}")
-	public Optional<Books> getBookById(@PathVariable("id") int id){
+	public Optional<Book> getBookById(@PathVariable("id") int id){
 		return service.getBookById(id);
 	}
 	
@@ -43,7 +42,7 @@ public class BookController {
 		JsonNode newBook = bookData.get("book");
 		
 		String author = bookData.get("author").asText();
-		Books dbBook = new Books();
+		Book dbBook = new Book();
 		
 		dbBook.setTitle(newBook.get("title").asText());
 		dbBook.setDescription(newBook.get("description").asText());
@@ -57,15 +56,15 @@ public class BookController {
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, value = "books/update/{id}")
-	public boolean updateBook(@RequestBody Books newBook, @PathVariable("id") int id) {
+	public boolean updateBook(@RequestBody Book newBook, @PathVariable("id") int id) {
 		
-		Optional<Books> optional = service.getBookById(id);
+		Optional<Book> optional = service.getBookById(id);
 		
 		if(optional.isEmpty()) {
 			return false;
 		}
 		
-		Books book = optional.get();
+		Book book = optional.get();
 		
 		//Check whether all data is filled
 		book.setDescription(newBook.getDescription());
