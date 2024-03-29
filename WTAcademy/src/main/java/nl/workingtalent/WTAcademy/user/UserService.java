@@ -17,7 +17,7 @@ public class UserService {
 		return repository.findAll();
 	}
 	
-	public Optional<User> findUserWithId(long id) {
+	public Optional<User> findUserWithId(int id) {
 		return repository.findById(id);
 	}
 
@@ -32,7 +32,7 @@ public class UserService {
 	}
 	
 	// DELETE
-	public void delete(long id) {
+	public void delete(int id) {
 		repository.deleteById(id);
 	}
 
