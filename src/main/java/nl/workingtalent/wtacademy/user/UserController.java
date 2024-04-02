@@ -52,7 +52,7 @@ public class UserController {
 		dbUser.setLastName(newUser.getLastName());
 		dbUser.setEmailaddress(newUser.getEmailaddress());
 		dbUser.setPassword(newUser.getPassword());
-		dbUser.setAddressId(newUser.getAddressId());
+		//dbUser.setAddressId(newUser.getAddressId());
 		dbUser.setRole(newUser.getRole());
 
 		// opslaan
