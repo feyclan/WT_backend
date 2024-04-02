@@ -1,6 +1,6 @@
 package nl.workingtalent.wtacademy.book;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import nl.workingtalent.wtacademy.author.Author;
 
 import nl.workingtalent.wtacademy.author.AuthorService;
 
@@ -37,26 +35,33 @@ public class BookController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "books/create")
-	public void addBook(@RequestBody ObjectNode bookData) {
+	public void addBook(@RequestBody SaveBookDto saveBookDto) {
 		
-		JsonNode newBook = bookData.get("book");
-		
-		String author = bookData.get("author").asText();
 		Book dbBook = new Book();
+		dbBook.setTitle(saveBookDto.getTitle());
+		dbBook.setDescription(saveBookDto.getDescription());
+		dbBook.setImageLink(saveBookDto.getImageLink());
+		dbBook.setPublishingDate(saveBookDto.getPublishingDate());
+
+		// Authors langs gaan
+		// Bestaat de author al in de db -> voeg author toe aan boek
+		// Niet bestaat dan aanmaken en toevoegen aan lijst authors
+		ArrayList<Author> authors = new ArrayList<Author>();
+		for (String authorName : saveBookDto.getAuthors()) {
+			if(authorService.getAuthorByName(authorName).isEmpty()) {
+				authorService.addAuthor(authorName);
+			}
+			authors.add(authorService.getAuthorByName(authorName).get());
+		}
 		
-		dbBook.setTitle(newBook.get("title").asText());
-		dbBook.setDescription(newBook.get("description").asText());
-		dbBook.setImageLink(newBook.get("imageLink").asText());
-		//dbBook.setPublisherId(newBook.get("publisherId").asInt());
-		//dbBook.setPublishingDate(LocalDateTime.parse(newBook.get("publishingDate").asText()));
-		
-		authorService.addAuthor(author);
-		
+
+		dbBook.setAuthors(authors);
+
 		service.addBook(dbBook);
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, value = "books/update/{id}")
-	public boolean updateBook(@RequestBody Book newBook, @PathVariable("id") int id) {
+	public boolean updateBook(@RequestBody SaveBookDto saveBookDto, @PathVariable("id") int id) {
 		
 		Optional<Book> optional = service.getBookById(id);
 		
@@ -67,12 +72,24 @@ public class BookController {
 		Book book = optional.get();
 		
 		//Check whether all data is filled
-		book.setDescription(newBook.getDescription());
-		book.setImageLink(newBook.getImageLink());
-		//book.setPublisherId(newBook.getPublisherId());
-		book.setPublishingDate(newBook.getPublishingDate());
-		book.setTitle(newBook.getTitle());
+
+		book.setDescription(saveBookDto.getDescription());
+		book.setImageLink(saveBookDto.getImageLink());
+		book.setPublishingDate(saveBookDto.getPublishingDate());
+		book.setTitle(saveBookDto.getTitle());
+
 		
+//		 Check if the edit contains unknown authors
+//		If so, add them to author table
+		ArrayList<Author> authors = new ArrayList<Author>();
+		for (String authorName : saveBookDto.getAuthors()) {
+			if(authorService.getAuthorByName(authorName).isEmpty()) {
+				authorService.addAuthor(authorName);
+			}
+			authors.add(authorService.getAuthorByName(authorName).get());
+		}
+		
+		book.setAuthors(authors);
 		service.updateBook(book);
 		return true;
 	}
