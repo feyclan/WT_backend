@@ -1,9 +1,7 @@
 package nl.workingtalent.wtacademy.book;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
