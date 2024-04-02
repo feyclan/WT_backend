@@ -2,12 +2,14 @@ package nl.workingtalent.wtacademy.book;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
@@ -46,7 +48,8 @@ public class Book {
 	@OneToMany(mappedBy = "book")
 	private List<Reservation> reservations;
 	
-	@ManyToMany(mappedBy = "books")
+	@ManyToMany
+	@JsonIgnore
 	private List<Author> authors;
 	
 	@ManyToMany(mappedBy = "books")

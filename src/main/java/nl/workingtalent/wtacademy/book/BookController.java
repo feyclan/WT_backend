@@ -54,7 +54,6 @@ public class BookController {
 			authors.add(authorService.getAuthorByName(authorName).get());
 		}
 		
-
 		dbBook.setAuthors(authors);
 
 		service.addBook(dbBook);

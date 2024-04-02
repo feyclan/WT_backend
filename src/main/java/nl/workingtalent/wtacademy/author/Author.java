@@ -20,7 +20,7 @@ public class Author {
 	@Column(length = 100)
 	private String name;
 	
-	@ManyToMany
+	@ManyToMany(mappedBy = "authors")
 	private List<Book> books;
 
 	public long getId() {
