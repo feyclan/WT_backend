@@ -1,8 +1,7 @@
-package nl.workingtalent.wtacademy.author;
+package nl.workingtalent.wtacademy.category;
 
 import java.util.List;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,14 +10,13 @@ import jakarta.persistence.ManyToMany;
 import nl.workingtalent.wtacademy.book.Book;
 
 @Entity
-public class Author {
-
+public class Category {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-
-	@Column(length = 100)
-	private String name;
+	
+	private String category;
 	
 	@ManyToMany
 	private List<Book> books;
@@ -31,12 +29,12 @@ public class Author {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getCategory() {
+		return category;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 	public List<Book> getBooks() {
@@ -46,7 +44,6 @@ public class Author {
 	public void setBooks(List<Book> books) {
 		this.books = books;
 	}
-
 
 
 }

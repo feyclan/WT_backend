@@ -47,8 +47,8 @@ public class BookController {
 		dbBook.setTitle(newBook.get("title").asText());
 		dbBook.setDescription(newBook.get("description").asText());
 		dbBook.setImageLink(newBook.get("imageLink").asText());
-		dbBook.setPublisherId(newBook.get("publisherId").asInt());
-		dbBook.setPublishingDate(LocalDateTime.parse(newBook.get("publishingDate").asText()));
+		//dbBook.setPublisherId(newBook.get("publisherId").asInt());
+		//dbBook.setPublishingDate(LocalDateTime.parse(newBook.get("publishingDate").asText()));
 		
 		authorService.addAuthor(author);
 		
@@ -69,7 +69,7 @@ public class BookController {
 		//Check whether all data is filled
 		book.setDescription(newBook.getDescription());
 		book.setImageLink(newBook.getImageLink());
-		book.setPublisherId(newBook.getPublisherId());
+		//book.setPublisherId(newBook.getPublisherId());
 		book.setPublishingDate(newBook.getPublishingDate());
 		book.setTitle(newBook.getTitle());
 		
