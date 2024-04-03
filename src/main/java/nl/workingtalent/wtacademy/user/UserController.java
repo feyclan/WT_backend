@@ -26,7 +26,12 @@ public class UserController {
 	
 	@RequestMapping("user/{id}")
 	public Optional<User> findUserById(@PathVariable("id") long id) {
-		return service.findUserWithId(id);
+		return service.findUserById(id);
+	}
+	
+	@RequestMapping("user/find/{lastName}")
+	public Optional<User> findUserByLastName(@PathVariable("lastName") String name) {
+		return service.findUserByLastName(name);
 	}
 	
 	// CREATE
@@ -40,7 +45,7 @@ public class UserController {
 	public boolean updateUser(@RequestBody User newUser, @PathVariable("id") long id) {
 		
 		// ophalen bestaande user
-		Optional<User> user = service.findUserWithId(id);
+		Optional<User> user = service.findUserById(id);
 		if (user.isEmpty()) {
 			return false;
 		}
@@ -50,9 +55,8 @@ public class UserController {
 		// overschrijven
 		dbUser.setFirstName(newUser.getFirstName());
 		dbUser.setLastName(newUser.getLastName());
-		dbUser.setEmailaddress(newUser.getEmailaddress());
+		dbUser.setEmail(newUser.getEmail());
 		dbUser.setPassword(newUser.getPassword());
-		//dbUser.setAddressId(newUser.getAddressId());
 		dbUser.setRole(newUser.getRole());
 
 		// opslaan

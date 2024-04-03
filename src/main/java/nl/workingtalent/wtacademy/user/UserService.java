@@ -17,8 +17,12 @@ public class UserService {
 		return repository.findAll();
 	}
 	
-	public Optional<User> findUserWithId(long id) {
+	public Optional<User> findUserById(long id) {
 		return repository.findById(id);
+	}
+	
+	public Optional<User> findUserByLastName(String name) {
+		return repository.findUserByLastName(name);
 	}
 
 	// CREATE
