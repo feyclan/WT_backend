@@ -20,26 +20,26 @@ public class BookCopyController {
 	@Autowired
 	private BookService bookService;
 	
-	@RequestMapping("bookCopy/all")
+	@RequestMapping("book-copy/all")
 	public List<BookCopy> getAllBooks(){
 		
 		return service.getAllBookCopies();
 	}
 	
-	@RequestMapping("book/bookCopies/{bookId}")
+	@RequestMapping("book/book-copy/{bookId}")
 	public List<BookCopy> getAllCopiesForBookId(@PathVariable("bookId") long bookId){
 		
 		return service.getAllCopiesForBookId(bookId);
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = "bookCopy/create/{bookId}")
+	@RequestMapping(method = RequestMethod.POST, value = "book-copy/create/{bookId}")
 	public void addBookCopy(@RequestBody BookCopy copy, @PathVariable("bookId") long bookId) {
 		if(bookService.getBookById(bookId).isEmpty()) return;
 		copy.setBook(bookService.getBookById(bookId).get());
 		service.addBookCopy(copy);
 	}
 	
-	@RequestMapping(method = RequestMethod.PUT, value = "bookCopy/update/{bookCopyId}")
+	@RequestMapping(method = RequestMethod.PUT, value = "book-copy/update/{bookCopyId}")
 	public boolean updateBookCopy(@RequestBody BookCopy copy, @PathVariable("bookCopyId") long bookCopyId) {
 		if(service.getBookCopyById(bookCopyId).isEmpty()) return false;
 		BookCopy dbCopy = service.getBookCopyById(bookCopyId).get();
@@ -51,7 +51,7 @@ public class BookCopyController {
 		return true;
 	}
 	
-	@RequestMapping(method = RequestMethod.DELETE, value = "bookCopy/delete/{bookCopyId}")
+	@RequestMapping(method = RequestMethod.DELETE, value = "book-copy/delete/{bookCopyId}")
 	public void deleteBookById(@PathVariable("bookCopyId") int bookCopyId) {
 		service.deleteBookCopyById(bookCopyId);
 	}
