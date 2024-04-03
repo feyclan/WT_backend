@@ -2,6 +2,8 @@ package nl.workingtalent.wtacademy.author;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +22,7 @@ public class Author {
 	@Column(length = 100)
 	private String name;
 	
+	@JsonIgnore
 	@ManyToMany(mappedBy = "authors")
 	private List<Book> books;
 

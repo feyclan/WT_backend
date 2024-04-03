@@ -13,6 +13,8 @@ public class SaveBookDto {
 	
 	private String imageLink;
 	
+	private List<String> authors;
+	
 	public LocalDate getPublishingDate() {
 		return publishingDate;
 	}
@@ -28,8 +30,6 @@ public class SaveBookDto {
 	public void setImageLink(String imageLink) {
 		this.imageLink = imageLink;
 	}
-
-	private List<String> authors;
 
 	public String getTitle() {
 		return title;

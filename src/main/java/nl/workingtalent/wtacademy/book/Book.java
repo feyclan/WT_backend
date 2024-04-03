@@ -49,7 +49,6 @@ public class Book {
 	private List<Reservation> reservations;
 	
 	@ManyToMany
-	@JsonIgnore
 	private List<Author> authors;
 	
 	@ManyToMany(mappedBy = "books")
