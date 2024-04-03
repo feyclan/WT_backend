@@ -34,6 +34,11 @@ public class UserController {
 		return service.findUserByLastName(name);
 	}
 	
+	@RequestMapping("user/role/{role}")
+	public Optional<User> findUserByRole(@PathVariable("role") Role role) {
+		return service.findUserByRole(role);
+	}
+	
 	// CREATE
 	@RequestMapping(method = RequestMethod.POST, value = "user/create")
 	public void createUser(@RequestBody User user) {

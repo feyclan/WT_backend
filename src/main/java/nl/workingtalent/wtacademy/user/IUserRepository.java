@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface IUserRepository extends JpaRepository<User, Long> {
 	
 	Optional<User> findUserByLastName(String user);
+	Optional<User> findUserByRole(Role role);
 
 }

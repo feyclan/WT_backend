@@ -24,6 +24,10 @@ public class UserService {
 	public Optional<User> findUserByLastName(String name) {
 		return repository.findUserByLastName(name);
 	}
+	
+	public Optional<User> findUserByRole(Role role) {
+		return repository.findUserByRole(role);
+	}
 
 	// CREATE
 	public void create(User user) {
