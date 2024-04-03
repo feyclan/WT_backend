@@ -8,15 +8,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-	
+
 	@Autowired
 	private IUserRepository repository;
-	
+
 	// READ
 	public List<User> findAllUsers() {
 		return repository.findAll();
 	}
-	
+
 	public Optional<User> findUserById(long id) {
 		return repository.findById(id);
 	}
@@ -28,25 +28,31 @@ public class UserService {
 	public List<User> findUserByLastName(String name) {
 		return repository.findUserByLastName(name);		
 	}
-	
+
 	public Optional<User> findUserByEmail(String email) {
 		return repository.findUserByEmail(email);
 	}
 	
 	public List<User> findUserByRole(Role role) {
+
 		return repository.findUserByRole(role);
 	}
 
 	// CREATE
-	public void create(User user) {
+	public boolean create(User user) {
+		Optional<User> existingUser = repository.findUserByEmail(user.getEmail());
+		if (existingUser.isPresent()) {
+			return false;
+		}
 		repository.save(user);
+		return true;
 	}
-	
+
 	// UPDATE
 	public void update(User dbUser) {
 		repository.save(dbUser);
 	}
-	
+
 	// DELETE
 	public void delete(long id) {
 		repository.deleteById(id);

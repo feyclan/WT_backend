@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,7 +44,7 @@ public class UserController {
 	public Optional<User> findUserByEmail(@PathVariable("email") String email) {
 		return service.findUserByEmail(email);
 	}
-	
+
 	@RequestMapping("user/role/{role}")
 	public List<User> findUserByRole(@PathVariable("role") Role role) {
 		return service.findUserByRole(role);
@@ -51,8 +52,13 @@ public class UserController {
 
 	// CREATE
 	@RequestMapping(method = RequestMethod.POST, value = "user/create")
-	public void createUser(@RequestBody User user) {
-		service.create(user);
+	public ResponseEntity<String> createUser(@RequestBody User user) {
+		if (service.create(user)) {
+			service.create(user);
+			return ResponseEntity.ok("User created successfully.");
+		} else {
+			return ResponseEntity.badRequest().body("User with the provided email already exists.");
+		}
 	}
 
 	// UPDATE
