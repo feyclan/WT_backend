@@ -21,8 +21,20 @@ public class UserService {
 		return repository.findById(id);
 	}
 	
+	public Optional<User> findUserByFirstName(String name) {
+		return repository.findUserByFirstName(name);
+	}
+	
 	public Optional<User> findUserByLastName(String name) {
-		return repository.findUserByLastName(name);
+		return repository.findUserByLastName(name);		
+	}
+	
+	public Optional<User> findUserByEmail(String email) {
+		return repository.findUserByEmail(email);
+	}
+	
+	public Optional<User> findUserByRole(Role role) {
+		return repository.findUserByRole(role);
 	}
 	
 	public Optional<User> findUserByRole(Role role) {

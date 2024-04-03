@@ -17,46 +17,56 @@ public class UserController {
 
 	@Autowired
 	private UserService service;
-	
+
 	// READ
 	@RequestMapping("user/all")
 	public List<User> allUsers() {
 		return service.findAllUsers();
 	}
-	
+
 	@RequestMapping("user/{id}")
 	public Optional<User> findUserById(@PathVariable("id") long id) {
 		return service.findUserById(id);
 	}
-	
-	@RequestMapping("user/find/{lastName}")
+
+	@RequestMapping("user/firstname/{firstName}")
+	public Optional<User> findUserByFirstName(@PathVariable("fristName") String name) {
+		return service.findUserByFirstName(name);
+	}
+
+	@RequestMapping("user/lastname/{lastName}")
 	public Optional<User> findUserByLastName(@PathVariable("lastName") String name) {
 		return service.findUserByLastName(name);
+	}
+
+	@RequestMapping("user/email/{email}")
+	public Optional<User> findUserByEmail(@PathVariable("email") String email) {
+		return service.findUserByEmail(email);
 	}
 	
 	@RequestMapping("user/role/{role}")
 	public Optional<User> findUserByRole(@PathVariable("role") Role role) {
 		return service.findUserByRole(role);
 	}
-	
+
 	// CREATE
 	@RequestMapping(method = RequestMethod.POST, value = "user/create")
 	public void createUser(@RequestBody User user) {
 		service.create(user);
 	}
-	
+
 	// UPDATE
 	@RequestMapping(method = RequestMethod.PUT, value = "user/update/{id}")
 	public boolean updateUser(@RequestBody User newUser, @PathVariable("id") long id) {
-		
+
 		// ophalen bestaande user
 		Optional<User> user = service.findUserById(id);
 		if (user.isEmpty()) {
 			return false;
 		}
-		
+
 		User dbUser = user.get();
-		
+
 		// overschrijven
 		dbUser.setFirstName(newUser.getFirstName());
 		dbUser.setLastName(newUser.getLastName());
@@ -66,10 +76,10 @@ public class UserController {
 
 		// opslaan
 		service.update(dbUser);
-		
+
 		return true;
 	}
-	
+
 	// DELETE
 	@RequestMapping(method = RequestMethod.DELETE, value = "user/delete/{id}")
 	public void deleteUser(@PathVariable("id") long id) {
