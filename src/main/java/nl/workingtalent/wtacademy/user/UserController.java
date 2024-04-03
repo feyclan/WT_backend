@@ -63,12 +63,14 @@ public class UserController {
 
 	// UPDATE
 	@RequestMapping(method = RequestMethod.PUT, value = "user/update/{id}")
-	public boolean updateUser(@RequestBody User newUser, @PathVariable("id") long id) {
+	public ResponseEntity<String> updateUser(@RequestBody User newUser, @PathVariable("id") long id) {
+		
+		Optional<User> existingEmail = service.findUserByEmail(newUser.getEmail());
 
 		// ophalen bestaande user
 		Optional<User> user = service.findUserById(id);
-		if (user.isEmpty()) {
-			return false;
+		if (user.isEmpty() || existingEmail.isPresent()) {
+			return ResponseEntity.badRequest().body("User with the provided email already exists.");
 		}
 
 		User dbUser = user.get();
@@ -83,7 +85,7 @@ public class UserController {
 		// opslaan
 		service.update(dbUser);
 
-		return true;
+		return ResponseEntity.ok("User updated successfully.");
 	}
 
 	// DELETE
