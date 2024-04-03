@@ -21,11 +21,11 @@ public class UserService {
 		return repository.findById(id);
 	}
 	
-	public Optional<User> findUserByFirstName(String name) {
+	public List<User> findUserByFirstName(String name) {
 		return repository.findUserByFirstName(name);
 	}
 	
-	public Optional<User> findUserByLastName(String name) {
+	public List<User> findUserByLastName(String name) {
 		return repository.findUserByLastName(name);		
 	}
 	
@@ -33,11 +33,7 @@ public class UserService {
 		return repository.findUserByEmail(email);
 	}
 	
-	public Optional<User> findUserByRole(Role role) {
-		return repository.findUserByRole(role);
-	}
-	
-	public Optional<User> findUserByRole(Role role) {
+	public List<User> findUserByRole(Role role) {
 		return repository.findUserByRole(role);
 	}
 

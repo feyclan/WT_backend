@@ -30,12 +30,12 @@ public class UserController {
 	}
 
 	@RequestMapping("user/firstname/{firstName}")
-	public Optional<User> findUserByFirstName(@PathVariable("fristName") String name) {
+	public List<User> findAllUsersByFirstName(@PathVariable("firstName") String name) {
 		return service.findUserByFirstName(name);
 	}
 
 	@RequestMapping("user/lastname/{lastName}")
-	public Optional<User> findUserByLastName(@PathVariable("lastName") String name) {
+	public List<User> findUserByLastName(@PathVariable("lastName") String name) {
 		return service.findUserByLastName(name);
 	}
 
@@ -45,7 +45,7 @@ public class UserController {
 	}
 	
 	@RequestMapping("user/role/{role}")
-	public Optional<User> findUserByRole(@PathVariable("role") Role role) {
+	public List<User> findUserByRole(@PathVariable("role") Role role) {
 		return service.findUserByRole(role);
 	}
 
