@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,9 +58,9 @@ public class UserController {
 	public ResponseDto createUser(@RequestBody CreateUserDto dto) {
 		
 		// DOES EMAIL EXIST?
-		Optional<User> existingUser = service.findUserByEmail(dto.getEmail());
-		if (existingUser.isPresent()) {
-			ResponseDto responseDto = new ResponseDto(false, existingUser.get().getEmail(), null, "User with the provided email already exists.");
+		Optional<User> existingUserEmail = service.findUserByEmail(dto.getEmail());
+		if (existingUserEmail.isPresent()) {
+			ResponseDto responseDto = new ResponseDto(false, existingUserEmail.get().getEmail(), null, "User with the provided email already exists.");
 	        return responseDto;
 		}
 		
@@ -79,29 +78,34 @@ public class UserController {
 
 	// UPDATE
 	@PutMapping("user/update/{id}")
-	public ResponseEntity<String> updateUser(@RequestBody User newUser, @PathVariable("id") long id) {
+	public ResponseDto updateUser(@RequestBody UpdateUserDto dto, @PathVariable("id") long id) {
 
-		Optional<User> existingEmail = service.findUserByEmail(newUser.getEmail());
-
-		// ophalen bestaande user
-		Optional<User> user = service.findUserById(id);
-		if (user.isEmpty() || existingEmail.isPresent()) {
-			return ResponseEntity.badRequest().body("User with the provided email already exists.");
+		// DOES USER EXIST?
+		Optional<User> existingUser = service.findUserById(id);
+		if (existingUser.isEmpty()) {
+			ResponseDto responseDto = new ResponseDto(false, existingUser, null, "User doesn't exist.");
+			return responseDto;
+		}
+		
+		// DOES EMAIL EXIST?
+		Optional<User> existingUserEmail = service.findUserByEmail(dto.getEmail());
+		if (existingUserEmail.isPresent() && existingUserEmail.get().getId() != id) {
+			ResponseDto responseDto = new ResponseDto(false, existingUserEmail.get().getEmail(), null, "User with the provided email already exists.");
+	        return responseDto;
 		}
 
-		User dbUser = user.get();
+		User dbUser = existingUser.get();
 
-		// overschrijven
-		dbUser.setFirstName(newUser.getFirstName());
-		dbUser.setLastName(newUser.getLastName());
-		dbUser.setEmail(newUser.getEmail());
-		dbUser.setPassword(newUser.getPassword());
-		dbUser.setRole(newUser.getRole());
+		// OVERWRITE
+		dbUser.setFirstName(dto.getFirstName());
+		dbUser.setLastName(dto.getLastName());
+		dbUser.setEmail(dto.getEmail());
+		dbUser.setPassword(dto.getPassword());
 
-		// opslaan
+		// SAVE
 		service.update(dbUser);
-
-		return ResponseEntity.ok("User updated successfully.");
+		ResponseDto responseDto = new ResponseDto(true, dto, null, "User updated successfully.");
+        return responseDto;
 	}
 
 	// DELETE
