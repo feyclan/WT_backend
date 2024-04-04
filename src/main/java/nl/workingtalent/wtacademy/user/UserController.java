@@ -2,6 +2,7 @@ package nl.workingtalent.wtacademy.user;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,12 @@ public class UserController {
 
 	// READ
 	@RequestMapping("user/all")
-	public List<User> allUsers() {
-		return service.findAllUsers();
+	public Stream<ReadUserDto> findAllUsers() {
+		List<User> users = service.findAllUsers();
+		
+		return users.stream().map(user -> {
+			return new ReadUserDto(user);
+		});
 	}
 
 	@RequestMapping("user/{id}")
