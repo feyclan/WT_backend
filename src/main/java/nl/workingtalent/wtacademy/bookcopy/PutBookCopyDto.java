@@ -5,7 +5,7 @@ public class PutBookCopyDto {
 	
 	private String location;
 	
-	private long bookCopyId;
+	private long id;
 
 	public String getCondition() {
 		return condition;
@@ -23,12 +23,12 @@ public class PutBookCopyDto {
 		this.location = location;
 	}
 
-	public long getBookCopyId() {
-		return bookCopyId;
+	public long getId() {
+		return id;
 	}
 
-	public void setBookCopyId(int bookId) {
-		this.bookCopyId = bookId;
+	public void setId(int bookId) {
+		this.id = bookId;
 	}
 	
 	
