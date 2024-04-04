@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import nl.workingtalent.wtacademy.dto.ResponseDto;
+
 @RestController
 @CrossOrigin(maxAge = 3600)
 public class UserController {
@@ -54,19 +56,31 @@ public class UserController {
 
 	// CREATE
 	@PostMapping("user/create")
-	public ResponseEntity<String> createUser(@RequestBody User user) {
-		if (service.create(user)) {
-			service.create(user);
-			return ResponseEntity.ok("User created successfully.");
-		} else {
-			return ResponseEntity.badRequest().body("User with the provided email already exists.");
+	public ResponseEntity<ResponseDto> createUser(@RequestBody CreateUserDto dto) {
+		
+		// DOES EMAIL EXIST?
+		Optional<User> existingUser = service.findUserByEmail(dto.getEmail());
+		if (existingUser.isPresent()) {
+			ResponseDto responseDto = new ResponseDto(false, existingUser.get().getEmail(), null, "User with the provided email already exists.");
+	        return ResponseEntity.badRequest().body(responseDto);
 		}
+		
+		User newUser = new User();
+		newUser.setFirstName(dto.getFirstName());
+		newUser.setLastName(dto.getLastName());
+		newUser.setEmail(dto.getEmail());
+		newUser.setPassword(dto.getPassword());
+		newUser.setRole(dto.getRole());
+		service.create(newUser);
+		
+        ResponseDto responseDto = new ResponseDto(true, newUser, null, "User created successfully.");
+        return ResponseEntity.ok(responseDto);
 	}
 
 	// UPDATE
 	@PutMapping("user/update/{id}")
 	public ResponseEntity<String> updateUser(@RequestBody User newUser, @PathVariable("id") long id) {
-		
+
 		Optional<User> existingEmail = service.findUserByEmail(newUser.getEmail());
 
 		// ophalen bestaande user
