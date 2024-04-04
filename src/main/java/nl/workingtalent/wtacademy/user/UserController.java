@@ -27,9 +27,7 @@ public class UserController {
 	public Stream<ReadUserDto> findAllUsers() {
 		List<User> users = service.findAllUsers();
 
-		return users.stream().map(user -> {
-			return new ReadUserDto(user);
-		});
+		return getUsers(users);
 	}
 
 	@RequestMapping("user/{id}")
@@ -41,18 +39,14 @@ public class UserController {
 	public Stream<ReadUserDto> findAllUsersByFirstName(@PathVariable("firstName") String name) {
 		List<User> users = service.findUserByFirstName(name);
 
-		return users.stream().map(user -> {
-			return new ReadUserDto(user);
-		});
+		return getUsers(users);
 	}
 
 	@RequestMapping("user/lastname/{lastName}")
 	public Stream<ReadUserDto> findUserByLastName(@PathVariable("lastName") String name) {
 		List<User> users = service.findUserByLastName(name);
 
-		return users.stream().map(user -> {
-			return new ReadUserDto(user);
-		});
+		return getUsers(users);
 	}
 
 	@RequestMapping("user/email/{email}")
@@ -107,5 +101,12 @@ public class UserController {
 	@DeleteMapping("user/delete/{id}")
 	public void deleteUser(@PathVariable("id") long id) {
 		service.delete(id);
+	}
+	
+	// Gets a list of users using the DTO
+	private Stream<ReadUserDto> getUsers(List<User> users) {
+		return users.stream().map(user -> {
+			return new ReadUserDto(user);
+		});
 	}
 }
