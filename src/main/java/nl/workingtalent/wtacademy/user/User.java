@@ -1,7 +1,6 @@
 package nl.workingtalent.wtacademy.user;
 
 import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -24,11 +23,11 @@ public class User {
 	@Column(length = 50, nullable = false)
 	private String firstName;
 	
-	@Column(length = 100, nullable = false)
+	@Column(length = 50, nullable = false)
 	private String lastName;
 	
 	@Column(length = 100, nullable = false)
-	private String emailaddress;
+	private String email;
 	
 	@Column(length = 50, nullable = false)
 	private String password;
@@ -69,12 +68,12 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	public String getEmailaddress() {
-		return emailaddress;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setEmailaddress(String emailaddress) {
-		this.emailaddress = emailaddress;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getPassword() {
@@ -116,6 +115,5 @@ public class User {
 	public void setLoans(List<Loan> loans) {
 		this.loans = loans;
 	}
-
 
 }

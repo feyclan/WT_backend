@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,50 +18,76 @@ public class UserController {
 
 	@Autowired
 	private UserService service;
-	
+
 	// READ
 	@RequestMapping("user/all")
 	public List<User> allUsers() {
 		return service.findAllUsers();
 	}
-	
+
 	@RequestMapping("user/{id}")
 	public Optional<User> findUserById(@PathVariable("id") long id) {
-		return service.findUserWithId(id);
+		return service.findUserById(id);
 	}
-	
+
+	@RequestMapping("user/firstname/{firstName}")
+	public List<User> findAllUsersByFirstName(@PathVariable("firstName") String name) {
+		return service.findUserByFirstName(name);
+	}
+
+	@RequestMapping("user/lastname/{lastName}")
+	public List<User> findUserByLastName(@PathVariable("lastName") String name) {
+		return service.findUserByLastName(name);
+	}
+
+	@RequestMapping("user/email/{email}")
+	public Optional<User> findUserByEmail(@PathVariable("email") String email) {
+		return service.findUserByEmail(email);
+	}
+
+	@RequestMapping("user/role/{role}")
+	public List<User> findUserByRole(@PathVariable("role") Role role) {
+		return service.findUserByRole(role);
+	}
+
 	// CREATE
 	@RequestMapping(method = RequestMethod.POST, value = "user/create")
-	public void createUser(@RequestBody User user) {
-		service.create(user);
+	public ResponseEntity<String> createUser(@RequestBody User user) {
+		if (service.create(user)) {
+			service.create(user);
+			return ResponseEntity.ok("User created successfully.");
+		} else {
+			return ResponseEntity.badRequest().body("User with the provided email already exists.");
+		}
 	}
-	
+
 	// UPDATE
 	@RequestMapping(method = RequestMethod.PUT, value = "user/update/{id}")
-	public boolean updateUser(@RequestBody User newUser, @PathVariable("id") long id) {
+	public ResponseEntity<String> updateUser(@RequestBody User newUser, @PathVariable("id") long id) {
 		
+		Optional<User> existingEmail = service.findUserByEmail(newUser.getEmail());
+
 		// ophalen bestaande user
-		Optional<User> user = service.findUserWithId(id);
-		if (user.isEmpty()) {
-			return false;
+		Optional<User> user = service.findUserById(id);
+		if (user.isEmpty() || existingEmail.isPresent()) {
+			return ResponseEntity.badRequest().body("User with the provided email already exists.");
 		}
-		
+
 		User dbUser = user.get();
-		
+
 		// overschrijven
 		dbUser.setFirstName(newUser.getFirstName());
 		dbUser.setLastName(newUser.getLastName());
-		dbUser.setEmailaddress(newUser.getEmailaddress());
+		dbUser.setEmail(newUser.getEmail());
 		dbUser.setPassword(newUser.getPassword());
-		//dbUser.setAddressId(newUser.getAddressId());
 		dbUser.setRole(newUser.getRole());
 
 		// opslaan
 		service.update(dbUser);
-		
-		return true;
+
+		return ResponseEntity.ok("User updated successfully.");
 	}
-	
+
 	// DELETE
 	@RequestMapping(method = RequestMethod.DELETE, value = "user/delete/{id}")
 	public void deleteUser(@PathVariable("id") long id) {
