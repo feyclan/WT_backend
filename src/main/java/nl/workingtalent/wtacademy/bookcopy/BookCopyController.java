@@ -58,14 +58,13 @@ public class BookCopyController {
 	}
 	
 	@PutMapping("bookcopy/update")
-	public boolean updateBookCopy(@RequestBody SaveBookCopyDto dto) {
-		Optional<Book> book = bookService.getBookById(dto.getBookId());
-		if(book.isEmpty()) return false;
-		BookCopy dbCopy = service.getBookCopyById(dto.getBookId()).get();
+	public boolean updateBookCopy(@RequestBody PutBookCopyDto dto) {
+		Optional<BookCopy> bookCopy = service.getBookCopyById(dto.getBookCopyId());
+		if(bookCopy.isEmpty()) return false;
+		BookCopy dbCopy = service.getBookCopyById(dto.getBookCopyId()).get();
 		
 		dbCopy.setCondition(dto.getCondition());
 		dbCopy.setLocation(dto.getLocation());
-		dbCopy.setBook(book.get());
 		
 		service.addBookCopy(dbCopy);
 		return true;
