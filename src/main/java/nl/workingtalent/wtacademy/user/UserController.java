@@ -2,6 +2,7 @@ package nl.workingtalent.wtacademy.user;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,33 +25,45 @@ public class UserController {
 
 	// READ
 	@RequestMapping("user/all")
-	public List<User> allUsers() {
-		return service.findAllUsers();
+	public Stream<ReadUserDto> findAllUsers() {
+		List<User> users = service.findAllUsers();
+
+		return getUsers(users);
 	}
 
 	@RequestMapping("user/{id}")
-	public Optional<User> findUserById(@PathVariable("id") long id) {
-		return service.findUserById(id);
+	public ReadUserDto findUserById(@PathVariable("id") long id) {
+		User user = service.findUserById(id).get();
+
+		return new ReadUserDto(user);
 	}
 
 	@RequestMapping("user/firstname/{firstName}")
-	public List<User> findAllUsersByFirstName(@PathVariable("firstName") String name) {
-		return service.findUserByFirstName(name);
+	public Stream<ReadUserDto> findAllUsersByFirstName(@PathVariable("firstName") String name) {
+		List<User> users = service.findUserByFirstName(name);
+
+		return getUsers(users);
 	}
 
 	@RequestMapping("user/lastname/{lastName}")
-	public List<User> findUserByLastName(@PathVariable("lastName") String name) {
-		return service.findUserByLastName(name);
+	public Stream<ReadUserDto> findUserByLastName(@PathVariable("lastName") String name) {
+		List<User> users = service.findUserByLastName(name);
+
+		return getUsers(users);
 	}
 
 	@RequestMapping("user/email/{email}")
-	public Optional<User> findUserByEmail(@PathVariable("email") String email) {
-		return service.findUserByEmail(email);
+	public ReadUserDto findUserByEmail(@PathVariable("email") String email) {
+		User user = service.findUserByEmail(email).get();
+
+		return new ReadUserDto(user);
 	}
 
 	@RequestMapping("user/role/{role}")
-	public List<User> findUserByRole(@PathVariable("role") Role role) {
-		return service.findUserByRole(role);
+	public Stream<ReadUserDto> findUserByRole(@PathVariable("role") Role role) {
+		List<User> users = service.findUserByRole(role);
+
+		return getUsers(users);
 	}
 
 	// CREATE
@@ -112,5 +125,12 @@ public class UserController {
 	@DeleteMapping("user/delete/{id}")
 	public void deleteUser(@PathVariable("id") long id) {
 		service.delete(id);
+	}
+
+	// Gets a list of users using the DTO
+	private Stream<ReadUserDto> getUsers(List<User> users) {
+		return users.stream().map(user -> {
+			return new ReadUserDto(user);
+		});
 	}
 }
