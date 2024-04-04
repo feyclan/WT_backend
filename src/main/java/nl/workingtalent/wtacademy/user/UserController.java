@@ -6,10 +6,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -51,7 +53,7 @@ public class UserController {
 	}
 
 	// CREATE
-	@RequestMapping(method = RequestMethod.POST, value = "user/create")
+	@PostMapping("user/create")
 	public ResponseEntity<String> createUser(@RequestBody User user) {
 		if (service.create(user)) {
 			service.create(user);
@@ -62,7 +64,7 @@ public class UserController {
 	}
 
 	// UPDATE
-	@RequestMapping(method = RequestMethod.PUT, value = "user/update/{id}")
+	@PutMapping("user/update/{id}")
 	public ResponseEntity<String> updateUser(@RequestBody User newUser, @PathVariable("id") long id) {
 		
 		Optional<User> existingEmail = service.findUserByEmail(newUser.getEmail());
@@ -89,7 +91,7 @@ public class UserController {
 	}
 
 	// DELETE
-	@RequestMapping(method = RequestMethod.DELETE, value = "user/delete/{id}")
+	@DeleteMapping("user/delete/{id}")
 	public void deleteUser(@PathVariable("id") long id) {
 		service.delete(id);
 	}
