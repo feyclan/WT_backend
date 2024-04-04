@@ -56,13 +56,13 @@ public class UserController {
 
 	// CREATE
 	@PostMapping("user/create")
-	public ResponseEntity<ResponseDto> createUser(@RequestBody CreateUserDto dto) {
+	public ResponseDto createUser(@RequestBody CreateUserDto dto) {
 		
 		// DOES EMAIL EXIST?
 		Optional<User> existingUser = service.findUserByEmail(dto.getEmail());
 		if (existingUser.isPresent()) {
 			ResponseDto responseDto = new ResponseDto(false, existingUser.get().getEmail(), null, "User with the provided email already exists.");
-	        return ResponseEntity.badRequest().body(responseDto);
+	        return responseDto;
 		}
 		
 		User newUser = new User();
@@ -74,7 +74,7 @@ public class UserController {
 		service.create(newUser);
 		
         ResponseDto responseDto = new ResponseDto(true, newUser, null, "User created successfully.");
-        return ResponseEntity.ok(responseDto);
+        return responseDto;
 	}
 
 	// UPDATE
