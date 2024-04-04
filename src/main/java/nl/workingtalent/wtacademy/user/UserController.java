@@ -31,8 +31,10 @@ public class UserController {
 	}
 
 	@RequestMapping("user/{id}")
-	public Optional<User> findUserById(@PathVariable("id") long id) {
-		return service.findUserById(id);
+	public ReadUserDto findUserById(@PathVariable("id") long id) {
+		User user = service.findUserById(id).get();
+
+		return new ReadUserDto(user);
 	}
 
 	@RequestMapping("user/firstname/{firstName}")
@@ -50,13 +52,17 @@ public class UserController {
 	}
 
 	@RequestMapping("user/email/{email}")
-	public Optional<User> findUserByEmail(@PathVariable("email") String email) {
-		return service.findUserByEmail(email);
+	public ReadUserDto findUserByEmail(@PathVariable("email") String email) {
+		User user = service.findUserByEmail(email).get();
+
+		return new ReadUserDto(user);
 	}
 
 	@RequestMapping("user/role/{role}")
-	public List<User> findUserByRole(@PathVariable("role") Role role) {
-		return service.findUserByRole(role);
+	public Stream<ReadUserDto> findUserByRole(@PathVariable("role") Role role) {
+		List<User> users = service.findUserByRole(role);
+
+		return getUsers(users);
 	}
 
 	// CREATE
@@ -102,7 +108,7 @@ public class UserController {
 	public void deleteUser(@PathVariable("id") long id) {
 		service.delete(id);
 	}
-	
+
 	// Gets a list of users using the DTO
 	private Stream<ReadUserDto> getUsers(List<User> users) {
 		return users.stream().map(user -> {
