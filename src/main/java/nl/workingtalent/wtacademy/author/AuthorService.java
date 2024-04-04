@@ -23,5 +23,6 @@ public class AuthorService {
 	public Optional<Author> getAuthorByName(String name) {
 		return repository.findOneByName(name);
 	}
+	
 
 }

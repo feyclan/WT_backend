@@ -3,7 +3,9 @@ package nl.workingtalent.wtacademy.book;
 import java.time.LocalDate;
 import java.util.List;
 
-public class SaveBookDto {
+public class PutBookDto {
+	
+	private long id;
 	
 	private String title;
 	
@@ -57,6 +59,14 @@ public class SaveBookDto {
 		this.description = description;
 	}
 
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
 	public String getIsbn() {
 		return isbn;
 	}
@@ -64,8 +74,6 @@ public class SaveBookDto {
 	public void setIsbn(String isbn) {
 		this.isbn = isbn;
 	}
-	
-	
 	
 	
 }
