@@ -42,7 +42,6 @@ public class Book {
 	@OneToMany(mappedBy = "book")
 	private List<Review> reviews;
 	
-	@JsonIgnore
 	@OneToMany(mappedBy = "book")
 	private List<BookCopy> bookCopies;
 	
