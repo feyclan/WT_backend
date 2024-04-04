@@ -26,7 +26,7 @@ public class UserController {
 	@RequestMapping("user/all")
 	public Stream<ReadUserDto> findAllUsers() {
 		List<User> users = service.findAllUsers();
-		
+
 		return users.stream().map(user -> {
 			return new ReadUserDto(user);
 		});
@@ -38,13 +38,21 @@ public class UserController {
 	}
 
 	@RequestMapping("user/firstname/{firstName}")
-	public List<User> findAllUsersByFirstName(@PathVariable("firstName") String name) {
-		return service.findUserByFirstName(name);
+	public Stream<ReadUserDto> findAllUsersByFirstName(@PathVariable("firstName") String name) {
+		List<User> users = service.findUserByFirstName(name);
+
+		return users.stream().map(user -> {
+			return new ReadUserDto(user);
+		});
 	}
 
 	@RequestMapping("user/lastname/{lastName}")
-	public List<User> findUserByLastName(@PathVariable("lastName") String name) {
-		return service.findUserByLastName(name);
+	public Stream<ReadUserDto> findUserByLastName(@PathVariable("lastName") String name) {
+		List<User> users = service.findUserByLastName(name);
+
+		return users.stream().map(user -> {
+			return new ReadUserDto(user);
+		});
 	}
 
 	@RequestMapping("user/email/{email}")
@@ -71,7 +79,7 @@ public class UserController {
 	// UPDATE
 	@PutMapping("user/update/{id}")
 	public ResponseEntity<String> updateUser(@RequestBody User newUser, @PathVariable("id") long id) {
-		
+
 		Optional<User> existingEmail = service.findUserByEmail(newUser.getEmail());
 
 		// ophalen bestaande user
