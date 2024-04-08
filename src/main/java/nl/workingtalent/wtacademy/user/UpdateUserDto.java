@@ -6,6 +6,7 @@ public class UpdateUserDto {
 	private String lastName;
 	private String email;
 	private String password;
+	private Role role;
 
 	public String getFirstName() {
 		return firstName;
@@ -37,6 +38,13 @@ public class UpdateUserDto {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public Role getRole() {
+		return role;
+	}
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
 }
