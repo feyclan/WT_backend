@@ -25,58 +25,85 @@ public class UserController {
 
 	// READ
 	@RequestMapping("user/all")
-	public Stream<ReadUserDto> findAllUsers() {
+	public ResponseDto findAllUsers() {
 		List<User> users = service.findAllUsers();
+		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
 
-		return getUsers(users);
+		if (users.isEmpty()) {
+			ResponseDto responseDto = new ResponseDto(false, null, null, "No users found.");
+			return responseDto;
+		}
+		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null, users.size() + " users found.");
+		return responseDto;
 	}
 
 	@RequestMapping("user/{id}")
-	public ReadUserDto findUserById(@PathVariable("id") long id) {
+	public ResponseDto findUserById(@PathVariable("id") long id) {
 		User user = service.findUserById(id).get();
-
-		return new ReadUserDto(user);
+		ReadUserDto readUserDto = new ReadUserDto(user);
+		ResponseDto responseDto = new ResponseDto(true, readUserDto, null, "User found.");
+		return responseDto;
 	}
 
 	@RequestMapping("user/firstname/{firstName}")
-	public Stream<ReadUserDto> findAllUsersByFirstName(@PathVariable("firstName") String name) {
+	public ResponseDto findAllUsersByFirstName(@PathVariable("firstName") String name) {
 		List<User> users = service.findUserByFirstName(name);
-
-		return getUsers(users);
+		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
+		
+		if (users.isEmpty()) {
+			ResponseDto responseDto = new ResponseDto(false, name, null, "No users with first name '" + name + "' found.");
+			return responseDto;
+		}
+		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null, users.size() + " users found.");
+		return responseDto;
 	}
 
 	@RequestMapping("user/lastname/{lastName}")
-	public Stream<ReadUserDto> findUserByLastName(@PathVariable("lastName") String name) {
+	public ResponseDto findUserByLastName(@PathVariable("lastName") String name) {
 		List<User> users = service.findUserByLastName(name);
-
-		return getUsers(users);
+		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
+		
+		if (users.isEmpty()) {
+			ResponseDto responseDto = new ResponseDto(false, name, null, "No users with last name '" + name + "' found.");
+			return responseDto;
+		}
+		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null, users.size() + " users found.");
+		return responseDto;
 	}
 
 	@RequestMapping("user/email/{email}")
-	public ReadUserDto findUserByEmail(@PathVariable("email") String email) {
+	public ResponseDto findUserByEmail(@PathVariable("email") String email) {
 		User user = service.findUserByEmail(email).get();
-
-		return new ReadUserDto(user);
+		ReadUserDto readUserDto = new ReadUserDto(user);
+		ResponseDto responseDto = new ResponseDto(true, readUserDto, null, "User found.");
+		return responseDto;
 	}
 
 	@RequestMapping("user/role/{role}")
-	public Stream<ReadUserDto> findUserByRole(@PathVariable("role") Role role) {
+	public ResponseDto findUserByRole(@PathVariable("role") Role role) {
 		List<User> users = service.findUserByRole(role);
-
-		return getUsers(users);
+		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
+		
+		if (users.isEmpty()) {
+			ResponseDto responseDto = new ResponseDto(false, role, null, "No users with the role '" + role + "' found.");
+			return responseDto;
+		}
+		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null, users.size() + " users found.");
+		return responseDto;
 	}
 
 	// CREATE
 	@PostMapping("user/create")
 	public ResponseDto createUser(@RequestBody CreateUserDto dto) {
-		
+
 		// DOES EMAIL EXIST?
 		Optional<User> existingUserEmail = service.findUserByEmail(dto.getEmail());
 		if (existingUserEmail.isPresent()) {
-			ResponseDto responseDto = new ResponseDto(false, existingUserEmail.get().getEmail(), null, "User with the provided email already exists.");
-	        return responseDto;
+			ResponseDto responseDto = new ResponseDto(false, existingUserEmail.get().getEmail(), null,
+					"User with the provided email already exists.");
+			return responseDto;
 		}
-		
+
 		User newUser = new User();
 		newUser.setFirstName(dto.getFirstName());
 		newUser.setLastName(dto.getLastName());
@@ -84,9 +111,9 @@ public class UserController {
 		newUser.setPassword(dto.getPassword());
 		newUser.setRole(dto.getRole());
 		service.create(newUser);
-		
-        ResponseDto responseDto = new ResponseDto(true, newUser, null, "User created successfully.");
-        return responseDto;
+
+		ResponseDto responseDto = new ResponseDto(true, newUser, null, "User created successfully.");
+		return responseDto;
 	}
 
 	// UPDATE
@@ -99,12 +126,13 @@ public class UserController {
 			ResponseDto responseDto = new ResponseDto(false, existingUser, null, "User doesn't exist.");
 			return responseDto;
 		}
-		
+
 		// DOES EMAIL EXIST?
 		Optional<User> existingUserEmail = service.findUserByEmail(dto.getEmail());
 		if (existingUserEmail.isPresent() && existingUserEmail.get().getId() != id) {
-			ResponseDto responseDto = new ResponseDto(false, existingUserEmail.get().getEmail(), null, "User with the provided email already exists.");
-	        return responseDto;
+			ResponseDto responseDto = new ResponseDto(false, existingUserEmail.get().getEmail(), null,
+					"User with the provided email already exists.");
+			return responseDto;
 		}
 
 		User dbUser = existingUser.get();
@@ -114,17 +142,25 @@ public class UserController {
 		dbUser.setLastName(dto.getLastName());
 		dbUser.setEmail(dto.getEmail());
 		dbUser.setPassword(dto.getPassword());
+		dbUser.setRole(dto.getRole());
 
 		// SAVE
 		service.update(dbUser);
 		ResponseDto responseDto = new ResponseDto(true, dto, null, "User updated successfully.");
-        return responseDto;
+		return responseDto;
 	}
 
 	// DELETE
 	@DeleteMapping("user/delete/{id}")
-	public void deleteUser(@PathVariable("id") long id) {
+	public ResponseDto deleteUser(@PathVariable("id") long id) {
+		Optional<User> user = service.findUserById(id);
+		if (user.isEmpty()) {
+			ResponseDto responseDto = new ResponseDto(false, user, null, "User doesn't exist.");
+			return responseDto;
+		}
 		service.delete(id);
+		ResponseDto responseDto = new ResponseDto(true, null, null, "User deleted successfully.");
+		return responseDto;
 	}
 
 	// Gets a list of users using the DTO
