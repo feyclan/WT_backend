@@ -16,7 +16,7 @@ public class BookDto {
 	
 	private String imageLink;
 	
-	private List<String> authorNames;
+	private List<String> authors;
 	
 	private int copyCount;
 	
@@ -25,7 +25,7 @@ public class BookDto {
 	public BookDto(Book book) {
 		id = book.getId();
 		title = book.getTitle();
-		authorNames = book.getAuthors().stream().map(author -> author.getName()).collect(Collectors.toList());                 
+		authors = book.getAuthors().stream().map(author -> author.getName()).collect(Collectors.toList());                 
 		copyCount = book.getBookCopies().size();
 		description = book.getDescription();
 		isbn = book.getIsbn();
@@ -59,11 +59,11 @@ public class BookDto {
 	}
 
 	public List<String> getAuthorNames() {
-		return authorNames;
+		return authors;
 	}
 
 	public void setAuthorNames(List<String> authorNames) {
-		this.authorNames = authorNames;
+		this.authors = authorNames;
 	}
 
 	public String getDescription() {

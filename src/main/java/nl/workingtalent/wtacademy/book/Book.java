@@ -3,8 +3,6 @@ package nl.workingtalent.wtacademy.book;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,7 +40,6 @@ public class Book {
 	@OneToMany(mappedBy = "book")
 	private List<Review> reviews;
 	
-	@JsonIgnore
 	@OneToMany(mappedBy = "book")
 	private List<BookCopy> bookCopies;
 	

@@ -42,7 +42,7 @@ public class BookController {
 	}
 	
 	@PostMapping("book/create")
-	public void addBook(@RequestBody SaveBookDto saveBookDto) {
+	public void addBook(@RequestBody CreateBookDto saveBookDto) {
 		
 		Book dbBook = new Book();
 		dbBook.setTitle(saveBookDto.getTitle());
@@ -69,7 +69,7 @@ public class BookController {
 	}
 	
 	@PutMapping("book/update")
-	public boolean updateBook(@RequestBody PutBookDto dto) {
+	public boolean updateBook(@RequestBody UpdateBookDto dto) {
 		
 		Optional<Book> optional = service.getBookById(dto.getId());
 		
