@@ -32,4 +32,12 @@ public class BookService {
 	public void deleteBookById(long id) {
 		repository.deleteById(id);
 	}
+
+	public List<Book> searchBookByTitle(String title) {		
+		return repository.findByTitleContaining(title);
+	}
+	
+	public List<Book> searchByCategories(List<String> categories){
+		return repository.findByCategoriesIn(categories);
+	}
 }

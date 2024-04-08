@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import nl.workingtalent.wtacademy.author.Author;
 
@@ -39,6 +40,24 @@ public class BookController {
 	@RequestMapping("book/{id}")
 	public Optional<Book> getBookById(@PathVariable("id") int id){
 		return service.getBookById(id);
+	}
+	
+	
+	@RequestMapping("book/search")
+	public Stream<ReadBookDto> searchBook(@RequestBody SearchBookDto dto) {
+		
+//		List<Book> books = service.searchBookByTitle(dto.getTitle());
+//		Stream<ReadBookDto> dtos = books.stream().map((book)->{
+// 			return new ReadBookDto(book);
+// 		});
+		
+		List<Book> books = service.searchByCategories(dto.getCategories());		
+		Stream<ReadBookDto> dtos = books.stream().map((book)->{
+ 			return new ReadBookDto(book);
+ 		});
+		
+		
+		return dtos;
 	}
 	
 	@PostMapping("book/create")
