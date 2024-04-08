@@ -2,9 +2,7 @@ package nl.workingtalent.wtacademy.user;
 
 import java.util.List;
 
-import nl.workingtalent.wtacademy.loan.Loan;
-import nl.workingtalent.wtacademy.reservation.Reservation;
-import nl.workingtalent.wtacademy.review.Review;
+import java.util.stream.Collectors;
 
 public class ReadUserDto {
 
@@ -18,11 +16,11 @@ public class ReadUserDto {
 
 	private Role role;
 
-	private List<Review> reviews;
+	private List<Long> reviews;
 
-	private List<Reservation> reservations;
+	private List<Long> reservations;
 
-	private List<Loan> loans;
+	private List<Long> loans;
 
 	public ReadUserDto(User user) {
 		id = user.getId();
@@ -30,9 +28,10 @@ public class ReadUserDto {
 		lastName = user.getLastName();
 		email = user.getEmail();
 		role = user.getRole();
-		reviews = user.getReviews();
-		reservations = user.getReservations();
-		loans = user.getLoans();
+		reviews = user.getReviews().stream().map(review -> review.getId()).collect(Collectors.toList());
+		reservations = user.getReservations().stream().map(reservation -> reservation.getId())
+				.collect(Collectors.toList());
+		loans = user.getLoans().stream().map(loan -> loan.getId()).collect(Collectors.toList());
 	}
 
 	public long getId() {
@@ -75,27 +74,27 @@ public class ReadUserDto {
 		this.role = role;
 	}
 
-	public List<Review> getReviews() {
+	public List<Long> getReviews() {
 		return reviews;
 	}
 
-	public void setReviews(List<Review> reviews) {
+	public void setReviews(List<Long> reviews) {
 		this.reviews = reviews;
 	}
 
-	public List<Reservation> getReservations() {
+	public List<Long> getReservations() {
 		return reservations;
 	}
 
-	public void setReservations(List<Reservation> reservations) {
+	public void setReservations(List<Long> reservations) {
 		this.reservations = reservations;
 	}
 
-	public List<Loan> getLoans() {
+	public List<Long> getLoans() {
 		return loans;
 	}
 
-	public void setLoans(List<Loan> loans) {
+	public void setLoans(List<Long> loans) {
 		this.loans = loans;
 	}
 
