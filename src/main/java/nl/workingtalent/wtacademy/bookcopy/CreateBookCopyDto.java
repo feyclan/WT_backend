@@ -1,11 +1,11 @@
 package nl.workingtalent.wtacademy.bookcopy;
 
-public class PutBookCopyDto {
+public class CreateBookCopyDto {
 	private String condition;
 	
 	private String location;
 	
-	private long id;
+	private long bookId;
 
 	public String getCondition() {
 		return condition;
@@ -23,13 +23,12 @@ public class PutBookCopyDto {
 		this.location = location;
 	}
 
-	public long getId() {
-		return id;
+	public long getBookId() {
+		return bookId;
 	}
 
-	public void setId(int bookId) {
-		this.id = bookId;
+	public void setBookId(long bookId) {
+		this.bookId = bookId;
 	}
-	
-	
+
 }

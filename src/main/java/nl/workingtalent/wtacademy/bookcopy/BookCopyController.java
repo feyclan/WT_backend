@@ -26,26 +26,26 @@ public class BookCopyController {
 	private BookService bookService;
 	
 	@RequestMapping("bookcopy/all")
-	public Stream<BookCopyDto> getAllBooks(){
+	public Stream<ReadBookCopyDto> getAllBooks(){
 		List<BookCopy> copies = service.getAllBookCopies();
- 		Stream<BookCopyDto> dtos = copies.stream().map((copy)->{
- 			return new BookCopyDto(copy);
+ 		Stream<ReadBookCopyDto> dtos = copies.stream().map((copy)->{
+ 			return new ReadBookCopyDto(copy);
  		});
 		return dtos;
 
 	}
 	
 	@RequestMapping("bookcopy/all/{bookId}")
-	public Stream<BookCopyDto> getAllCopiesForBookId(@PathVariable("bookId") long bookId){
+	public Stream<ReadBookCopyDto> getAllCopiesForBookId(@PathVariable("bookId") long bookId){
  		List<BookCopy> copies = service.getAllCopiesForBookId(bookId);
- 		Stream<BookCopyDto> dtos = copies.stream().map((copy)->{
- 			return new BookCopyDto(copy);
+ 		Stream<ReadBookCopyDto> dtos = copies.stream().map((copy)->{
+ 			return new ReadBookCopyDto(copy);
  		});
 		return dtos;
 	}
 	
 	@PostMapping("bookcopy/create")
-	public void addBookCopy(@RequestBody SaveBookCopyDto dto) {
+	public void addBookCopy(@RequestBody CreateBookCopyDto dto) {
 		Optional<Book> book = bookService.getBookById(dto.getBookId());
 		if(book.isEmpty()) return;
 		BookCopy copy = new BookCopy();
@@ -58,7 +58,7 @@ public class BookCopyController {
 	}
 	
 	@PutMapping("bookcopy/update")
-	public boolean updateBookCopy(@RequestBody PutBookCopyDto dto) {
+	public boolean updateBookCopy(@RequestBody UpdateBookCopyDto dto) {
 		Optional<BookCopy> bookCopy = service.getBookCopyById(dto.getId());
 		if(bookCopy.isEmpty()) return false;
 		BookCopy dbCopy = service.getBookCopyById(dto.getId()).get();
