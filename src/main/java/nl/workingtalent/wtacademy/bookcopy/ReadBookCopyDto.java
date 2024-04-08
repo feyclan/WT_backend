@@ -2,18 +2,25 @@ package nl.workingtalent.wtacademy.bookcopy;
 
 public class ReadBookCopyDto {
 	
+	private String state;
+	
+	private String location;
+	
+	private long id;
+	
 	public ReadBookCopyDto(BookCopy copy) {
-		this.condition = copy.getCondition();
+		this.state = copy.getState();
 		this.location = copy.getLocation();
 		this.id = copy.getId();
 	}
 	
-	public String getCondition() {
-		return condition;
+	
+	public String getState() {
+		return state;
 	}
 
-	public void setCondition(String condition) {
-		this.condition = condition;
+	public void setState(String state) {
+		this.state = state;
 	}
 
 	public String getLocation() {
@@ -31,12 +38,6 @@ public class ReadBookCopyDto {
 	public void setId(long id) {
 		this.id = id;
 	}
-
-	private String condition;
-	
-	private String location;
-	
-	private long id;
 	
 	
 }

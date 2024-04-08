@@ -18,7 +18,7 @@ public class BookCopy {
 	@Column(name = "id")
 	private long id;
 		
-	private String condition;
+	private String state;
 	
 	private String location;
 	
@@ -36,12 +36,13 @@ public class BookCopy {
 		this.id = id;
 	}
 
-	public String getCondition() {
-		return condition;
+
+	public String getState() {
+		return state;
 	}
 
-	public void setCondition(String condition) {
-		this.condition = condition;
+	public void setState(String state) {
+		this.state = state;
 	}
 
 	public String getLocation() {

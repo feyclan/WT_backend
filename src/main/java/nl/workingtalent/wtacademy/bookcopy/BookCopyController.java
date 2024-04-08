@@ -50,7 +50,7 @@ public class BookCopyController {
 		if(book.isEmpty()) return;
 		BookCopy copy = new BookCopy();
 		
-		copy.setCondition(dto.getCondition());
+		copy.setState(dto.getState());
 		copy.setLocation(dto.getLocation());
 		copy.setBook(book.get());
 		
@@ -63,7 +63,7 @@ public class BookCopyController {
 		if(bookCopy.isEmpty()) return false;
 		BookCopy dbCopy = service.getBookCopyById(dto.getId()).get();
 		
-		dbCopy.setCondition(dto.getCondition());
+		dbCopy.setState(dto.getState());
 		dbCopy.setLocation(dto.getLocation());
 		
 		service.addBookCopy(dbCopy);

@@ -1,18 +1,18 @@
 package nl.workingtalent.wtacademy.bookcopy;
 
 public class UpdateBookCopyDto {
-	private String condition;
+	private String state;
 	
 	private String location;
 	
 	private long id;
 
-	public String getCondition() {
-		return condition;
+	public String getState() {
+		return state;
 	}
 
-	public void setCondition(String condition) {
-		this.condition = condition;
+	public void setState(String state) {
+		this.state = state;
 	}
 
 	public String getLocation() {
@@ -27,9 +27,8 @@ public class UpdateBookCopyDto {
 		return id;
 	}
 
-	public void setId(int bookId) {
-		this.id = bookId;
+	public void setId(long id) {
+		this.id = id;
 	}
-	
 	
 }

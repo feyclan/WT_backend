@@ -1,18 +1,18 @@
 package nl.workingtalent.wtacademy.bookcopy;
 
 public class CreateBookCopyDto {
-	private String condition;
+	private String state;
 	
 	private String location;
 	
 	private long bookId;
 
-	public String getCondition() {
-		return condition;
+	public String getState() {
+		return state;
 	}
 
-	public void setCondition(String condition) {
-		this.condition = condition;
+	public void setState(String state) {
+		this.state = state;
 	}
 
 	public String getLocation() {
