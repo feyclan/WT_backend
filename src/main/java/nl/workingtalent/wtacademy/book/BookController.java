@@ -28,10 +28,10 @@ public class BookController {
 	
 
 	@RequestMapping("book/all")
-	public Stream<BookDto> getAllBooks(){
+	public Stream<ReadBookDto> getAllBooks(){
 		List<Book> books = service.getAllBooks();
-		Stream<BookDto> dtos = books.stream().map((book)->{
- 			return new BookDto(book);
+		Stream<ReadBookDto> dtos = books.stream().map((book)->{
+ 			return new ReadBookDto(book);
  		});
 		return dtos;
 	}

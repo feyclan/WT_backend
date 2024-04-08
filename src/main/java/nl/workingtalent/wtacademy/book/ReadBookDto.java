@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BookDto {
+public class ReadBookDto {
 
 	private long id;
 	
@@ -22,7 +22,7 @@ public class BookDto {
 	
 	private LocalDate publishingDate;
 	
-	public BookDto(Book book) {
+	public ReadBookDto(Book book) {
 		id = book.getId();
 		title = book.getTitle();
 		authors = book.getAuthors().stream().map(author -> author.getName()).collect(Collectors.toList());                 
