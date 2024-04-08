@@ -58,12 +58,12 @@ public class ReadBookDto {
 		this.copyCount = copyCount;
 	}
 
-	public List<String> getAuthorNames() {
+	public List<String> getAuthors() {
 		return authors;
 	}
 
-	public void setAuthorNames(List<String> authorNames) {
-		this.authors = authorNames;
+	public void setAuthors(List<String> authors) {
+		this.authors = authors;
 	}
 
 	public String getDescription() {
