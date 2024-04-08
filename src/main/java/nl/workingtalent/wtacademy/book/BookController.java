@@ -60,7 +60,7 @@ public class BookController {
 			if(author.isEmpty()) {
 				authorService.addAuthor(authorName);
 			}
-			authors.add(author.get());
+			authors.add(authorService.getAuthorByName(authorName).get());
 		}
 		
 		dbBook.setAuthors(authors);
@@ -96,7 +96,7 @@ public class BookController {
 			if(author.isEmpty()) {
 				authorService.addAuthor(authorName);
 			}
-			authors.add(author.get());
+			authors.add(authorService.getAuthorByName(authorName).get());
 		}
 		
 		book.setAuthors(authors);
