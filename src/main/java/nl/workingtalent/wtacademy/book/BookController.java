@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import nl.workingtalent.wtacademy.author.Author;
 
 import nl.workingtalent.wtacademy.author.AuthorService;
+import nl.workingtalent.wtacademy.category.Category;
+import nl.workingtalent.wtacademy.category.CategoryService;
 
 @RestController
 public class BookController {
@@ -26,6 +28,9 @@ public class BookController {
 	
 	@Autowired
 	private AuthorService authorService;
+	
+	@Autowired
+	private CategoryService categoryService;
 	
 
 	@RequestMapping("book/all")
@@ -50,6 +55,12 @@ public class BookController {
 //		Stream<ReadBookDto> dtos = books.stream().map((book)->{
 // 			return new ReadBookDto(book);
 // 		});
+		
+//		List<String> categoryNames = dto.getCategories();
+//		List<Category> categories =  new ArrayList<>();
+//		for(String name: categoryNames) {
+//			categories.add(categoryService.findCategoryByName(name));
+//		}
 		
 		List<Book> books = service.searchByCategories(dto.getCategories());		
 		Stream<ReadBookDto> dtos = books.stream().map((book)->{
