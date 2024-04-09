@@ -40,14 +40,8 @@ public class UserController {
 	@RequestMapping("user/{id}")
 	public ResponseDto findUserById(@PathVariable("id") long id) {
 		Optional<User> userOptional = service.findUserById(id);
-		if (userOptional.isPresent()) {
-			User user = userOptional.get();
-			ReadUserDto readUserDto = new ReadUserDto(user);
-			ResponseDto responseDto = new ResponseDto(true, readUserDto, null, "User found.");
-			return responseDto;
-		}
-		ResponseDto responseDto = new ResponseDto(false, id, null, "No users with id '" + id + "' found.");
-		return responseDto;
+
+		return createResponseDto(id, userOptional, "id");
 	}
 
 	@RequestMapping("user/firstname/{firstName}")
@@ -81,14 +75,8 @@ public class UserController {
 	@RequestMapping("user/email/{email}")
 	public ResponseDto findUserByEmail(@PathVariable("email") String email) {
 		Optional<User> userOptional = service.findUserByEmail(email);
-		if (userOptional.isPresent()) {
-			User user = userOptional.get();
-			ReadUserDto readUserDto = new ReadUserDto(user);
-			ResponseDto responseDto = new ResponseDto(true, readUserDto, null, "User found.");
-			return responseDto;
-		}
-		ResponseDto responseDto = new ResponseDto(false, email, null, "No users with email '" + email + "' found.");
-		return responseDto;
+
+		return createResponseDto(email, userOptional, "email");
 	}
 
 	@RequestMapping("user/role/{role}")
@@ -181,5 +169,19 @@ public class UserController {
 		return users.stream().map(user -> {
 			return new ReadUserDto(user);
 		});
+	}
+
+	// Gets the reponseDto for objects who return a single value
+	private ResponseDto createResponseDto(Object pathVal, Optional<User> userOptional, String pathVar) {
+		if (userOptional.isPresent()) {
+			User user = userOptional.get();
+			ReadUserDto readUserDto = new ReadUserDto(user);
+			ResponseDto responseDto = new ResponseDto(true, readUserDto, null, "User found.");
+			return responseDto;
+		}
+		ResponseDto responseDto = new ResponseDto(false, pathVal, null,
+				"No users with " + pathVar + " '" + pathVal + "' found.");
+
+		return responseDto;
 	}
 }
