@@ -39,9 +39,14 @@ public class UserController {
 
 	@RequestMapping("user/{id}")
 	public ResponseDto findUserById(@PathVariable("id") long id) {
-		User user = service.findUserById(id).get();
-		ReadUserDto readUserDto = new ReadUserDto(user);
-		ResponseDto responseDto = new ResponseDto(true, readUserDto, null, "User found.");
+		Optional<User> userOptional = service.findUserById(id);
+		if (userOptional.isPresent()) {
+			User user = userOptional.get();
+			ReadUserDto readUserDto = new ReadUserDto(user);
+			ResponseDto responseDto = new ResponseDto(true, readUserDto, null, "User found.");
+			return responseDto;
+		}
+		ResponseDto responseDto = new ResponseDto(false, id, null, "No users with id '" + id + "' found.");
 		return responseDto;
 	}
 
@@ -49,9 +54,10 @@ public class UserController {
 	public ResponseDto findAllUsersByFirstName(@PathVariable("firstName") String name) {
 		List<User> users = service.findUserByFirstName(name);
 		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
-		
+
 		if (users.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, name, null, "No users with first name '" + name + "' found.");
+			ResponseDto responseDto = new ResponseDto(false, name, null,
+					"No users with first name '" + name + "' found.");
 			return responseDto;
 		}
 		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null, users.size() + " users found.");
@@ -62,9 +68,10 @@ public class UserController {
 	public ResponseDto findUserByLastName(@PathVariable("lastName") String name) {
 		List<User> users = service.findUserByLastName(name);
 		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
-		
+
 		if (users.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, name, null, "No users with last name '" + name + "' found.");
+			ResponseDto responseDto = new ResponseDto(false, name, null,
+					"No users with last name '" + name + "' found.");
 			return responseDto;
 		}
 		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null, users.size() + " users found.");
@@ -73,9 +80,14 @@ public class UserController {
 
 	@RequestMapping("user/email/{email}")
 	public ResponseDto findUserByEmail(@PathVariable("email") String email) {
-		User user = service.findUserByEmail(email).get();
-		ReadUserDto readUserDto = new ReadUserDto(user);
-		ResponseDto responseDto = new ResponseDto(true, readUserDto, null, "User found.");
+		Optional<User> userOptional = service.findUserByEmail(email);
+		if (userOptional.isPresent()) {
+			User user = userOptional.get();
+			ReadUserDto readUserDto = new ReadUserDto(user);
+			ResponseDto responseDto = new ResponseDto(true, readUserDto, null, "User found.");
+			return responseDto;
+		}
+		ResponseDto responseDto = new ResponseDto(false, email, null, "No users with email '" + email + "' found.");
 		return responseDto;
 	}
 
@@ -83,9 +95,10 @@ public class UserController {
 	public ResponseDto findUserByRole(@PathVariable("role") Role role) {
 		List<User> users = service.findUserByRole(role);
 		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
-		
+
 		if (users.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, role, null, "No users with the role '" + role + "' found.");
+			ResponseDto responseDto = new ResponseDto(false, role, null,
+					"No users with the role '" + role + "' found.");
 			return responseDto;
 		}
 		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null, users.size() + " users found.");
