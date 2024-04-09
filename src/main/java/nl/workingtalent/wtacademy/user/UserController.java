@@ -48,7 +48,7 @@ public class UserController {
 	@RequestMapping("user/lastname/{lastName}")
 	public ResponseDto findUserByLastName(@PathVariable("lastName") String name) {
 		List<User> users = service.findUserByLastName(name);
-		
+
 		return createResponseDtoList(name, users, "last name");
 
 	}
@@ -63,7 +63,7 @@ public class UserController {
 	@RequestMapping("user/role/{role}")
 	public ResponseDto findUserByRole(@PathVariable("role") Role role) {
 		List<User> users = service.findUserByRole(role);
-		
+
 		return createResponseDtoList(role, users, "role");
 	}
 
@@ -161,16 +161,16 @@ public class UserController {
 
 	// Gets the responseDto for objects who return a list of values
 	private ResponseDto createResponseDtoList(Object pathVal, List<User> users, String pathVar) {
-		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
-
 		if (users.isEmpty()) {
 			ResponseDto responseDto = new ResponseDto(false, pathVal, null,
 					"No users with the " + pathVar + " '" + pathVal + "' found.");
 			return responseDto;
 		}
+		
+		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
 		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null,
 				users.size() + " " + pathVar + " found.");
-		
+
 		return responseDto;
 	}
 }
