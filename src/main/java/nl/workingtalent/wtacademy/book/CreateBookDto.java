@@ -3,8 +3,8 @@ package nl.workingtalent.wtacademy.book;
 import java.time.LocalDate;
 import java.util.List;
 
-public class SaveBookDto {
-
+public class CreateBookDto {
+	
 	private String title;
 	
 	private String description;
@@ -12,6 +12,8 @@ public class SaveBookDto {
 	private LocalDate publishingDate;
 	
 	private String imageLink;
+	
+	private String isbn;
 	
 	private List<String> authors;
 	
@@ -54,5 +56,16 @@ public class SaveBookDto {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public String getIsbn() {
+		return isbn;
+	}
+
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
+	}
+	
+	
+	
 	
 }
