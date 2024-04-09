@@ -33,6 +33,10 @@ public class BookCopyService {
 		repository.deleteById(id);
 	}
 	
+	public List<Long> searchCopiesByLocation(String location){
+		return repository.findBookIdByLocation(location);
+	}
+	
 	
 
 }

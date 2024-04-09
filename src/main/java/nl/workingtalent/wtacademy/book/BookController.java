@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import nl.workingtalent.wtacademy.author.Author;
 
 import nl.workingtalent.wtacademy.author.AuthorService;
+import nl.workingtalent.wtacademy.bookcopy.BookCopyService;
 import nl.workingtalent.wtacademy.category.Category;
 import nl.workingtalent.wtacademy.category.CategoryService;
 
@@ -31,6 +32,9 @@ public class BookController {
 	
 	@Autowired
 	private CategoryService categoryService;
+	
+	@Autowired
+	private BookCopyService copyService;
 	
 
 	@RequestMapping("book/all")
@@ -57,6 +61,15 @@ public class BookController {
 // 			return new ReadBookDto(book);
 // 		});
 		
+		
+		List<Long> ids = copyService.searchCopiesByLocation(dto.getLocation());
+		//Search by location
+		List<Book> books = service.getByIds(ids);		
+		Stream<ReadBookDto> dtos = books.stream().map((book)->{
+ 			return new ReadBookDto(book);
+ 		});
+		
+		//Use strings from dto to find actual authors in the database and get their names
 		List<String> authorNames = new ArrayList<>();
 		
 		for(String name: dto.getAuthors()) {
@@ -67,10 +80,11 @@ public class BookController {
 		}
 		
 		//Search by authors
-		List<Book> books = service.searchByAuthors(authorNames);		
-		Stream<ReadBookDto> dtos = books.stream().map((book)->{
- 			return new ReadBookDto(book);
- 		});
+//		List<Book> books = service.searchByAuthors(authorNames);		
+//		Stream<ReadBookDto> dtos = books.stream().map((book)->{
+// 			return new ReadBookDto(book);
+// 		});
+		
 		
 		// Search by categories
 //		List<Book> books = service.searchByCategories(dto.getCategories());		

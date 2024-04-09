@@ -11,7 +11,7 @@ public class SearchBookDto {
 	
 	private List<String> authors;
 	
-	private String state;
+	private String location;
 
 	
 
@@ -39,12 +39,12 @@ public class SearchBookDto {
 		this.authors = authors;
 	}
 
-	public String getState() {
-		return state;
+	public String getLocation() {
+		return location;
 	}
 
-	public void setState(String state) {
-		this.state = state;
+	public void setLocation(String location) {
+		this.location = location;
 	}
 	
 

@@ -44,4 +44,8 @@ public class BookService {
 	public List<Book> searchByAuthors(List<String> authors){
 		return repository.findByAuthors(authors);
 	}
+	
+	public List<Book> getByIds(List<Long> ids){
+		return repository.findByIdIn(ids);
+	}
 }
