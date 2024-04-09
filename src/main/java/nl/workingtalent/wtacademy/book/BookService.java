@@ -40,4 +40,8 @@ public class BookService {
 	public List<Book> searchByCategories(List<String> categories){
 		return repository.findByCategoriesIn(categories);
 	}
+	
+	public List<Book> searchByAuthors(List<String> authors){
+		return repository.findByAuthors(authors);
+	}
 }

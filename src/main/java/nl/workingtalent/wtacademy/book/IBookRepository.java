@@ -14,4 +14,7 @@ public interface IBookRepository extends JpaRepository<Book, Long> {
 	
 	@Query("SELECT DISTINCT b from Book b JOIN b.categories c WHERE c.category in :categories")
 	List<Book> findByCategoriesIn(@Param("categories") List<String> categories);
+	
+	@Query("SELECT DISTINCT b from Book b JOIN b.authors c WHERE c.name in :authors")
+	List<Book> findByAuthors(@Param("authors") List<String> authors);
 }

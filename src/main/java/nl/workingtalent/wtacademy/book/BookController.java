@@ -51,21 +51,32 @@ public class BookController {
 	@RequestMapping("book/search")
 	public Stream<ReadBookDto> searchBook(@RequestBody SearchBookDto dto) {
 		
+		//Search by title
 //		List<Book> books = service.searchBookByTitle(dto.getTitle());
 //		Stream<ReadBookDto> dtos = books.stream().map((book)->{
 // 			return new ReadBookDto(book);
 // 		});
 		
-//		List<String> categoryNames = dto.getCategories();
-//		List<Category> categories =  new ArrayList<>();
-//		for(String name: categoryNames) {
-//			categories.add(categoryService.findCategoryByName(name));
-//		}
+		List<String> authorNames = new ArrayList<>();
 		
-		List<Book> books = service.searchByCategories(dto.getCategories());		
+		for(String name: dto.getAuthors()) {
+			List<Author> authors = authorService.searchAuthorByName(name);
+			for(Author author: authors) {
+				authorNames.add(author.getName());
+			}
+		}
+		
+		//Search by authors
+		List<Book> books = service.searchByAuthors(authorNames);		
 		Stream<ReadBookDto> dtos = books.stream().map((book)->{
  			return new ReadBookDto(book);
  		});
+		
+		// Search by categories
+//		List<Book> books = service.searchByCategories(dto.getCategories());		
+//		Stream<ReadBookDto> dtos = books.stream().map((book)->{
+// 			return new ReadBookDto(book);
+// 		});
 		
 		
 		return dtos;
