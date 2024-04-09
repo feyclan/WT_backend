@@ -27,14 +27,8 @@ public class UserController {
 	@RequestMapping("user/all")
 	public ResponseDto findAllUsers() {
 		List<User> users = service.findAllUsers();
-		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
 
-		if (users.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, null, null, "No users found.");
-			return responseDto;
-		}
-		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null, users.size() + " users found.");
-		return responseDto;
+		return createResponseDtoList(null, users, null);
 	}
 
 	@RequestMapping("user/{id}")
@@ -47,29 +41,16 @@ public class UserController {
 	@RequestMapping("user/firstname/{firstName}")
 	public ResponseDto findAllUsersByFirstName(@PathVariable("firstName") String name) {
 		List<User> users = service.findUserByFirstName(name);
-		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
 
-		if (users.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, name, null,
-					"No users with first name '" + name + "' found.");
-			return responseDto;
-		}
-		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null, users.size() + " users found.");
-		return responseDto;
+		return createResponseDtoList(name, users, "first name");
 	}
 
 	@RequestMapping("user/lastname/{lastName}")
 	public ResponseDto findUserByLastName(@PathVariable("lastName") String name) {
 		List<User> users = service.findUserByLastName(name);
-		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
+		
+		return createResponseDtoList(name, users, "last name");
 
-		if (users.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, name, null,
-					"No users with last name '" + name + "' found.");
-			return responseDto;
-		}
-		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null, users.size() + " users found.");
-		return responseDto;
 	}
 
 	@RequestMapping("user/email/{email}")
@@ -82,15 +63,8 @@ public class UserController {
 	@RequestMapping("user/role/{role}")
 	public ResponseDto findUserByRole(@PathVariable("role") Role role) {
 		List<User> users = service.findUserByRole(role);
-		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
-
-		if (users.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, role, null,
-					"No users with the role '" + role + "' found.");
-			return responseDto;
-		}
-		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null, users.size() + " users found.");
-		return responseDto;
+		
+		return createResponseDtoList(role, users, "role");
 	}
 
 	// CREATE
@@ -182,6 +156,21 @@ public class UserController {
 		ResponseDto responseDto = new ResponseDto(false, pathVal, null,
 				"No users with " + pathVar + " '" + pathVal + "' found.");
 
+		return responseDto;
+	}
+
+	// Gets the responseDto for objects who return a list of values
+	private ResponseDto createResponseDtoList(Object pathVal, List<User> users, String pathVar) {
+		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
+
+		if (users.isEmpty()) {
+			ResponseDto responseDto = new ResponseDto(false, pathVal, null,
+					"No users with the " + pathVar + " '" + pathVal + "' found.");
+			return responseDto;
+		}
+		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null,
+				users.size() + " " + pathVar + " found.");
+		
 		return responseDto;
 	}
 }
