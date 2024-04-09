@@ -18,7 +18,7 @@ public class Category {
 	
 	private String category;
 	
-	@ManyToMany
+	@ManyToMany(mappedBy="categories")
 	private List<Book> books;
 
 	public long getId() {
