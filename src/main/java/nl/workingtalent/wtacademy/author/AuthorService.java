@@ -25,8 +25,4 @@ public class AuthorService {
 		return repository.findOneByName(name);
 	}
 	
-	public List<Author> searchAuthorByName(String name) {
-		return repository.findByNameContaining(name);
-	}
-
 }

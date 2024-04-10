@@ -8,7 +8,5 @@ import org.springframework.data.repository.query.Param;
 
 public interface IBookCopyRepository extends JpaRepository<BookCopy, Long> {
 	List<BookCopy> findByBookId(long id);
-	
-	@Query("SELECT DISTINCT b.book.id FROM BookCopy b WHERE b.location = :location")
-	List<Long> findBookIdByLocation(@Param("location") String location);
+
 }

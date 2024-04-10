@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,20 +33,32 @@ public class BookService {
 	public void deleteBookById(long id) {
 		repository.deleteById(id);
 	}
+	
+	 public List<Book> searchBooks(SearchBookDto searchBookDto) {
+	        List<String> categories = searchBookDto.getCategories();
+	        String title = searchBookDto.getTitle();
+	        List<String> authors = searchBookDto.getAuthors();
+	        String location = searchBookDto.getLocation();
 
-	public List<Book> searchBookByTitle(String title) {		
-		return repository.findByTitleContaining(title);
-	}
-	
-	public List<Book> searchByCategories(List<String> categories){
-		return repository.findByCategoriesIn(categories);
-	}
-	
-	public List<Book> searchByAuthors(List<String> authors){
-		return repository.findByAuthors(authors);
-	}
-	
-	public List<Book> getByIds(List<Long> ids){
-		return repository.findByIdIn(ids);
-	}
+	        // Constructing the query based on provided criteria
+	        Specification<Book> spec = Specification.where(null);
+
+	        if (categories != null && !categories.isEmpty()) {
+	            spec = spec.and((root, query, builder) -> root.join("categories").get("category").in(categories));
+	        }
+	        if (title != null && !title.isEmpty()) {
+	            spec = spec.and((root, query, builder) -> builder.like(root.get("title"), "%" + title + "%"));
+	        }
+	        if (authors != null && !authors.isEmpty()) {
+	        	for (String author : authors) {
+	                spec = spec.and((root, query, builder) -> builder.like(root.join("authors").get("name"), "%" + author + "%"));
+	            }
+	        }
+	        if (location != null && !location.isEmpty()) {
+	            spec = spec.and((root, query, builder) -> builder.equal(root.join("bookCopies").get("location"), location));
+	        }
+
+	        // Fetching books based on the constructed query
+	        return repository.findAll(spec);
+	    }
 }

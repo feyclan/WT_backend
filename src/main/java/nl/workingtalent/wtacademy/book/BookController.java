@@ -54,43 +54,10 @@ public class BookController {
 	
 	@RequestMapping("book/search")
 	public Stream<ReadBookDto> searchBook(@RequestBody SearchBookDto dto) {
-		
-		//Search by title
-//		List<Book> books = service.searchBookByTitle(dto.getTitle());
-//		Stream<ReadBookDto> dtos = books.stream().map((book)->{
-// 			return new ReadBookDto(book);
-// 		});
-		
-		
-		List<Long> ids = copyService.searchCopiesByLocation(dto.getLocation());
-		//Search by location
-		List<Book> books = service.getByIds(ids);		
-		Stream<ReadBookDto> dtos = books.stream().map((book)->{
+	
+		Stream<ReadBookDto> dtos = service.searchBooks(dto).stream().map((book)->{
  			return new ReadBookDto(book);
  		});
-		
-		//Use strings from dto to find actual authors in the database and get their names
-		List<String> authorNames = new ArrayList<>();
-		
-		for(String name: dto.getAuthors()) {
-			List<Author> authors = authorService.searchAuthorByName(name);
-			for(Author author: authors) {
-				authorNames.add(author.getName());
-			}
-		}
-		
-		//Search by authors
-//		List<Book> books = service.searchByAuthors(authorNames);		
-//		Stream<ReadBookDto> dtos = books.stream().map((book)->{
-// 			return new ReadBookDto(book);
-// 		});
-		
-		
-		// Search by categories
-//		List<Book> books = service.searchByCategories(dto.getCategories());		
-//		Stream<ReadBookDto> dtos = books.stream().map((book)->{
-// 			return new ReadBookDto(book);
-// 		});
 		
 		
 		return dtos;
