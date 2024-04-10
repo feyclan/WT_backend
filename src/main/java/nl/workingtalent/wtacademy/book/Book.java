@@ -49,7 +49,7 @@ public class Book {
 	@ManyToMany
 	private List<Author> authors;
 	
-	@ManyToMany(mappedBy = "books")
+	@ManyToMany
 	private List<Category> categories;
 
 	public long getId() {

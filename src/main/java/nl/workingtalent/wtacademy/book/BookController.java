@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import nl.workingtalent.wtacademy.author.Author;
 
 import nl.workingtalent.wtacademy.author.AuthorService;
+import nl.workingtalent.wtacademy.category.Category;
+import nl.workingtalent.wtacademy.category.CategoryService;
 
 @RestController
 public class BookController {
@@ -25,6 +27,9 @@ public class BookController {
 	
 	@Autowired
 	private AuthorService authorService;
+	
+	@Autowired
+	private CategoryService categoryService;
 	
 
 	@RequestMapping("book/all")
@@ -49,21 +54,10 @@ public class BookController {
 		dbBook.setDescription(saveBookDto.getDescription());
 		dbBook.setImageLink(saveBookDto.getImageLink());
 		dbBook.setPublishingDate(saveBookDto.getPublishingDate());
-		dbBook.setIsbn(saveBookDto.getIsbn());
-
-		// Authors langs gaan
-		// Bestaat de author al in de db -> voeg author toe aan boek
-		// Niet bestaat dan aanmaken en toevoegen aan lijst authors
-		ArrayList<Author> authors = new ArrayList<Author>();
-		for (String authorName : saveBookDto.getAuthors()) {
-			Optional<Author> author = authorService.getAuthorByName(authorName);
-			if(author.isEmpty()) {
-				authorService.addAuthor(authorName);
-			}
-			authors.add(authorService.getAuthorByName(authorName).get());
-		}
+		dbBook.setIsbn(saveBookDto.getIsbn());	
 		
-		dbBook.setAuthors(authors);
+		dbBook.setAuthors(createAuthorsAndAddToDB(saveBookDto.getAuthors()));		
+		dbBook.setCategories(createCategoriesAndAddToDB(saveBookDto.getCategories()));
 
 		service.addBook(dbBook);
 	}
@@ -85,21 +79,11 @@ public class BookController {
 		book.setImageLink(dto.getImageLink());
 		book.setPublishingDate(dto.getPublishingDate());
 		book.setTitle(dto.getTitle());
-		book.setIsbn(dto.getIsbn());
-
+		book.setIsbn(dto.getIsbn());	
 		
-//		 Check if the edit contains unknown authors
-//		If so, add them to author table
-		ArrayList<Author> authors = new ArrayList<Author>();
-		for (String authorName : dto.getAuthors()) {
-			Optional<Author> author = authorService.getAuthorByName(authorName);
-			if(author.isEmpty()) {
-				authorService.addAuthor(authorName);
-			}
-			authors.add(authorService.getAuthorByName(authorName).get());
-		}
+		book.setAuthors(createAuthorsAndAddToDB(dto.getAuthors()));		
+		book.setCategories(createCategoriesAndAddToDB(dto.getCategories()));
 		
-		book.setAuthors(authors);
 		service.updateBook(book);
 		return true;
 	}
@@ -107,5 +91,37 @@ public class BookController {
 	@DeleteMapping("books/delete/{id}")
 	public void deleteBookById(@PathVariable("id") int id) {
 		service.deleteBookById(id);
+	}
+	
+	private List<Category> createCategoriesAndAddToDB(List<String> categoryNames){
+		
+		ArrayList<Category> categories = new ArrayList<Category>();
+		for (String categoryName : categoryNames) {
+			Optional<Category> category = categoryService.getCategoryByName(categoryName);
+			if(category.isEmpty()) {
+				categoryService.addCategory(categoryName);
+			}
+			categories.add(categoryService.getCategoryByName(categoryName).get());
+		}
+		
+		return categories;
+	}
+	
+	
+	// Authors langs gaan
+	// Bestaat de author al in de db -> voeg author toe aan boek
+	// Niet bestaat dan aanmaken en toevoegen aan lijst authors
+private List<Author> createAuthorsAndAddToDB(List<String> authorNames){
+		
+		ArrayList<Author> authors = new ArrayList<Author>();
+		for (String authorName : authorNames) {
+			Optional<Author> author = authorService.getAuthorByName(authorName);
+			if(author.isEmpty()) {
+				authorService.addAuthor(authorName);
+			}
+			authors.add(authorService.getAuthorByName(authorName).get());
+		}
+		
+		return authors;
 	}
 }
