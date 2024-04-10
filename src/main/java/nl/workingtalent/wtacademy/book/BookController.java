@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,7 @@ import nl.workingtalent.wtacademy.category.Category;
 import nl.workingtalent.wtacademy.category.CategoryService;
 
 @RestController
+@CrossOrigin(maxAge=3600)
 public class BookController {
 	
 	@Autowired
@@ -56,8 +58,13 @@ public class BookController {
 		dbBook.setPublishingDate(saveBookDto.getPublishingDate());
 		dbBook.setIsbn(saveBookDto.getIsbn());	
 		
-		dbBook.setAuthors(createAuthorsAndAddToDB(saveBookDto.getAuthors()));		
-		dbBook.setCategories(createCategoriesAndAddToDB(saveBookDto.getCategories()));
+		if(saveBookDto.getAuthors() != null) {
+			dbBook.setAuthors(createAuthorsAndAddToDB(saveBookDto.getAuthors()));				
+		}
+	
+		if(saveBookDto.getCategories() != null) {
+			dbBook.setCategories(createCategoriesAndAddToDB(saveBookDto.getCategories()));			
+		}
 
 		service.addBook(dbBook);
 	}
@@ -81,8 +88,14 @@ public class BookController {
 		book.setTitle(dto.getTitle());
 		book.setIsbn(dto.getIsbn());	
 		
-		book.setAuthors(createAuthorsAndAddToDB(dto.getAuthors()));		
-		book.setCategories(createCategoriesAndAddToDB(dto.getCategories()));
+		if(dto.getAuthors() != null) {
+			book.setAuthors(createAuthorsAndAddToDB(dto.getAuthors()));
+		}
+			
+		if(dto.getCategories() != null) {
+			book.setCategories(createCategoriesAndAddToDB(dto.getCategories()));
+		}
+		
 		
 		service.updateBook(book);
 		return true;
