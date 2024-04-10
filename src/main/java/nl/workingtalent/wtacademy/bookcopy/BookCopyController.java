@@ -31,20 +31,14 @@ public class BookCopyController {
 	@RequestMapping("bookcopy/all")
 	public ResponseDto getAllBooks(){
 		List<BookCopy> copies = service.getAllBookCopies();
- 		Stream<ReadBookCopyDto> dtos = copies.stream().map((copy)->{
- 			return new ReadBookCopyDto(copy);
- 		});
- 		return createResponseDtoList(null, dtos.toList(), "copy");
+ 		return createResponseDtoList(null, copies, "copy");
  		
 	}
 	
 	@RequestMapping("bookcopy/all/{bookId}")
 	public ResponseDto getAllCopiesForBookId(@PathVariable("bookId") long bookId){
  		List<BookCopy> copies = service.getAllCopiesForBookId(bookId);
- 		Stream<ReadBookCopyDto> dtos = copies.stream().map((copy)->{
- 			return new ReadBookCopyDto(copy);
- 		});
- 		return createResponseDtoList(null, dtos.toList(), "copy");
+ 		return createResponseDtoList(null, copies, "copy");
 	}
 	
 	@PostMapping("bookcopy/create")
@@ -88,30 +82,21 @@ public class BookCopyController {
 		return new ResponseDto(true, new ReadBookCopyDto(copy.get()), null, "Copy deleted");
 	}
 	
-//	// Gets the reponseDto for objects who return a single value
-//	private ResponseDto createResponseDto(Object pathVal, Optional<BookCopy> bookCopyOptional, String pathVar) {
-//		if (bookCopyOptional.isPresent()) {
-//			BookCopy copy = bookCopyOptional.get();
-//			ReadBookCopyDto readCopyDto = new ReadBookCopyDto(copy);
-//			ResponseDto responseDto = new ResponseDto(true, readCopyDto, null, "Copy found.");
-//			return responseDto;
-//		}
-//		ResponseDto responseDto = new ResponseDto(false, pathVal, null,
-//				"No copies with " + pathVar + " '" + pathVal + "' found.");
-//
-//		return responseDto;
-//	}
 
 	// Gets the responseDto for objects who return a list of values
-	private ResponseDto createResponseDtoList(Object pathVal, List<ReadBookCopyDto> bookCopies, String pathVar) {
-		if (bookCopies.isEmpty()) {
+	private ResponseDto createResponseDtoList(Object pathVal, List<BookCopy> copies, String pathVar) {
+		if (copies.isEmpty()) {
 			ResponseDto responseDto = new ResponseDto(false, pathVal, null,
 					"No copies with the " + pathVar + " '" + pathVal + "' found.");
 			return responseDto;
 		}
 		
-		ResponseDto responseDto = new ResponseDto(true, bookCopies, null,
-				bookCopies.size() + " " + pathVar + " found.");
+		Stream<ReadBookCopyDto> dtos = copies.stream().map((copy)->{
+ 			return new ReadBookCopyDto(copy);
+ 		});
+		
+		ResponseDto responseDto = new ResponseDto(true, dtos, null,
+				copies.size() + " " + pathVar + " found.");
 
 		return responseDto;
 	}
