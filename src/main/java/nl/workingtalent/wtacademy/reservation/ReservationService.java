@@ -22,12 +22,12 @@ public class ReservationService {
 		return repository.findById(id);
 	}
 	
-	public List<Reservation> findReservationByRequest(boolean request) {
-		return repository.findReservationByRequest(request);
+	public List<Reservation> findReservationByReservationRequest(boolean request) {
+		return repository.findReservationByReservationRequest(request);
 	}
 	
-	public List<Reservation> findReservationByDate(LocalDate date) {
-		return repository.findReservationByDate(date);
+	public List<Reservation> findReservationByRequestDate(LocalDate date) {
+		return repository.findReservationByRequestDate(date);
 	}
 	
 	// CREATE

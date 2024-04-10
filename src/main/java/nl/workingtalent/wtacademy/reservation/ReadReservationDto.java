@@ -2,38 +2,32 @@ package nl.workingtalent.wtacademy.reservation;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import nl.workingtalent.wtacademy.book.Book;
 import nl.workingtalent.wtacademy.loan.Loan;
 import nl.workingtalent.wtacademy.user.User;
 
-@Entity
-public class Reservation {
+public class ReadReservationDto {
 	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
-	
-	@Column(nullable = false)
+
 	private boolean reservationRequest;
-	
-	@Column(nullable = false)
+
 	private LocalDate requestDate;
 	
-	@ManyToOne
 	private Book book;
 	
-	@ManyToOne
 	private User user;
 	
-	@OneToOne(mappedBy = "reservation")
 	private Loan loan;
+	
+	public ReadReservationDto(Reservation reservation) {
+		id = reservation.getId();
+		reservationRequest = reservation.isReservationRequest();
+		requestDate = reservation.getRequestDate();	
+		book = reservation.getBook();
+		user = reservation.getUser();
+		loan = reservation.getLoan();
+	}
 
 	public long getId() {
 		return id;

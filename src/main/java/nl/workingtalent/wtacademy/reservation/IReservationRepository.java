@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface IReservationRepository extends JpaRepository<Reservation, Long>{
 	
-	List<Reservation> findReservationByRequest(boolean request);
-	List<Reservation> findReservationByDate(LocalDate date);
+	List<Reservation> findReservationByReservationRequest(boolean request);
+	List<Reservation> findReservationByRequestDate(LocalDate date);
 
 }
