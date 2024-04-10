@@ -31,14 +31,14 @@ public class BookCopyController {
 	@RequestMapping("bookcopy/all")
 	public ResponseDto getAllBooks(){
 		List<BookCopy> copies = service.getAllBookCopies();
- 		return createResponseDtoList(null, copies, "copy");
+ 		return createResponseDtoList(null, copies, (copies.size() < 2)? "copy" : "copies");
  		
 	}
 	
 	@RequestMapping("bookcopy/all/{bookId}")
 	public ResponseDto getAllCopiesForBookId(@PathVariable("bookId") long bookId){
  		List<BookCopy> copies = service.getAllCopiesForBookId(bookId);
- 		return createResponseDtoList(null, copies, "copy");
+ 		return createResponseDtoList(null, copies, (copies.size() < 2)? "copy" : "copies");
 	}
 	
 	@PostMapping("bookcopy/create")
