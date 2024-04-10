@@ -2,9 +2,9 @@ package nl.workingtalent.wtacademy.bookcopy;
 
 public class UpdateBookCopyDto {
 	private String state;
-	
+
 	private String location;
-	
+
 	private long id;
 
 	public String getState() {
@@ -30,5 +30,5 @@ public class UpdateBookCopyDto {
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 }

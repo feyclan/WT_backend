@@ -2,9 +2,9 @@ package nl.workingtalent.wtacademy.bookcopy;
 
 public class CreateBookCopyDto {
 	private String state;
-	
+
 	private String location;
-	
+
 	private long bookId;
 
 	public String getState() {
