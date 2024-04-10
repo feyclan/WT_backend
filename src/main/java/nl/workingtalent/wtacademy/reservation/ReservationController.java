@@ -15,7 +15,6 @@ import nl.workingtalent.wtacademy.dto.ResponseDto;
 
 @RestController
 @CrossOrigin(maxAge = 3600)
-
 public class ReservationController {
 
 	@Autowired
