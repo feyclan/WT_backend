@@ -28,7 +28,7 @@ public class UserController {
 	public ResponseDto findAllUsers() {
 		List<User> users = service.findAllUsers();
 
-		return createResponseDtoList(null, users, null);
+		return createResponseDtoList(null, users, (users.size() < 2) ? "user" : "users");
 	}
 
 	@RequestMapping("user/{id}")
