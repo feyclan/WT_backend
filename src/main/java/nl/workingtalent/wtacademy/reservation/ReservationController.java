@@ -1,6 +1,5 @@
 package nl.workingtalent.wtacademy.reservation;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -28,25 +27,35 @@ public class ReservationController {
 	@RequestMapping("reservation/all")
 	public ResponseDto findAllReservations() {
 		List<Reservation> reservations = service.findAllReservations();
-		return createResponseDtoList(null, reservations, (reservations.size() < 2) ? "reservation" : "reservations");
+
+		if (reservations.isEmpty()) {
+			return new ResponseDto(false, null, null, "No reservations found.");
+		}
+
+		Stream<ReadReservationDto> readReservationDtoStream = getReservations(reservations);
+		return new ResponseDto(true, readReservationDtoStream, null,
+				reservations.size() + (reservations.size() < 2 ? " reservation " : " reservations ") + "found.");
 	}
 
 	@RequestMapping("reservation/{id}")
 	public ResponseDto findReservationById(@PathVariable("id") long id) {
 		Optional<Reservation> reservationOptional = service.findReservationById(id);
-		return createResponseDto(id, reservationOptional, "id");
+
+		if (reservationOptional.isPresent()) {
+			Reservation reservation = reservationOptional.get();
+			ReadReservationDto readReservationDto = new ReadReservationDto(reservation);
+			return new ResponseDto(true, readReservationDto, null, "Reservation found.");
+		}
+		return new ResponseDto(false, null, null, "No reservations found.");
 	}
 
-	@RequestMapping("reservation/reservationrequest/{reservationRequest}")
-	public ResponseDto findAllReservationsByReservationRequest(@PathVariable("reservationRequest") boolean request) {
-		List<Reservation> reservations = service.findReservationByReservationRequest(request);
-		return createResponseDtoList(request, reservations, "reservation request");
-	}
+	@RequestMapping("reservation/search")
+	public Stream<ReadReservationDto> searchReservation(@RequestBody SearchReservationDto dto) {
 
-	@RequestMapping("reservation/requestdate/{requestDate}")
-	public ResponseDto findReservationByRequestDate(@PathVariable("requestDate") LocalDate date) {
-		List<Reservation> reservations = service.findReservationByRequestDate(date);
-		return createResponseDtoList(date, reservations, "request date");
+		Stream<ReadReservationDto> dtos = service.searchReservations(dto).stream().map((reservation) -> {
+			return new ReadReservationDto(reservation);
+		});
+		return dtos;
 	}
 
 	// CREATE
@@ -58,8 +67,7 @@ public class ReservationController {
 		newReservation.setRequestDate(dto.getRequestDate());
 		service.create(newReservation);
 
-		ResponseDto responseDto = new ResponseDto(true, newReservation, null, "Reservation created successfully.");
-		return responseDto;
+		return new ResponseDto(true, newReservation, null, "Reservation created successfully.");
 	}
 
 	// UPDATE
@@ -69,8 +77,7 @@ public class ReservationController {
 		// DOES RESERVATION EXIST?
 		Optional<Reservation> existingReservation = service.findReservationById(id);
 		if (existingReservation.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, existingReservation, null, "Reservation doesn't exist.");
-			return responseDto;
+			return new ResponseDto(false, existingReservation, null, "Reservation doesn't exist.");
 		}
 
 		Reservation dbReservation = existingReservation.get();
@@ -81,21 +88,19 @@ public class ReservationController {
 
 		// SAVE
 		service.update(dbReservation);
-		ResponseDto responseDto = new ResponseDto(true, dto, null, "Reservation updated successfully.");
-		return responseDto;
+		return new ResponseDto(true, dbReservation, null, "Reservation updated successfully.");
 	}
 
 	// DELETE
 	@DeleteMapping("reservation/delete/{id}")
 	public ResponseDto deleteReservation(@PathVariable("id") long id) {
 		Optional<Reservation> reservation = service.findReservationById(id);
+
 		if (reservation.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, reservation, null, "Reservation doesn't exist.");
-			return responseDto;
+			return new ResponseDto(false, null, null, "Reservation doesn't exist.");
 		}
 		service.delete(id);
-		ResponseDto responseDto = new ResponseDto(true, null, null, "Reservation deleted successfully.");
-		return responseDto;
+		return new ResponseDto(true, null, null, "Reservation deleted successfully.");
 	}
 
 	// Gets a list of users using the DTO
@@ -105,29 +110,4 @@ public class ReservationController {
 		});
 	}
 
-	// Gets the reponseDto for objects who return a single value
-	private ResponseDto createResponseDto(Object pathVal, Optional<Reservation> reservationOptional, String pathVar) {
-		if (reservationOptional.isPresent()) {
-			Reservation reservation = reservationOptional.get();
-			ReadReservationDto readReservationDto = new ReadReservationDto(reservation);
-			ResponseDto responseDto = new ResponseDto(true, readReservationDto, null, "Reservation found.");
-			return responseDto;
-		}
-		ResponseDto responseDto = new ResponseDto(false, pathVal, null,
-				"No reservations with " + pathVar + " '" + pathVal + "' found.");
-		return responseDto;
-	}
-
-	// Gets the responseDto for objects who return a list of values
-	private ResponseDto createResponseDtoList(Object pathVal, List<Reservation> reservations, String pathVar) {
-		if (reservations.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, pathVal, null,
-					"No reservations with the " + pathVar + " '" + pathVal + "' found.");
-			return responseDto;
-		}
-		Stream<ReadReservationDto> readReservationDtoStream = getReservations(reservations);
-		ResponseDto responseDto = new ResponseDto(true, readReservationDtoStream, null,
-				reservations.size() + " " + pathVar + " found.");
-		return responseDto;
-	}
 }

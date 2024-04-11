@@ -1,6 +1,7 @@
 package nl.workingtalent.wtacademy.reservation;
 
 import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 import nl.workingtalent.wtacademy.book.Book;
 import nl.workingtalent.wtacademy.loan.Loan;
@@ -14,7 +15,7 @@ public class ReadReservationDto {
 
 	private LocalDate requestDate;
 	
-	private Book book;
+	private long book;
 	
 	private User user;
 	
@@ -24,9 +25,23 @@ public class ReadReservationDto {
 		id = reservation.getId();
 		reservationRequest = reservation.isReservationRequest();
 		requestDate = reservation.getRequestDate();	
-		book = reservation.getBook();
+		book = reservation.getBook().getId();
 		user = reservation.getUser();
 		loan = reservation.getLoan();
+		
+//		
+//		books = reservation.getBook().stream().map(book -> book.getId()).collect(Collectors.toList());
+//		
+//		
+//		
+//		
+//		
+//		reservations = user.getReservations().stream().map(reservation -> reservation.getId())
+//				.collect(Collectors.toList());
+//		loans = user.getLoans().stream().map(loan -> loan.getId()).collect(Collectors.toList());
+		
+		
+		
 	}
 
 	public long getId() {
@@ -53,19 +68,20 @@ public class ReadReservationDto {
 		this.requestDate = requestDate;
 	}
 
-	public Book getBook() {
+
+	public long getBook() {
 		return book;
 	}
 
-	public void setBook(Book book) {
+	public void setBook(long book) {
 		this.book = book;
 	}
 
-	public User getUser() {
+	public long getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(long user) {
 		this.user = user;
 	}
 
