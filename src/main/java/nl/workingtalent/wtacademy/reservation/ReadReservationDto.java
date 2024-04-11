@@ -17,17 +17,17 @@ public class ReadReservationDto {
 	
 	private long book;
 	
-	private User user;
+	private long user;
 	
-	private Loan loan;
+	private long loan;
 	
 	public ReadReservationDto(Reservation reservation) {
 		id = reservation.getId();
 		reservationRequest = reservation.isReservationRequest();
 		requestDate = reservation.getRequestDate();	
 		book = reservation.getBook().getId();
-		user = reservation.getUser();
-		loan = reservation.getLoan();
+		user = reservation.getUser().getId();
+		loan = reservation.getLoan().getId();
 		
 //		
 //		books = reservation.getBook().stream().map(book -> book.getId()).collect(Collectors.toList());
@@ -77,19 +77,19 @@ public class ReadReservationDto {
 		this.book = book;
 	}
 
-	public long getUser() {
+	public Long getUser() {
 		return user;
 	}
 
-	public void setUser(long user) {
+	public void setUser(Long user) {
 		this.user = user;
 	}
 
-	public Loan getLoan() {
+	public Long getLoan() {
 		return loan;
 	}
 
-	public void setLoan(Loan loan) {
+	public void setLoan(Long loan) {
 		this.loan = loan;
 	}
 	
