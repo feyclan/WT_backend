@@ -24,22 +24,11 @@ public class UserService {
 	public Optional<User> findUserById(long id) {
 		return repository.findById(id);
 	}
-
-	// TODO: Remove when implemented
-//	public List<User> findUserByLastName(String name) {
-//		return repository.findUserByLastName(name);
-//	}
-//
+	
 	public Optional<User> findUserByEmail(String email) {
 		return repository.findUserByEmail(email);
 	}
-	// TODO: Remove when implemented
-//	public List<User> findUserByRole(Role role) {
-//
-//		return repository.findUserByRole(role);
-//	}
 
-	// CREATE
 	public void create(User user) {
 		repository.save(user);
 	}
@@ -58,15 +47,11 @@ public class UserService {
 		String firstName = searchUserDto.getFirstName();
 		String lastName = searchUserDto.getLastName();
 		String email = searchUserDto.getEmail();
-		// Moet dit een role object worden?
-		Role role = searchUserDto.getRole();
+		String role = searchUserDto.getRole();
 
 		// Constructing the query based on provided criteria
 		Specification<User> spec = Specification.where(null);
 
-//		if (firstName != null && !firstName.isEmpty()) {
-//			spec = spec.and((root, query, builder) -> root.join("categories").get("category").in(firstName));
-//		}
 		if (firstName != null && !firstName.isEmpty()) {
 			spec = spec.and((root, query, builder) -> builder.like(root.get("firstName"), "%" + firstName + "%"));
 		}
@@ -78,17 +63,12 @@ public class UserService {
 		if (email != null && !email.isEmpty()) {
 			spec = spec.and((root, query, builder) -> builder.like(root.get("email"), "%" + email + "%"));
 		}
-//		if (authors != null && !authors.isEmpty()) {
-//			for (String author : authors) {
-//				spec = spec.and(
-//						(root, query, builder) -> builder.like(root.join("authors").get("name"), "%" + author + "%"));
-//			}
-//		}
-//		if (location != null && !location.isEmpty()) {
-//			spec = spec.and((root, query, builder) -> builder.equal(root.join("bookCopies").get("location"), location));
-//		}
+		
+		if (role != null && !role.isEmpty()) {
+			spec = spec.and((root, query, builder) -> builder.like(root.get("role"), "%" + role + "%"));
+		}
 
-		// Fetching books based on the constructed query
+		// Fetching users based on the constructed query
 		return repository.findAll(spec);
 	}
 
