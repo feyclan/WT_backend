@@ -23,10 +23,10 @@ import nl.workingtalent.wtacademy.category.CategoryService;
 @RestController
 @CrossOrigin(maxAge=3600)
 public class BookController {
-	
+
 	@Autowired
 	private BookService service;
-	
+
 	@Autowired
 	private AuthorService authorService;
 	
@@ -35,22 +35,32 @@ public class BookController {
 	
 
 	@RequestMapping("book/all")
-	public Stream<ReadBookDto> getAllBooks(){
+	public Stream<ReadBookDto> getAllBooks() {
 		List<Book> books = service.getAllBooks();
-		Stream<ReadBookDto> dtos = books.stream().map((book)->{
- 			return new ReadBookDto(book);
- 		});
+		Stream<ReadBookDto> dtos = books.stream().map((book) -> {
+			return new ReadBookDto(book);
+		});
 		return dtos;
 	}
-	
+
 	@RequestMapping("book/{id}")
-	public Optional<Book> getBookById(@PathVariable("id") int id){
+	public Optional<Book> getBookById(@PathVariable("id") int id) {
 		return service.getBookById(id);
 	}
-	
+
+	@RequestMapping("book/search")
+	public Stream<ReadBookDto> searchBook(@RequestBody SearchBookDto dto) {
+
+		Stream<ReadBookDto> dtos = service.searchBooks(dto).stream().map((book) -> {
+			return new ReadBookDto(book);
+		});
+
+		return dtos;
+	}
+
 	@PostMapping("book/create")
 	public void addBook(@RequestBody CreateBookDto saveBookDto) {
-		
+
 		Book dbBook = new Book();
 		dbBook.setTitle(saveBookDto.getTitle());
 		dbBook.setDescription(saveBookDto.getDescription());
@@ -68,19 +78,19 @@ public class BookController {
 
 		service.addBook(dbBook);
 	}
-	
+
 	@PutMapping("book/update")
 	public boolean updateBook(@RequestBody UpdateBookDto dto) {
-		
+
 		Optional<Book> optional = service.getBookById(dto.getId());
-		
-		if(optional.isEmpty()) {
+
+		if (optional.isEmpty()) {
 			return false;
 		}
-		
+
 		Book book = optional.get();
-		
-		//Check whether all data is filled
+
+		// Check whether all data is filled
 
 		book.setDescription(dto.getDescription());
 		book.setImageLink(dto.getImageLink());

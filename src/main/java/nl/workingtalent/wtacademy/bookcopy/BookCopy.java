@@ -12,22 +12,22 @@ import nl.workingtalent.wtacademy.loan.Loan;
 
 @Entity
 public class BookCopy {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private long id;
-		
-	private String condition;
-	
+
+	private String state;
+
 	private String location;
-	
+
 	@ManyToOne
 	private Book book;
-	
+
 	@OneToOne(mappedBy = "bookCopy")
 	private Loan loan;
-	
+
 	public long getId() {
 		return id;
 	}
@@ -36,12 +36,12 @@ public class BookCopy {
 		this.id = id;
 	}
 
-	public String getCondition() {
-		return condition;
+	public String getState() {
+		return state;
 	}
 
-	public void setCondition(String condition) {
-		this.condition = condition;
+	public void setState(String state) {
+		this.state = state;
 	}
 
 	public String getLocation() {
@@ -67,5 +67,5 @@ public class BookCopy {
 	public void setLoan(Loan loan) {
 		this.loan = loan;
 	}
-	
+
 }

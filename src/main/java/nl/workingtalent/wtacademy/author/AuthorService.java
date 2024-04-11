@@ -1,5 +1,6 @@
 package nl.workingtalent.wtacademy.author;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +25,4 @@ public class AuthorService {
 		return repository.findOneByName(name);
 	}
 	
-
 }
