@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +17,17 @@ public class BookService {
 	@Autowired
 	private IBookRepository repository;
 
-	public List<Book> getAllBooks() {
-		return repository.findAll();
+	private final int pageSize = 5;
+
+	public Page<Book> getAllBooks(int pageNr) {
+		// Bouw een filtering + sortering
+		Pageable pageable = PageRequest.of(pageNr, pageSize, Sort.by(Sort.Direction.DESC, "title"));
+
+		// Vind allemaal met de filtering erbij
+		Page<Book> page = repository.findAll(pageable);
+
+		// Geef de lijst terug
+		return page;
 	}
 
 	public Optional<Book> getBookById(long id) {
