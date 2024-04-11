@@ -24,9 +24,34 @@ public class UserService {
 	public Optional<User> findUserById(long id) {
 		return repository.findById(id);
 	}
-	
-	public Optional<User> findUserByEmail(String email) {
-		return repository.findUserByEmail(email);
+
+	public List<User> searchUser(SearchUserDto searchUserDto) {
+		String firstName = searchUserDto.getFirstName();
+		String lastName = searchUserDto.getLastName();
+		String email = searchUserDto.getEmail();
+		String role = searchUserDto.getRole();
+
+		// Constructing the query based on provided criteria
+		Specification<User> spec = Specification.where(null);
+
+		if (firstName != null && !firstName.isEmpty()) {
+			spec = spec.and((root, query, builder) -> builder.like(root.get("firstName"), "%" + firstName + "%"));
+		}
+
+		if (lastName != null && !lastName.isEmpty()) {
+			spec = spec.and((root, query, builder) -> builder.like(root.get("lastName"), "%" + lastName + "%"));
+		}
+
+		if (email != null && !email.isEmpty()) {
+			spec = spec.and((root, query, builder) -> builder.equal(root.get("email"), email));
+		}
+
+		if (role != null && !role.isEmpty()) {
+			spec = spec.and((root, query, builder) -> builder.like(root.get("role"), "%" + role + "%"));
+		}
+
+		// Fetching users based on the constructed query
+		return repository.findAll(spec);
 	}
 
 	public void create(User user) {
@@ -41,35 +66,6 @@ public class UserService {
 	// DELETE
 	public void delete(long id) {
 		repository.deleteById(id);
-	}
-
-	public List<User> searchUser(SearchUserDto searchUserDto) {
-		String firstName = searchUserDto.getFirstName();
-		String lastName = searchUserDto.getLastName();
-		String email = searchUserDto.getEmail();
-		String role = searchUserDto.getRole();
-
-		// Constructing the query based on provided criteria
-		Specification<User> spec = Specification.where(null);
-
-		if (firstName != null && !firstName.isEmpty()) {
-			spec = spec.and((root, query, builder) -> builder.like(root.get("firstName"), "%" + firstName + "%"));
-		}
-		
-		if (lastName != null && !lastName.isEmpty()) {
-			spec = spec.and((root, query, builder) -> builder.like(root.get("lastName"), "%" + lastName + "%"));
-		}
-		
-		if (email != null && !email.isEmpty()) {
-			spec = spec.and((root, query, builder) -> builder.like(root.get("email"), "%" + email + "%"));
-		}
-		
-		if (role != null && !role.isEmpty()) {
-			spec = spec.and((root, query, builder) -> builder.like(root.get("role"), "%" + role + "%"));
-		}
-
-		// Fetching users based on the constructed query
-		return repository.findAll(spec);
 	}
 
 }

@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import nl.workingtalent.wtacademy.book.ReadBookDto;
-import nl.workingtalent.wtacademy.book.SearchBookDto;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
 
 @RestController
@@ -50,21 +47,18 @@ public class UserController {
 		return dtos;
 	}
 
-	@RequestMapping("user/email/{email}")
-	public ResponseDto findUserByEmail(@PathVariable("email") String email) {
-		Optional<User> userOptional = service.findUserByEmail(email);
-
-		return createResponseDto(email, userOptional, "email");
-	}
-
 	// CREATE
 	@PostMapping("user/create")
 	public ResponseDto createUser(@RequestBody CreateUserDto dto) {
 
-		// DOES EMAIL EXIST?
-		Optional<User> existingUserEmail = service.findUserByEmail(dto.getEmail());
-		if (existingUserEmail.isPresent()) {
-			ResponseDto responseDto = new ResponseDto(false, existingUserEmail.get().getEmail(), null,
+		// Create SearchDto to search for a user with a certain email
+		SearchUserDto searchDto = new SearchUserDto();
+		searchDto.setEmail(dto.getEmail());
+
+		// Check if user exists
+		List<User> existingUserEmail = service.searchUser(searchDto);
+		if (!existingUserEmail.isEmpty()) {
+			ResponseDto responseDto = new ResponseDto(false, existingUserEmail, null,
 					"User with the provided email already exists.");
 			return responseDto;
 		}
@@ -92,10 +86,14 @@ public class UserController {
 			return responseDto;
 		}
 
-		// DOES EMAIL EXIST?
-		Optional<User> existingUserEmail = service.findUserByEmail(dto.getEmail());
-		if (existingUserEmail.isPresent() && existingUserEmail.get().getId() != id) {
-			ResponseDto responseDto = new ResponseDto(false, existingUserEmail.get().getEmail(), null,
+		// Create SearchDto to search for a user with a certain email
+		SearchUserDto searchDto = new SearchUserDto();
+		searchDto.setEmail(dto.getEmail());
+		
+		// Check if email is already in use
+		List<User> existingUserEmail = service.searchUser(searchDto);
+		if (!existingUserEmail.isEmpty() && existingUserEmail.get(0).getId() != id) {
+			ResponseDto responseDto = new ResponseDto(false, existingUserEmail.get(0).getEmail(), null,
 					"User with the provided email already exists.");
 			return responseDto;
 		}
