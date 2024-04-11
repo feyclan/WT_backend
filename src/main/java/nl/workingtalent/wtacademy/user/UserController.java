@@ -50,29 +50,12 @@ public class UserController {
 		return dtos;
 	}
 
-	// TODO: Remove when implemented
-//	@RequestMapping("user/lastname/{lastName}")
-//	public ResponseDto findUserByLastName(@PathVariable("lastName") String name) {
-//		List<User> users = service.findUserByLastName(name);
-//
-//		return createResponseDtoList(name, users, "last name");
-//
-//	}
-//
 	@RequestMapping("user/email/{email}")
 	public ResponseDto findUserByEmail(@PathVariable("email") String email) {
 		Optional<User> userOptional = service.findUserByEmail(email);
 
 		return createResponseDto(email, userOptional, "email");
 	}
-
-	// TODO: Remove when implemented
-//	@RequestMapping("user/role/{role}")
-//	public ResponseDto findUserByRole(@PathVariable("role") Role role) {
-//		List<User> users = service.findUserByRole(role);
-//
-//		return createResponseDtoList(role, users, "role");
-//	}
 
 	// CREATE
 	@PostMapping("user/create")
