@@ -19,6 +19,8 @@ public class UpdateBookDto {
 	
 	private List<String> authors;
 	
+	private List<String> categories;
+	
 	public LocalDate getPublishingDate() {
 		return publishingDate;
 	}
@@ -73,6 +75,14 @@ public class UpdateBookDto {
 
 	public void setIsbn(String isbn) {
 		this.isbn = isbn;
+	}
+
+	public List<String> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<String> categories) {
+		this.categories = categories;
 	}
 	
 	

@@ -18,6 +18,8 @@ public class ReadBookDto {
 	
 	private List<String> authors;
 	
+	private List<String> categories;
+	
 	private int copyCount;
 	
 	private LocalDate publishingDate;
@@ -31,6 +33,7 @@ public class ReadBookDto {
 		isbn = book.getIsbn();
 		imageLink = book.getImageLink();
 		publishingDate = book.getPublishingDate();
+		categories = book.getCategories().stream().map(category -> category.getCategory()).collect(Collectors.toList()); 
 		
 	}
 
@@ -96,6 +99,14 @@ public class ReadBookDto {
 
 	public void setPublishingDate(LocalDate publishingDate) {
 		this.publishingDate = publishingDate;
+	}
+
+	public List<String> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<String> categories) {
+		this.categories = categories;
 	}
 	
 	
