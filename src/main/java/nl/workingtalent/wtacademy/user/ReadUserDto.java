@@ -14,7 +14,7 @@ public class ReadUserDto {
 
 	private String email;
 
-	private Role role;
+	private String role;
 
 	private List<Long> reviews;
 
@@ -27,7 +27,7 @@ public class ReadUserDto {
 		firstName = user.getFirstName();
 		lastName = user.getLastName();
 		email = user.getEmail();
-		role = user.getRole();
+		role = user.getRole().toString();
 		reviews = user.getReviews().stream().map(review -> review.getId()).collect(Collectors.toList());
 		reservations = user.getReservations().stream().map(reservation -> reservation.getId())
 				.collect(Collectors.toList());
@@ -66,11 +66,11 @@ public class ReadUserDto {
 		this.email = email;
 	}
 
-	public Role getRole() {
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(Role role) {
+	public void setRole(String role) {
 		this.role = role;
 	}
 

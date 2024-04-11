@@ -8,7 +8,7 @@ public class SearchUserDto {
 
 	private String email;
 
-	private Role role;
+	private String role;
 
 	public String getFirstName() {
 		return firstName;
@@ -34,11 +34,11 @@ public class SearchUserDto {
 		this.email = email;
 	}
 
-	public Role getRole() {
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(Role role) {
+	public void setRole(String role) {
 		this.role = role;
 	}
 
