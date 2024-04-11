@@ -19,31 +19,40 @@ import nl.workingtalent.wtacademy.author.AuthorService;
 
 @RestController
 public class BookController {
-	
+
 	@Autowired
 	private BookService service;
-	
+
 	@Autowired
 	private AuthorService authorService;
-	
 
 	@RequestMapping("book/all")
-	public Stream<ReadBookDto> getAllBooks(){
+	public Stream<ReadBookDto> getAllBooks() {
 		List<Book> books = service.getAllBooks();
-		Stream<ReadBookDto> dtos = books.stream().map((book)->{
- 			return new ReadBookDto(book);
- 		});
+		Stream<ReadBookDto> dtos = books.stream().map((book) -> {
+			return new ReadBookDto(book);
+		});
 		return dtos;
 	}
-	
+
 	@RequestMapping("book/{id}")
-	public Optional<Book> getBookById(@PathVariable("id") int id){
+	public Optional<Book> getBookById(@PathVariable("id") int id) {
 		return service.getBookById(id);
 	}
-	
+
+	@RequestMapping("book/search")
+	public Stream<ReadBookDto> searchBook(@RequestBody SearchBookDto dto) {
+
+		Stream<ReadBookDto> dtos = service.searchBooks(dto).stream().map((book) -> {
+			return new ReadBookDto(book);
+		});
+
+		return dtos;
+	}
+
 	@PostMapping("book/create")
 	public void addBook(@RequestBody CreateBookDto saveBookDto) {
-		
+
 		Book dbBook = new Book();
 		dbBook.setTitle(saveBookDto.getTitle());
 		dbBook.setDescription(saveBookDto.getDescription());
@@ -57,29 +66,29 @@ public class BookController {
 		ArrayList<Author> authors = new ArrayList<Author>();
 		for (String authorName : saveBookDto.getAuthors()) {
 			Optional<Author> author = authorService.getAuthorByName(authorName);
-			if(author.isEmpty()) {
+			if (author.isEmpty()) {
 				authorService.addAuthor(authorName);
 			}
 			authors.add(authorService.getAuthorByName(authorName).get());
 		}
-		
+
 		dbBook.setAuthors(authors);
 
 		service.addBook(dbBook);
 	}
-	
+
 	@PutMapping("book/update")
 	public boolean updateBook(@RequestBody UpdateBookDto dto) {
-		
+
 		Optional<Book> optional = service.getBookById(dto.getId());
-		
-		if(optional.isEmpty()) {
+
+		if (optional.isEmpty()) {
 			return false;
 		}
-		
+
 		Book book = optional.get();
-		
-		//Check whether all data is filled
+
+		// Check whether all data is filled
 
 		book.setDescription(dto.getDescription());
 		book.setImageLink(dto.getImageLink());
@@ -87,18 +96,17 @@ public class BookController {
 		book.setTitle(dto.getTitle());
 		book.setIsbn(dto.getIsbn());
 
-		
 //		 Check if the edit contains unknown authors
 //		If so, add them to author table
 		ArrayList<Author> authors = new ArrayList<Author>();
 		for (String authorName : dto.getAuthors()) {
 			Optional<Author> author = authorService.getAuthorByName(authorName);
-			if(author.isEmpty()) {
+			if (author.isEmpty()) {
 				authorService.addAuthor(authorName);
 			}
 			authors.add(authorService.getAuthorByName(authorName).get());
 		}
-		
+
 		book.setAuthors(authors);
 		service.updateBook(book);
 		return true;
