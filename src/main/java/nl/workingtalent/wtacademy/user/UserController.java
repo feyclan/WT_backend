@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import nl.workingtalent.wtacademy.book.ReadBookDto;
+import nl.workingtalent.wtacademy.book.SearchBookDto;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
 
 @RestController
@@ -38,21 +40,25 @@ public class UserController {
 		return createResponseDto(id, userOptional, "id");
 	}
 
-	@RequestMapping("user/firstname/{firstName}")
-	public ResponseDto findAllUsersByFirstName(@PathVariable("firstName") String name) {
-		List<User> users = service.findUserByFirstName(name);
+	@RequestMapping("user/search")
+	public Stream<ReadUserDto> serachUser(@RequestBody SearchUserDto dto) {
 
-		return createResponseDtoList(name, users, "first name");
+		Stream<ReadUserDto> dtos = service.searchUser(dto).stream().map((user) -> {
+			return new ReadUserDto(user);
+		});
+
+		return dtos;
 	}
 
-	@RequestMapping("user/lastname/{lastName}")
-	public ResponseDto findUserByLastName(@PathVariable("lastName") String name) {
-		List<User> users = service.findUserByLastName(name);
-
-		return createResponseDtoList(name, users, "last name");
-
-	}
-
+	// TODO: Remove when implemented
+//	@RequestMapping("user/lastname/{lastName}")
+//	public ResponseDto findUserByLastName(@PathVariable("lastName") String name) {
+//		List<User> users = service.findUserByLastName(name);
+//
+//		return createResponseDtoList(name, users, "last name");
+//
+//	}
+//
 	@RequestMapping("user/email/{email}")
 	public ResponseDto findUserByEmail(@PathVariable("email") String email) {
 		Optional<User> userOptional = service.findUserByEmail(email);
@@ -60,12 +66,13 @@ public class UserController {
 		return createResponseDto(email, userOptional, "email");
 	}
 
-	@RequestMapping("user/role/{role}")
-	public ResponseDto findUserByRole(@PathVariable("role") Role role) {
-		List<User> users = service.findUserByRole(role);
-
-		return createResponseDtoList(role, users, "role");
-	}
+	// TODO: Remove when implemented
+//	@RequestMapping("user/role/{role}")
+//	public ResponseDto findUserByRole(@PathVariable("role") Role role) {
+//		List<User> users = service.findUserByRole(role);
+//
+//		return createResponseDtoList(role, users, "role");
+//	}
 
 	// CREATE
 	@PostMapping("user/create")
@@ -166,7 +173,7 @@ public class UserController {
 					"No users with the " + pathVar + " '" + pathVal + "' found.");
 			return responseDto;
 		}
-		
+
 		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
 		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null,
 				users.size() + " " + pathVar + " found.");
