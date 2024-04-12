@@ -46,7 +46,7 @@ public class BookService {
 		repository.deleteById(id);
 	}
 
-	public List<Book> searchBooks(SearchBookDto searchBookDto) {
+	public Page<Book> searchBooks(SearchBookDto searchBookDto) {
 		List<String> categories = searchBookDto.getCategories();
 		String title = searchBookDto.getTitle();
 		List<String> authors = searchBookDto.getAuthors();
@@ -70,8 +70,12 @@ public class BookService {
 		if (location != null && !location.isEmpty()) {
 			spec = spec.and((root, query, builder) -> builder.equal(root.join("bookCopies").get("location"), location));
 		}
+		
+
+		Pageable pageable = PageRequest.of(searchBookDto.getPageNr(), pageSize, Sort.by(Sort.Direction.DESC, "title"));
+		
 
 		// Fetching books based on the constructed query
-		return repository.findAll(spec);
+		return repository.findAll(spec, pageable);
 	}
 }

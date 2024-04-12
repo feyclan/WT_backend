@@ -45,7 +45,7 @@ public class BookController {
 		ReadAllBookDto dto = new ReadAllBookDto();
 		dto.setTotalPages(books.getTotalPages());
 		dto.setBooks(dtos);
-		return new ResponseDto(true, dto, null, books.getSize() + " books found.");
+		return new ResponseDto(true, dto, null, books.getNumberOfElements() + " books found.");
 	}
 
 	@RequestMapping("book/{id}")
@@ -59,11 +59,17 @@ public class BookController {
 
 	@RequestMapping("book/search")
 	public ResponseDto searchBook(@RequestBody SearchBookDto dto) {
-		List<Book> books = service.searchBooks(dto);
+		Page<Book> books = service.searchBooks(dto);
 		Stream<ReadBookDto> dtos = books.stream().map((book) -> {
 			return new ReadBookDto(book);
 		});
-		return new ResponseDto(true, dtos, null, books.size() + " books found.");
+		
+		ReadAllBookDto resultDto = new ReadAllBookDto();
+		resultDto.setTotalPages(books.getTotalPages());
+		resultDto.setBooks(dtos);
+		
+		
+		return new ResponseDto(true, resultDto, null, books.getNumberOfElements() + " books found.");
 
 	}
 
