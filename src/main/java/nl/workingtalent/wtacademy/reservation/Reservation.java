@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import nl.workingtalent.wtacademy.book.Book;
@@ -15,23 +16,25 @@ import nl.workingtalent.wtacademy.user.User;
 
 @Entity
 public class Reservation {
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	
+
 	@Column(nullable = false)
 	private boolean reservationRequest;
-	
+
 	@Column(nullable = false)
 	private LocalDate requestDate;
-	
+
 	@ManyToOne
+	@JoinColumn(nullable = false)
 	private Book book;
-	
+
 	@ManyToOne
+	@JoinColumn(nullable = false)
 	private User user;
-	
+
 	@OneToOne(mappedBy = "reservation")
 	private Loan loan;
 
@@ -82,5 +85,5 @@ public class Reservation {
 	public void setLoan(Loan loan) {
 		this.loan = loan;
 	}
-	
+
 }
