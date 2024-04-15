@@ -28,18 +28,14 @@ public class UserController {
 		List<User> users = service.findAllUsers();
 
 		if (users.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, null, null, "No users found.");
-
-			return responseDto;
+			return new ResponseDto(false, null, null, "No users found.");
 		}
 
 		Stream<ReadUserDto> readUserDtoStream = users.stream().map(user -> {
 			return new ReadUserDto(user);
 		});
 
-		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null, users.size() + " users " + " found.");
-
-		return responseDto;
+		return new ResponseDto(true, readUserDtoStream, null, users.size() + " users " + " found.");
 	}
 
 	@RequestMapping("user/{id}")
@@ -49,24 +45,21 @@ public class UserController {
 		if (userOptional.isPresent()) {
 			User user = userOptional.get();
 			ReadUserDto readUserDto = new ReadUserDto(user);
-			ResponseDto responseDto = new ResponseDto(true, readUserDto, null, "User found.");
-			return responseDto;
+			return new ResponseDto(true, readUserDto, null, "User found.");
 		}
 
-		ResponseDto responseDto = new ResponseDto(false, null, null, "No user with id '" + id + "' found.");
-
-		return responseDto;
-
+		return new ResponseDto(false, null, null, "No user with id '" + id + "' found.");
 	}
 
 	@RequestMapping("user/search")
-	public Stream<ReadUserDto> searchUser(@RequestBody SearchUserDto dto) {
+	public ResponseDto searchUser(@RequestBody SearchUserDto dto) {
+		List<User> users = service.searchUser(dto);
 
 		Stream<ReadUserDto> dtos = service.searchUser(dto).stream().map((user) -> {
 			return new ReadUserDto(user);
 		});
 
-		return dtos;
+		return new ResponseDto(true, dtos, null, users.size() + " users " + " found.");
 	}
 
 	// CREATE
@@ -80,9 +73,7 @@ public class UserController {
 		// Check if user exists
 		List<User> existingUserEmail = service.searchUser(searchDto);
 		if (!existingUserEmail.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, existingUserEmail, null,
-					"User with the provided email already exists.");
-			return responseDto;
+			return new ResponseDto(false, existingUserEmail, null, "User with the provided email already exists.");
 		}
 
 		User newUser = new User();
@@ -93,8 +84,7 @@ public class UserController {
 		newUser.setRole(dto.getRole());
 		service.create(newUser);
 
-		ResponseDto responseDto = new ResponseDto(true, newUser, null, "User created successfully.");
-		return responseDto;
+		return new ResponseDto(true, newUser, null, "User created successfully.");
 	}
 
 	// UPDATE
@@ -104,8 +94,7 @@ public class UserController {
 		// DOES USER EXIST?
 		Optional<User> existingUser = service.findUserById(id);
 		if (existingUser.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, existingUser, null, "User doesn't exist.");
-			return responseDto;
+			return new ResponseDto(false, existingUser, null, "User doesn't exist.");
 		}
 
 		// Create SearchDto to search for a user with a certain email
@@ -115,9 +104,8 @@ public class UserController {
 		// Check if email is already in use
 		List<User> existingUserEmail = service.searchUser(searchDto);
 		if (!existingUserEmail.isEmpty() && existingUserEmail.get(0).getId() != id) {
-			ResponseDto responseDto = new ResponseDto(false, existingUserEmail.get(0).getEmail(), null,
+			return new ResponseDto(false, existingUserEmail.get(0).getEmail(), null,
 					"User with the provided email already exists.");
-			return responseDto;
 		}
 
 		User dbUser = existingUser.get();
@@ -131,8 +119,7 @@ public class UserController {
 
 		// SAVE
 		service.update(dbUser);
-		ResponseDto responseDto = new ResponseDto(true, dto, null, "User updated successfully.");
-		return responseDto;
+		return new ResponseDto(true, dto, null, "User updated successfully.");
 	}
 
 	// DELETE
@@ -140,11 +127,9 @@ public class UserController {
 	public ResponseDto deleteUser(@PathVariable("id") long id) {
 		Optional<User> user = service.findUserById(id);
 		if (user.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, user, null, "User doesn't exist.");
-			return responseDto;
+			return new ResponseDto(false, user, null, "User doesn't exist.");
 		}
 		service.delete(id);
-		ResponseDto responseDto = new ResponseDto(true, null, null, "User deleted successfully.");
-		return responseDto;
+		return new ResponseDto(true, null, null, "User deleted successfully.");
 	}
 }
