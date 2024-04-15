@@ -1,7 +1,5 @@
 package nl.workingtalent.wtacademy.book;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,6 +9,5 @@ public interface IBookRepository extends JpaRepository<Book, Long> {
 
 	// Derived query
 	Page<Book> findAll(Specification<Book> spec, Pageable page);
-	
-	
+
 }

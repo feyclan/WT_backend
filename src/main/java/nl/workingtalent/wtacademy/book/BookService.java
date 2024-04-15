@@ -20,13 +20,10 @@ public class BookService {
 	private final int pageSize = 5;
 
 	public Page<Book> getAllBooks(int pageNr) {
-		// Bouw een filtering + sortering
+		//Get a page of certain size, sorted by title 
 		Pageable pageable = PageRequest.of(pageNr, pageSize, Sort.by(Sort.Direction.DESC, "title"));
-
-		// Vind allemaal met de filtering erbij
 		Page<Book> page = repository.findAll(pageable);
 
-		// Geef de lijst terug
 		return page;
 	}
 
