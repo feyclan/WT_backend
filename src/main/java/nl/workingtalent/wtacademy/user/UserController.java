@@ -27,18 +27,40 @@ public class UserController {
 	public ResponseDto findAllUsers() {
 		List<User> users = service.findAllUsers();
 
-		return createResponseDtoList(null, users, null);
+		if (users.isEmpty()) {
+			ResponseDto responseDto = new ResponseDto(false, null, null, "No users found.");
+
+			return responseDto;
+		}
+
+		Stream<ReadUserDto> readUserDtoStream = users.stream().map(user -> {
+			return new ReadUserDto(user);
+		});
+
+		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null, users.size() + " users " + " found.");
+
+		return responseDto;
 	}
 
 	@RequestMapping("user/{id}")
 	public ResponseDto findUserById(@PathVariable("id") long id) {
 		Optional<User> userOptional = service.findUserById(id);
 
-		return createResponseDto(id, userOptional, "id");
+		if (userOptional.isPresent()) {
+			User user = userOptional.get();
+			ReadUserDto readUserDto = new ReadUserDto(user);
+			ResponseDto responseDto = new ResponseDto(true, readUserDto, null, "User found.");
+			return responseDto;
+		}
+
+		ResponseDto responseDto = new ResponseDto(false, null, null, "No user with id '" + id + "' found.");
+
+		return responseDto;
+
 	}
 
 	@RequestMapping("user/search")
-	public Stream<ReadUserDto> serachUser(@RequestBody SearchUserDto dto) {
+	public Stream<ReadUserDto> searchUser(@RequestBody SearchUserDto dto) {
 
 		Stream<ReadUserDto> dtos = service.searchUser(dto).stream().map((user) -> {
 			return new ReadUserDto(user);
@@ -89,7 +111,7 @@ public class UserController {
 		// Create SearchDto to search for a user with a certain email
 		SearchUserDto searchDto = new SearchUserDto();
 		searchDto.setEmail(dto.getEmail());
-		
+
 		// Check if email is already in use
 		List<User> existingUserEmail = service.searchUser(searchDto);
 		if (!existingUserEmail.isEmpty() && existingUserEmail.get(0).getId() != id) {
@@ -123,42 +145,6 @@ public class UserController {
 		}
 		service.delete(id);
 		ResponseDto responseDto = new ResponseDto(true, null, null, "User deleted successfully.");
-		return responseDto;
-	}
-
-	// Gets a list of users using the DTO
-	private Stream<ReadUserDto> getUsers(List<User> users) {
-		return users.stream().map(user -> {
-			return new ReadUserDto(user);
-		});
-	}
-
-	// Gets the reponseDto for objects who return a single value
-	private ResponseDto createResponseDto(Object pathVal, Optional<User> userOptional, String pathVar) {
-		if (userOptional.isPresent()) {
-			User user = userOptional.get();
-			ReadUserDto readUserDto = new ReadUserDto(user);
-			ResponseDto responseDto = new ResponseDto(true, readUserDto, null, "User found.");
-			return responseDto;
-		}
-		ResponseDto responseDto = new ResponseDto(false, pathVal, null,
-				"No users with " + pathVar + " '" + pathVal + "' found.");
-
-		return responseDto;
-	}
-
-	// Gets the responseDto for objects who return a list of values
-	private ResponseDto createResponseDtoList(Object pathVal, List<User> users, String pathVar) {
-		if (users.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, pathVal, null,
-					"No users with the " + pathVar + " '" + pathVal + "' found.");
-			return responseDto;
-		}
-
-		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
-		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null,
-				users.size() + " " + pathVar + " found.");
-
 		return responseDto;
 	}
 }

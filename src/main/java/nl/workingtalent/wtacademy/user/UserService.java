@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import nl.workingtalent.wtacademy.book.Book;
-import nl.workingtalent.wtacademy.book.SearchBookDto;
-
 @Service
 public class UserService {
 
@@ -47,7 +44,7 @@ public class UserService {
 		}
 
 		if (role != null && !role.isEmpty()) {
-			spec = spec.and((root, query, builder) -> builder.like(root.get("role"), "%" + role + "%"));
+			spec = spec.and((root, query, builder) -> builder.equal(root.get("role"), "%" + role + "%"));
 		}
 
 		// Fetching users based on the constructed query
