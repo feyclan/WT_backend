@@ -22,6 +22,8 @@ public class BookCopy {
 
 	private String location;
 
+	private String WTId;
+
 	@ManyToOne
 	private Book book;
 
@@ -66,6 +68,14 @@ public class BookCopy {
 
 	public void setLoan(Loan loan) {
 		this.loan = loan;
+	}
+
+	public String getWTId() {
+		return WTId;
+	}
+
+	public void setWTId(String wTId) {
+		WTId = wTId;
 	}
 
 }

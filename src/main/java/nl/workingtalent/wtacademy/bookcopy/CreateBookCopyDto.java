@@ -1,26 +1,18 @@
 package nl.workingtalent.wtacademy.bookcopy;
 
-public class CreateBookCopyDto {
-	private String state;
+import java.util.List;
 
-	private String location;
+public class CreateBookCopyDto {
+	private List<String> states;
 
 	private long bookId;
 
-	public String getState() {
-		return state;
+	public List<String> getStates() {
+		return states;
 	}
 
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
+	public void setStates(List<String> states) {
+		this.states = states;
 	}
 
 	public long getBookId() {

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import nl.workingtalent.wtacademy.author.Author;
 
 import nl.workingtalent.wtacademy.author.AuthorService;
+import nl.workingtalent.wtacademy.bookcopy.BookCopy;
+import nl.workingtalent.wtacademy.bookcopy.BookCopyService;
 import nl.workingtalent.wtacademy.category.Category;
 import nl.workingtalent.wtacademy.category.CategoryService;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
@@ -33,6 +35,9 @@ public class BookController {
 
 	@Autowired
 	private CategoryService categoryService;
+
+	@Autowired
+	private BookCopyService bookCopyService;
 
 	@RequestMapping("book/all")
 	public ResponseDto getAllBooks() {
@@ -68,6 +73,18 @@ public class BookController {
 			return new ResponseDto(false, null, null, "Title is required.");
 		}
 
+		if (saveBookDto.getAuthors() == null || saveBookDto.getAuthors().isEmpty()) {
+			return new ResponseDto(false, null, null, "At least one author is required.");
+		}
+
+		if (saveBookDto.getCategories() == null || saveBookDto.getCategories().isEmpty()) {
+			return new ResponseDto(false, null, null, "At least one category is required.");
+		}
+
+		if (saveBookDto.getStates() == null || saveBookDto.getStates().isEmpty()) {
+			return new ResponseDto(false, null, null, "At least one book copy with state is required.");
+		}
+
 		Book dbBook = new Book();
 		dbBook.setTitle(saveBookDto.getTitle());
 		dbBook.setDescription(saveBookDto.getDescription());
@@ -75,15 +92,25 @@ public class BookController {
 		dbBook.setPublishingDate(saveBookDto.getPublishingDate());
 		dbBook.setIsbn(saveBookDto.getIsbn());
 
-		if (saveBookDto.getAuthors() != null) {
-			dbBook.setAuthors(createAuthorsAndAddToDB(saveBookDto.getAuthors()));
-		}
+		dbBook.setAuthors(createAuthorsAndAddToDB(saveBookDto.getAuthors()));
 
-		if (saveBookDto.getCategories() != null) {
-			dbBook.setCategories(createCategoriesAndAddToDB(saveBookDto.getCategories()));
-		}
+		dbBook.setCategories(createCategoriesAndAddToDB(saveBookDto.getCategories()));
 
 		service.addBook(dbBook);
+
+		// Initialized at 1, assumed that when adding a book we start counting copies from 1
+		int bookCopyCounter = 1;
+		//For each state given add a book copy with a unique id and that given state
+		for (String state : saveBookDto.getStates()) {
+			BookCopy copy = new BookCopy();
+			copy.setBook(dbBook);
+			copy.setState(state);
+			copy.setWTId(dbBook.getId() + "." + bookCopyCounter);
+
+			bookCopyService.addBookCopy(copy);
+			bookCopyCounter++;
+		}
+
 		return new ResponseDto(true, null, null, "Book created.");
 	}
 
