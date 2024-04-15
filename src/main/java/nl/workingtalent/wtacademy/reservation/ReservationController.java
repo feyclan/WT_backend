@@ -74,9 +74,11 @@ public class ReservationController {
 	public ResponseDto createReservation(@RequestBody CreateReservationDto dto) {
 		Optional<Book> optionalBook = bookService.getBookById(dto.getBook());
 
+		// DOES BOOK EXIST?
 		if (optionalBook.isPresent()) {
 			Book book = optionalBook.get();
-
+			
+			// DOES USER EXIST?
 			Optional<User> optionalUser = userService.findUserById(dto.getUser());
 			if (optionalUser.isPresent()) {
 				User user = optionalUser.get();
