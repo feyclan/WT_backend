@@ -35,7 +35,7 @@ public class UserController {
 			return new ReadUserDto(user);
 		});
 
-		return new ResponseDto(true, readUserDtoStream, null, users.size() + " users " + " found.");
+		return new ResponseDto(true, readUserDtoStream, null, (users.size() < 2) ? "user" : " users " + " found.");
 	}
 
 	@RequestMapping("user/{id}")
