@@ -44,7 +44,7 @@ public class UserService {
 		}
 
 		if (role != null && !role.isEmpty()) {
-			spec = spec.and((root, query, builder) -> builder.equal(root.get("role"), "%" + role + "%"));
+			spec = spec.and((root, query, builder) -> builder.equal(root.get("role"), role));
 		}
 
 		// Fetching users based on the constructed query
