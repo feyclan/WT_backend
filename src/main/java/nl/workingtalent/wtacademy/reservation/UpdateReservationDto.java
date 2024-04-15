@@ -1,26 +1,15 @@
 package nl.workingtalent.wtacademy.reservation;
 
-import java.time.LocalDate;
-
 public class UpdateReservationDto {
 
-	private boolean reservationRequest;
-	private LocalDate requestDate;
+	private ReservationRequest reservationRequest;
 
-	public boolean isReservationRequest() {
+	public ReservationRequest getReservationRequest() {
 		return reservationRequest;
 	}
 
-	public void setReservationRequest(boolean reservationRequest) {
+	public void setReservationRequest(ReservationRequest reservationRequest) {
 		this.reservationRequest = reservationRequest;
-	}
-
-	public LocalDate getRequestDate() {
-		return requestDate;
-	}
-
-	public void setRequestDate(LocalDate requestDate) {
-		this.requestDate = requestDate;
 	}
 
 }

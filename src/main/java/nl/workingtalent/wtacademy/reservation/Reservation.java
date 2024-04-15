@@ -4,10 +4,11 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import nl.workingtalent.wtacademy.book.Book;
@@ -21,18 +22,16 @@ public class Reservation {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@Column(nullable = false)
-	private boolean reservationRequest;
+	@Enumerated(EnumType.STRING)
+	private ReservationRequest reservationRequest = ReservationRequest.PENDING;
 
 	@Column(nullable = false)
 	private LocalDate requestDate;
 
 	@ManyToOne
-	@JoinColumn(nullable = false)
 	private Book book;
 
 	@ManyToOne
-	@JoinColumn(nullable = false)
 	private User user;
 
 	@OneToOne(mappedBy = "reservation")
@@ -46,11 +45,11 @@ public class Reservation {
 		this.id = id;
 	}
 
-	public boolean isReservationRequest() {
+	public ReservationRequest getReservationRequest() {
 		return reservationRequest;
 	}
 
-	public void setReservationRequest(boolean reservationRequest) {
+	public void setReservationRequest(ReservationRequest reservationRequest) {
 		this.reservationRequest = reservationRequest;
 	}
 

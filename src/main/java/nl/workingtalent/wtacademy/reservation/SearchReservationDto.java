@@ -4,14 +4,14 @@ import java.time.LocalDate;
 
 public class SearchReservationDto {
 
-	private boolean reservationRequest;
+	private ReservationRequest reservationRequest;
 	private LocalDate requestDate;
 
-	public boolean isReservationRequest() {
+	public ReservationRequest getReservationRequest() {
 		return reservationRequest;
 	}
 
-	public void setReservationRequest(boolean reservationRequest) {
+	public void setReservationRequest(ReservationRequest reservationRequest) {
 		this.reservationRequest = reservationRequest;
 	}
 

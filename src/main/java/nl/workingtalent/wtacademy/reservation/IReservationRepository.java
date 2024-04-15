@@ -12,6 +12,6 @@ public interface IReservationRepository extends JpaRepository<Reservation, Long>
 	// JPQL
 	@Query("SELECT r FROM Reservation r " + "WHERE (:request is null OR r.reservationRequest = :request) "
 			+ "AND (:date is null OR r.requestDate = :date)")
-	List<Reservation> search(@Param("request") boolean request, @Param("date") LocalDate date);
+	List<Reservation> search(@Param("request") ReservationRequest request, @Param("date") LocalDate date);
 
 }

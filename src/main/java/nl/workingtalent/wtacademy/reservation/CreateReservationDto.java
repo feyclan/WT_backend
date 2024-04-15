@@ -4,14 +4,16 @@ import java.time.LocalDate;
 
 public class CreateReservationDto {
 
-	private boolean reservationRequest;
+	private ReservationRequest reservationRequest;
 	private LocalDate requestDate;
+	private long book;
+	private long user;
 
-	public boolean isReservationRequest() {
+	public ReservationRequest getReservationRequest() {
 		return reservationRequest;
 	}
 
-	public void setReservationRequest(boolean reservationRequest) {
+	public void setReservationRequest(ReservationRequest reservationRequest) {
 		this.reservationRequest = reservationRequest;
 	}
 
@@ -21,6 +23,22 @@ public class CreateReservationDto {
 
 	public void setRequestDate(LocalDate requestDate) {
 		this.requestDate = requestDate;
+	}
+
+	public long getBook() {
+		return book;
+	}
+
+	public void setBook(long book) {
+		this.book = book;
+	}
+
+	public long getUser() {
+		return user;
+	}
+
+	public void setUser(long user) {
+		this.user = user;
 	}
 
 }

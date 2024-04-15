@@ -14,7 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import nl.workingtalent.wtacademy.book.Book;
+import nl.workingtalent.wtacademy.book.BookService;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
+import nl.workingtalent.wtacademy.user.User;
+import nl.workingtalent.wtacademy.user.UserService;
 
 @RestController
 @CrossOrigin(maxAge = 3600)
@@ -22,6 +26,12 @@ public class ReservationController {
 
 	@Autowired
 	private ReservationService service;
+
+	@Autowired
+	private BookService bookService;
+
+	@Autowired
+	private UserService userService;
 
 	// READ
 	@RequestMapping("reservation/all")
@@ -46,28 +56,44 @@ public class ReservationController {
 			ReadReservationDto readReservationDto = new ReadReservationDto(reservation);
 			return new ResponseDto(true, readReservationDto, null, "Reservation found.");
 		}
-		return new ResponseDto(false, null, null, "No reservations found.");
+		return new ResponseDto(false, null, null, "No reservation found.");
 	}
 
 	@RequestMapping("reservation/search")
-	public Stream<ReadReservationDto> searchReservation(@RequestBody SearchReservationDto dto) {
-
-		Stream<ReadReservationDto> dtos = service.searchReservations(dto).stream().map((reservation) -> {
+	public ResponseDto searchReservation(@RequestBody SearchReservationDto dto) {
+		List<Reservation> reservations = service.searchReservations(dto);
+		Stream<ReadReservationDto> dtos = reservations.stream().map((reservation) -> {
 			return new ReadReservationDto(reservation);
 		});
-		return dtos;
+		return new ResponseDto(true, dtos, null,
+				reservations.size() + (reservations.size() < 2 ? " reservation " : " reservations ") + "found.");
 	}
 
 	// CREATE
 	@PostMapping("reservation/create")
 	public ResponseDto createReservation(@RequestBody CreateReservationDto dto) {
+		Optional<Book> optionalBook = bookService.getBookById(dto.getBook());
 
-		Reservation newReservation = new Reservation();
-		newReservation.setReservationRequest(dto.isReservationRequest());
-		newReservation.setRequestDate(dto.getRequestDate());
-		service.create(newReservation);
+		if (optionalBook.isPresent()) {
+			Book book = optionalBook.get();
 
-		return new ResponseDto(true, newReservation, null, "Reservation created successfully.");
+			Optional<User> optionalUser = userService.findUserById(dto.getUser());
+			if (optionalUser.isPresent()) {
+				User user = optionalUser.get();
+
+				Reservation newReservation = new Reservation();
+				newReservation.setReservationRequest(dto.getReservationRequest());
+				newReservation.setRequestDate(dto.getRequestDate());
+				newReservation.setBook(book);
+				newReservation.setUser(user);
+				service.create(newReservation);
+				return new ResponseDto(true, newReservation.getId(), null, "Reservation created successfully.");
+			} else {
+				return new ResponseDto(false, null, null, "User not found.");
+			}
+		} else {
+			return new ResponseDto(false, null, null, "Book not found.");
+		}
 	}
 
 	// UPDATE
@@ -83,12 +109,11 @@ public class ReservationController {
 		Reservation dbReservation = existingReservation.get();
 
 		// OVERWRITE
-		dbReservation.setReservationRequest(dto.isReservationRequest());
-		dbReservation.setRequestDate(dto.getRequestDate());
+		dbReservation.setReservationRequest(dto.getReservationRequest());
 
 		// SAVE
 		service.update(dbReservation);
-		return new ResponseDto(true, dbReservation, null, "Reservation updated successfully.");
+		return new ResponseDto(true, dbReservation.getReservationRequest(), null, "Reservation updated successfully.");
 	}
 
 	// DELETE

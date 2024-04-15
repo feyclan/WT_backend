@@ -5,28 +5,23 @@ import java.time.LocalDate;
 import nl.workingtalent.wtacademy.loan.Loan;
 
 public class ReadReservationDto {
-	
+
 	private long id;
-
-	private boolean reservationRequest;
-
+	private ReservationRequest reservationRequest;
 	private LocalDate requestDate;
-	
 	private long book;
-	
 	private long user;
-	
 	private Long loan;
-	
+
 	public ReadReservationDto(Reservation reservation) {
 		id = reservation.getId();
-		reservationRequest = reservation.isReservationRequest();
-		requestDate = reservation.getRequestDate();	
+		reservationRequest = reservation.getReservationRequest();
+		requestDate = reservation.getRequestDate();
 		book = reservation.getBook().getId();
 		user = reservation.getUser().getId();
 		// loan moet null kunnen zijn
 		Loan reservationLoan = reservation.getLoan();
-	    loan = (reservationLoan != null) ? reservationLoan.getId() : null;
+		loan = (reservationLoan != null) ? reservationLoan.getId() : null;
 	}
 
 	public long getId() {
@@ -37,11 +32,11 @@ public class ReadReservationDto {
 		this.id = id;
 	}
 
-	public boolean isReservationRequest() {
+	public ReservationRequest getReservationRequest() {
 		return reservationRequest;
 	}
 
-	public void setReservationRequest(boolean reservationRequest) {
+	public void setReservationRequest(ReservationRequest reservationRequest) {
 		this.reservationRequest = reservationRequest;
 	}
 
@@ -76,5 +71,5 @@ public class ReadReservationDto {
 	public void setLoan(Long loan) {
 		this.loan = loan;
 	}
-	
+
 }

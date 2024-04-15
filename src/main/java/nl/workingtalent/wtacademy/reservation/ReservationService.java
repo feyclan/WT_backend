@@ -29,10 +29,9 @@ public class ReservationService {
 	}
 
 	public List<Reservation> searchReservations(SearchReservationDto searchReservationDto) {
-		boolean reservationRequest = searchReservationDto.isReservationRequest();
+		ReservationRequest reservationRequest = searchReservationDto.getReservationRequest();
 		LocalDate requestDate = searchReservationDto.getRequestDate();
 		return repository.search(reservationRequest, requestDate);
-
 	}
 
 	// CREATE
