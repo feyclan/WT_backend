@@ -22,6 +22,7 @@ public class Reservation {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private ReservationRequest reservationRequest = ReservationRequest.PENDING;
 

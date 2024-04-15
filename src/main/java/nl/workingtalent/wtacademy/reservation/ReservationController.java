@@ -72,38 +72,38 @@ public class ReservationController {
 	// CREATE
 	@PostMapping("reservation/create")
 	public ResponseDto createReservation(@RequestBody CreateReservationDto dto) {
-		Optional<Book> optionalBook = bookService.getBookById(dto.getBook());
+		Optional<Book> optionalBook = bookService.getBookById(dto.getBookId());
+		Optional<User> optionalUser = userService.findUserById(dto.getUserId());
 
 		// DOES BOOK EXIST?
-		if (optionalBook.isPresent()) {
-			Book book = optionalBook.get();
-			
-			// DOES USER EXIST?
-			Optional<User> optionalUser = userService.findUserById(dto.getUser());
-			if (optionalUser.isPresent()) {
-				User user = optionalUser.get();
-
-				Reservation newReservation = new Reservation();
-				newReservation.setReservationRequest(dto.getReservationRequest());
-				newReservation.setRequestDate(dto.getRequestDate());
-				newReservation.setBook(book);
-				newReservation.setUser(user);
-				service.create(newReservation);
-				return new ResponseDto(true, newReservation.getId(), null, "Reservation created successfully.");
-			} else {
-				return new ResponseDto(false, null, null, "User not found.");
-			}
-		} else {
+		if (optionalBook.isEmpty()) {
 			return new ResponseDto(false, null, null, "Book not found.");
 		}
+
+		// DOES USER EXIST?
+		if (optionalUser.isEmpty()) {
+			return new ResponseDto(false, null, null, "User not found.");
+		}
+
+		Book book = optionalBook.get();
+		User user = optionalUser.get();
+
+		Reservation newReservation = new Reservation();
+		newReservation.setReservationRequest(dto.getReservationRequest());
+		newReservation.setRequestDate(dto.getRequestDate());
+		newReservation.setBook(book);
+		newReservation.setUser(user);
+
+		service.create(newReservation);
+		return new ResponseDto(true, newReservation.getId(), null, "Reservation created successfully.");
 	}
 
 	// UPDATE
-	@PutMapping("reservation/update/{id}")
-	public ResponseDto updateReservation(@RequestBody UpdateReservationDto dto, @PathVariable("id") long id) {
+	@PutMapping("reservation/update")
+	public ResponseDto updateReservation(@RequestBody UpdateReservationDto dto) {
 
 		// DOES RESERVATION EXIST?
-		Optional<Reservation> existingReservation = service.findReservationById(id);
+		Optional<Reservation> existingReservation = service.findReservationById(dto.getId());
 		if (existingReservation.isEmpty()) {
 			return new ResponseDto(false, existingReservation, null, "Reservation doesn't exist.");
 		}

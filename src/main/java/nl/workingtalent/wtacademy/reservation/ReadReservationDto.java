@@ -7,21 +7,21 @@ import nl.workingtalent.wtacademy.loan.Loan;
 public class ReadReservationDto {
 
 	private long id;
-	private ReservationRequest reservationRequest;
+	private String reservationRequest;
 	private LocalDate requestDate;
-	private long book;
-	private long user;
-	private Long loan;
+	private long bookId;
+	private long userId;
+	private Long loanId;
 
 	public ReadReservationDto(Reservation reservation) {
 		id = reservation.getId();
-		reservationRequest = reservation.getReservationRequest();
+		reservationRequest = reservation.getReservationRequest().toString();
 		requestDate = reservation.getRequestDate();
-		book = reservation.getBook().getId();
-		user = reservation.getUser().getId();
+		bookId = reservation.getBook().getId();
+		userId = reservation.getUser().getId();
 		// loan moet null kunnen zijn
 		Loan reservationLoan = reservation.getLoan();
-		loan = (reservationLoan != null) ? reservationLoan.getId() : null;
+		loanId = (reservationLoan != null) ? reservationLoan.getId() : null;
 	}
 
 	public long getId() {
@@ -32,11 +32,11 @@ public class ReadReservationDto {
 		this.id = id;
 	}
 
-	public ReservationRequest getReservationRequest() {
+	public String getReservationRequest() {
 		return reservationRequest;
 	}
 
-	public void setReservationRequest(ReservationRequest reservationRequest) {
+	public void setReservationRequest(String reservationRequest) {
 		this.reservationRequest = reservationRequest;
 	}
 
@@ -48,28 +48,28 @@ public class ReadReservationDto {
 		this.requestDate = requestDate;
 	}
 
-	public long getBook() {
-		return book;
+	public long getBookId() {
+		return bookId;
 	}
 
-	public void setBook(long book) {
-		this.book = book;
+	public void setBookId(long bookId) {
+		this.bookId = bookId;
 	}
 
-	public long getUser() {
-		return user;
+	public long getUserId() {
+		return userId;
 	}
 
-	public void setUser(long user) {
-		this.user = user;
+	public void setUserId(long userId) {
+		this.userId = userId;
 	}
 
-	public Long getLoan() {
-		return loan;
+	public Long getLoanId() {
+		return loanId;
 	}
 
-	public void setLoan(Long loan) {
-		this.loan = loan;
+	public void setLoanId(Long loanId) {
+		this.loanId = loanId;
 	}
 
 }

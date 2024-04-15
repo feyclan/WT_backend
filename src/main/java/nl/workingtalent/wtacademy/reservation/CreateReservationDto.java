@@ -6,8 +6,8 @@ public class CreateReservationDto {
 
 	private ReservationRequest reservationRequest;
 	private LocalDate requestDate;
-	private long book;
-	private long user;
+	private long bookId;
+	private long userId;
 
 	public ReservationRequest getReservationRequest() {
 		return reservationRequest;
@@ -25,20 +25,20 @@ public class CreateReservationDto {
 		this.requestDate = requestDate;
 	}
 
-	public long getBook() {
-		return book;
+	public long getBookId() {
+		return bookId;
 	}
 
-	public void setBook(long book) {
-		this.book = book;
+	public void setBookId(long book) {
+		this.bookId = book;
 	}
 
-	public long getUser() {
-		return user;
+	public long getUserId() {
+		return userId;
 	}
 
-	public void setUser(long user) {
-		this.user = user;
+	public void setUserId(long user) {
+		this.userId = user;
 	}
 
 }
