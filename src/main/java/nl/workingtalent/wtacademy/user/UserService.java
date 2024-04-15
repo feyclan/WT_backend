@@ -37,6 +37,10 @@ public class UserService {
 
 		return repository.findUserByRole(role);
 	}
+	
+	public Optional<User> login(String email, String password) {
+		return repository.findByEmailAndPassword(email, password);
+	}
 
 	// CREATE
 	public void create(User user) {

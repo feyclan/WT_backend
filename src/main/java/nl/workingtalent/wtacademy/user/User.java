@@ -43,6 +43,9 @@ public class User {
 	
 	@OneToMany(mappedBy = "user")
 	private List<Loan> loans;
+	
+	@Column(length = 100, unique = true)
+	private String token;
 
 	public long getId() {
 		return id;
@@ -115,5 +118,14 @@ public class User {
 	public void setLoans(List<Loan> loans) {
 		this.loans = loans;
 	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
 
 }

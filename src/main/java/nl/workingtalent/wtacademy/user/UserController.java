@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import nl.workingtalent.wtacademy.dto.LoginRequestDto;
+import nl.workingtalent.wtacademy.dto.LoginResponseDto;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
 
 @RestController
@@ -136,6 +139,30 @@ public class UserController {
 		service.delete(id);
 		ResponseDto responseDto = new ResponseDto(true, null, null, "User deleted successfully.");
 		return responseDto;
+	}
+	
+	@PostMapping("user/login")
+	public ResponseDto login(@RequestBody LoginRequestDto dto) {
+		Optional<User> optionalUser = service.login(dto.getUsername(), dto.getPassword());
+		if (optionalUser.isEmpty()) {
+			return new ResponseDto(false, null, null, "Gebruiker niet gevonden");
+		}
+
+		// Dit is de gevonden user
+		User user = optionalUser.get();
+
+		// Generate token -> Maak gebruik van apache commons
+		user.setToken(RandomStringUtils.random(100, true, true));
+
+		// User opslaan
+		service.update(user);
+
+		// Data terug esturen naar de frontend
+		LoginResponseDto loginResponseDto = new LoginResponseDto();
+		loginResponseDto.setName(user.getFirstName() + " " + user.getLastName());
+		loginResponseDto.setToken(user.getToken());
+
+		return new ResponseDto(true, loginResponseDto, null, null);
 	}
 
 	// Gets a list of users using the DTO
