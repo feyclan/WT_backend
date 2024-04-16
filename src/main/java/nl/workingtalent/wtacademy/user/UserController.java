@@ -1,5 +1,7 @@
 package nl.workingtalent.wtacademy.user;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -85,19 +87,20 @@ public class UserController {
 		newUser.setFirstName(dto.getFirstName());
 		newUser.setLastName(dto.getLastName());
 		newUser.setEmail(dto.getEmail());
-		newUser.setPassword(dto.getPassword());
+		String hashedPassword = hashSHA256(dto.getPassword());
+		newUser.setPassword(hashedPassword);
 		newUser.setRole(dto.getRole());
 		service.create(newUser);
 
-		return new ResponseDto(true, newUser, null, "User created successfully.");
+		return new ResponseDto(true, null, null, "User created successfully.");
 	}
 
 	// UPDATE
-	@PutMapping("user/update/{id}")
-	public ResponseDto updateUser(@RequestBody UpdateUserDto dto, @PathVariable("id") long id) {
+	@PutMapping("user/update")
+	public ResponseDto updateUser(@RequestBody UpdateUserDto dto) {
 
 		// DOES USER EXIST?
-		Optional<User> existingUser = service.findUserById(id);
+		Optional<User> existingUser = service.findUserById(dto.getId());
 		if (existingUser.isEmpty()) {
 			return new ResponseDto(false, existingUser, null, "User doesn't exist.");
 		}
@@ -108,7 +111,7 @@ public class UserController {
 
 		// Check if email is already in use
 		List<User> existingUserEmail = service.searchUser(searchDto);
-		if (!existingUserEmail.isEmpty() && existingUserEmail.get(0).getId() != id) {
+		if (!existingUserEmail.isEmpty() && existingUserEmail.get(0).getId() != dto.getId()) {
 			return new ResponseDto(false, existingUserEmail.get(0).getEmail(), null,
 					"User with the provided email already exists.");
 		}
@@ -119,12 +122,13 @@ public class UserController {
 		dbUser.setFirstName(dto.getFirstName());
 		dbUser.setLastName(dto.getLastName());
 		dbUser.setEmail(dto.getEmail());
-		dbUser.setPassword(dto.getPassword());
+		String hashedPassword = hashSHA256(dto.getPassword());
+		dbUser.setPassword(hashedPassword);
 		dbUser.setRole(dto.getRole());
 
 		// SAVE
 		service.update(dbUser);
-		return new ResponseDto(true, dto, null, "User updated successfully.");
+		return new ResponseDto(true, null, null, "User updated successfully.");
 	}
 
 	// DELETE
@@ -141,7 +145,8 @@ public class UserController {
 
 	@PostMapping("user/login")
 	public ResponseDto login(@RequestBody LoginRequestDto dto) {
-		Optional<User> optionalUser = service.login(dto.getEmail(), dto.getPassword());
+		String hashedPassword = hashSHA256(dto.getPassword());
+		Optional<User> optionalUser = service.login(dto.getEmail(), hashedPassword);
 		if (optionalUser.isEmpty()) {
 			return new ResponseDto(false, null, null, "Gebruiker niet gevonden");
 		}
@@ -176,5 +181,28 @@ public class UserController {
 		service.update(dbUser);
 		
 		return new ResponseDto(true, null, null, "Gebruiker is uitgelogd.");
-	}
+	}	
+	
+	private String hashSHA256(String input) {
+        try {
+            // Create MessageDigest instance for SHA-256
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+            // Add input string bytes to digest
+            md.update(input.getBytes());
+
+            // Get the hash's bytes
+            byte[] bytes = md.digest();
+
+            // This bytes[] has bytes in decimal format;
+            // Convert it to hexadecimal format
+            StringBuilder sb = new StringBuilder();
+            for (byte b : bytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+    }
 }
