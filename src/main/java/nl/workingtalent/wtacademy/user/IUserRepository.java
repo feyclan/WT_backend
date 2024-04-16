@@ -12,5 +12,7 @@ public interface IUserRepository extends JpaRepository<User, Long> {
 	List<User> findAll(Specification<User> spec);
 	
 	Optional<User> findByEmailAndPassword(String email, String password);
+	
+	Optional<User> findByToken(String token);
 
 }

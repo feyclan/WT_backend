@@ -4,21 +4,23 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class CreateBookDto {
-	
+
 	private String title;
-	
+
 	private String description;
-	
+
 	private LocalDate publishingDate;
-	
+
 	private String imageLink;
-	
+
 	private String isbn;
-	
+
 	private List<String> authors;
-	
+
 	private List<String> categories;
-	
+
+	private String token;
+
 	public LocalDate getPublishingDate() {
 		return publishingDate;
 	}
@@ -50,11 +52,11 @@ public class CreateBookDto {
 	public void setAuthors(List<String> authors) {
 		this.authors = authors;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -74,8 +76,13 @@ public class CreateBookDto {
 	public void setCategories(List<String> categories) {
 		this.categories = categories;
 	}
-	
-	
-	
-	
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import nl.workingtalent.wtacademy.dto.LoginRequestDto;
 import nl.workingtalent.wtacademy.dto.LoginResponseDto;
+import nl.workingtalent.wtacademy.dto.LogoutDto;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
 
 @RestController
@@ -140,7 +141,7 @@ public class UserController {
 
 	@PostMapping("user/login")
 	public ResponseDto login(@RequestBody LoginRequestDto dto) {
-		Optional<User> optionalUser = service.login(dto.getUsername(), dto.getPassword());
+		Optional<User> optionalUser = service.login(dto.getEmail(), dto.getPassword());
 		if (optionalUser.isEmpty()) {
 			return new ResponseDto(false, null, null, "Gebruiker niet gevonden");
 		}
@@ -162,4 +163,18 @@ public class UserController {
 		return new ResponseDto(true, loginResponseDto, null, null);
 	}
 
+	@PostMapping("user/logout")
+	public ResponseDto logout(@RequestBody LogoutDto dto) {
+		
+		Optional<User> user = service.getUserByToken(dto.getToken());
+		if(user.isEmpty()) {
+			return new ResponseDto(false, null, null, "Geen gebruiker gevonden.");
+		}
+		
+		User dbUser = user.get();
+		dbUser.setToken(null);
+		service.update(dbUser);
+		
+		return new ResponseDto(true, null, null, "Gebruiker is uitgelogd.");
+	}
 }
