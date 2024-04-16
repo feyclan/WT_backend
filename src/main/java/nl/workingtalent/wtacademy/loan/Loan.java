@@ -3,6 +3,7 @@ package nl.workingtalent.wtacademy.loan;
 import java.time.LocalDate;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,12 +22,16 @@ public class Loan {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
+	@Column(nullable = false)
 	private LocalDate startDate;
 	
+	@Column(nullable = false)
 	private LocalDate endDate;
 	
+	@Column(nullable = false)
 	private String conditionStart;
 	
+	@Column(nullable = false)
 	private String conditionEnd;
 	
 	@ManyToOne
