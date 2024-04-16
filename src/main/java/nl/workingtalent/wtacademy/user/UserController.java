@@ -80,7 +80,7 @@ public class UserController {
 		// Check if user exists
 		List<User> existingUserEmail = service.searchUser(searchDto);
 		if (!existingUserEmail.isEmpty()) {
-			return new ResponseDto(false, existingUserEmail, null, "User with the provided email already exists.");
+			return new ResponseDto(false, null, null, "User with the provided email already exists.");
 		}
 
 		User newUser = new User();
@@ -102,7 +102,7 @@ public class UserController {
 		// DOES USER EXIST?
 		Optional<User> existingUser = service.findUserById(dto.getId());
 		if (existingUser.isEmpty()) {
-			return new ResponseDto(false, existingUser, null, "User doesn't exist.");
+			return new ResponseDto(false, null, null, "User doesn't exist.");
 		}
 
 		// Create SearchDto to search for a user with a certain email
