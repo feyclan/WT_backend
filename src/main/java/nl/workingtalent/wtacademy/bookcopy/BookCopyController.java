@@ -56,7 +56,6 @@ public class BookCopyController {
 		BookCopy copy = new BookCopy();
 
 		copy.setState(dto.getState());
-		copy.setLocation(dto.getLocation());
 		copy.setBook(book.get());
 
 		service.addBookCopy(copy);
@@ -71,7 +70,6 @@ public class BookCopyController {
 		BookCopy dbCopy = service.getBookCopyById(dto.getId()).get();
 
 		dbCopy.setState(dto.getState());
-		dbCopy.setLocation(dto.getLocation());
 
 		service.addBookCopy(dbCopy);
 		return new ResponseDto(true, null, null, "Copy succesfully updated.");
