@@ -137,7 +137,7 @@ public class UserController {
 		ResponseDto responseDto = new ResponseDto(true, null, null, "User deleted successfully.");
 		return responseDto;
 	}
-	
+
 	@PostMapping("user/login")
 	public ResponseDto login(@RequestBody LoginRequestDto dto) {
 		Optional<User> optionalUser = service.login(dto.getUsername(), dto.getPassword());
@@ -162,39 +162,4 @@ public class UserController {
 		return new ResponseDto(true, loginResponseDto, null, null);
 	}
 
-	// Gets a list of users using the DTO
-	private Stream<ReadUserDto> getUsers(List<User> users) {
-		return users.stream().map(user -> {
-			return new ReadUserDto(user);
-		});
-	}
-
-	// Gets the reponseDto for objects who return a single value
-	private ResponseDto createResponseDto(Object pathVal, Optional<User> userOptional, String pathVar) {
-		if (userOptional.isPresent()) {
-			User user = userOptional.get();
-			ReadUserDto readUserDto = new ReadUserDto(user);
-			ResponseDto responseDto = new ResponseDto(true, readUserDto, null, "User found.");
-			return responseDto;
-		}
-		ResponseDto responseDto = new ResponseDto(false, pathVal, null,
-				"No users with " + pathVar + " '" + pathVal + "' found.");
-
-		return responseDto;
-	}
-
-	// Gets the responseDto for objects who return a list of values
-	private ResponseDto createResponseDtoList(Object pathVal, List<User> users, String pathVar) {
-		if (users.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, pathVal, null,
-					"No users with the " + pathVar + " '" + pathVal + "' found.");
-			return responseDto;
-		}
-		
-		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
-		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null,
-				users.size() + " " + pathVar + " found.");
-
-		return responseDto;
-	}
 }

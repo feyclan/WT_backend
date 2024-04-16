@@ -64,5 +64,9 @@ public class UserService {
 	public void delete(long id) {
 		repository.deleteById(id);
 	}
+	
+	public Optional<User> login(String email, String password) {
+		return repository.findByEmailAndPassword(email, password);
+	}
 
 }
