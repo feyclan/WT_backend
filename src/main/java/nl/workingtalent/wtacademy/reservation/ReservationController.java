@@ -95,7 +95,7 @@ public class ReservationController {
 		newReservation.setUser(user);
 
 		service.create(newReservation);
-		return new ResponseDto(true, newReservation.getId(), null, "Reservation created successfully.");
+		return new ResponseDto(true, null, null, "Reservation created successfully.");
 	}
 
 	// UPDATE
@@ -115,7 +115,7 @@ public class ReservationController {
 
 		// SAVE
 		service.update(dbReservation);
-		return new ResponseDto(true, dbReservation.getReservationRequest(), null, "Reservation updated successfully.");
+		return new ResponseDto(true, null, null, "Reservation updated successfully.");
 	}
 
 	// DELETE
