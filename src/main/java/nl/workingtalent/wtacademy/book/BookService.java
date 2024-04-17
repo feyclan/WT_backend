@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +17,14 @@ public class BookService {
 	@Autowired
 	private IBookRepository repository;
 
-	public List<Book> getAllBooks() {
-		return repository.findAll();
+	private final int pageSize = 5;
+
+	public Page<Book> getAllBooks(int pageNr) {
+		//Get a page of certain size, sorted by title 
+		Pageable pageable = PageRequest.of(pageNr, pageSize, Sort.by(Sort.Direction.DESC, "title"));
+		Page<Book> page = repository.findAll(pageable);
+
+		return page;
 	}
 
 	public Optional<Book> getBookById(long id) {
@@ -33,7 +43,7 @@ public class BookService {
 		repository.deleteById(id);
 	}
 
-	public List<Book> searchBooks(SearchBookDto searchBookDto) {
+	public Page<Book> searchBooks(SearchBookDto searchBookDto) {
 		List<String> categories = searchBookDto.getCategories();
 		String title = searchBookDto.getTitle();
 		List<String> authors = searchBookDto.getAuthors();
@@ -52,9 +62,12 @@ public class BookService {
 				spec = spec.and(
 						(root, query, builder) -> builder.like(root.join("authors").get("name"), "%" + author + "%"));
 			}
-		}
+		}		
+
+		Pageable pageable = PageRequest.of(searchBookDto.getPageNr(), pageSize, Sort.by(Sort.Direction.DESC, "title"));
+
 
 		// Fetching books based on the constructed query
-		return repository.findAll(spec);
+		return repository.findAll(spec, pageable);
 	}
 }

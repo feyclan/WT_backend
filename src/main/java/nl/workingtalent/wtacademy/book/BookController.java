@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,12 +36,16 @@ public class BookController {
 	private CategoryService categoryService;
 
 	@RequestMapping("book/all")
-	public ResponseDto getAllBooks() {
-		List<Book> books = service.getAllBooks();
+	public ResponseDto getAllBooks(@RequestBody int pageNr) {
+		Page<Book> books = service.getAllBooks(pageNr);
 		Stream<ReadBookDto> dtos = books.stream().map((book) -> {
 			return new ReadBookDto(book);
 		});
-		return new ResponseDto(true, dtos, null, books.size() + " books found.");
+
+		ReadAllBookDto dto = new ReadAllBookDto();
+		dto.setTotalPages(books.getTotalPages());
+		dto.setBooks(dtos);
+		return new ResponseDto(true, dto, null, books.getNumberOfElements() + " books found.");
 	}
 
 	@RequestMapping("book/{id}")
@@ -54,11 +59,17 @@ public class BookController {
 
 	@RequestMapping("book/search")
 	public ResponseDto searchBook(@RequestBody SearchBookDto dto) {
-		List<Book> books = service.searchBooks(dto);
+		Page<Book> books = service.searchBooks(dto);
 		Stream<ReadBookDto> dtos = books.stream().map((book) -> {
 			return new ReadBookDto(book);
 		});
-		return new ResponseDto(true, dtos, null, books.size() + " books found.");
+		
+		ReadAllBookDto resultDto = new ReadAllBookDto();
+		resultDto.setTotalPages(books.getTotalPages());
+		resultDto.setBooks(dtos);
+		
+		
+		return new ResponseDto(true, resultDto, null, books.getNumberOfElements() + " books found.");
 
 	}
 
