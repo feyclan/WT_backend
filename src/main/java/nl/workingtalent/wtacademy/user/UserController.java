@@ -73,6 +73,20 @@ public class UserController {
 	@PostMapping("user/create")
 	public ResponseDto createUser(@RequestBody CreateUserDto dto) {
 
+		if (dto.getFirstName() == null || dto.getLastName() == null || dto.getFirstName().isBlank()
+				|| dto.getLastName().isBlank()) {
+			return new ResponseDto(false, null, null, "Name is required.");
+		}
+		if (dto.getEmail() == null || dto.getEmail().isBlank()) {
+			return new ResponseDto(false, null, null, "Email is required.");
+		}
+		if (dto.getPassword() == null || dto.getPassword().isBlank()) {
+			return new ResponseDto(false, null, null, "Password is required.");
+		}
+		if (dto.getRole() == null) {
+			return new ResponseDto(false, null, null, "Role is required.");
+		}
+
 		// Create SearchDto to search for a user with a certain email
 		SearchUserDto searchDto = new SearchUserDto();
 		searchDto.setEmail(dto.getEmail());
@@ -170,39 +184,39 @@ public class UserController {
 
 	@PostMapping("user/logout")
 	public ResponseDto logout(@RequestBody LogoutDto dto) {
-		
+
 		Optional<User> user = service.getUserByToken(dto.getToken());
-		if(user.isEmpty()) {
+		if (user.isEmpty()) {
 			return new ResponseDto(false, null, null, "Geen gebruiker gevonden.");
 		}
-		
+
 		User dbUser = user.get();
 		dbUser.setToken(null);
 		service.update(dbUser);
-		
+
 		return new ResponseDto(true, null, null, "Gebruiker is uitgelogd.");
-	}	
-	
+	}
+
 	private String hashSHA256(String input) {
-        try {
-            // Create MessageDigest instance for SHA-256
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
+		try {
+			// Create MessageDigest instance for SHA-256
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
 
-            // Add input string bytes to digest
-            md.update(input.getBytes());
+			// Add input string bytes to digest
+			md.update(input.getBytes());
 
-            // Get the hash's bytes
-            byte[] bytes = md.digest();
+			// Get the hash's bytes
+			byte[] bytes = md.digest();
 
-            // This bytes[] has bytes in decimal format;
-            // Convert it to hexadecimal format
-            StringBuilder sb = new StringBuilder();
-            for (byte b : bytes) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            return null;
-        }
-    }
+			// This bytes[] has bytes in decimal format;
+			// Convert it to hexadecimal format
+			StringBuilder sb = new StringBuilder();
+			for (byte b : bytes) {
+				sb.append(String.format("%02x", b));
+			}
+			return sb.toString();
+		} catch (NoSuchAlgorithmException e) {
+			return null;
+		}
+	}
 }
