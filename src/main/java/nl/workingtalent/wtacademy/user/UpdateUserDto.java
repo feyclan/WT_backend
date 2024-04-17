@@ -2,11 +2,20 @@ package nl.workingtalent.wtacademy.user;
 
 public class UpdateUserDto {
 
+	private long id;
 	private String firstName;
 	private String lastName;
 	private String email;
 	private String password;
 	private Role role;
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public long getId() {
+		return id;
+	}
 
 	public String getFirstName() {
 		return firstName;
@@ -39,10 +48,11 @@ public class UpdateUserDto {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public Role getRole() {
 		return role;
 	}
+
 	public void setRole(Role role) {
 		this.role = role;
 	}

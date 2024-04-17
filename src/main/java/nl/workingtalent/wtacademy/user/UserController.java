@@ -1,9 +1,12 @@
 package nl.workingtalent.wtacademy.user;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +16,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import nl.workingtalent.wtacademy.dto.LoginRequestDto;
+import nl.workingtalent.wtacademy.dto.LoginResponseDto;
+import nl.workingtalent.wtacademy.dto.LogoutDto;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
 
 @RestController
@@ -66,6 +73,20 @@ public class UserController {
 	@PostMapping("user/create")
 	public ResponseDto createUser(@RequestBody CreateUserDto dto) {
 
+		if (dto.getFirstName() == null || dto.getLastName() == null || dto.getFirstName().isBlank()
+				|| dto.getLastName().isBlank()) {
+			return new ResponseDto(false, null, null, "Name is required.");
+		}
+		if (dto.getEmail() == null || dto.getEmail().isBlank()) {
+			return new ResponseDto(false, null, null, "Email is required.");
+		}
+		if (dto.getPassword() == null || dto.getPassword().isBlank()) {
+			return new ResponseDto(false, null, null, "Password is required.");
+		}
+		if (dto.getRole() == null) {
+			return new ResponseDto(false, null, null, "Role is required.");
+		}
+
 		// Create SearchDto to search for a user with a certain email
 		SearchUserDto searchDto = new SearchUserDto();
 		searchDto.setEmail(dto.getEmail());
@@ -73,28 +94,29 @@ public class UserController {
 		// Check if user exists
 		List<User> existingUserEmail = service.searchUser(searchDto);
 		if (!existingUserEmail.isEmpty()) {
-			return new ResponseDto(false, existingUserEmail, null, "User with the provided email already exists.");
+			return new ResponseDto(false, null, null, "User with the provided email already exists.");
 		}
 
 		User newUser = new User();
 		newUser.setFirstName(dto.getFirstName());
 		newUser.setLastName(dto.getLastName());
 		newUser.setEmail(dto.getEmail());
-		newUser.setPassword(dto.getPassword());
+		String hashedPassword = hashSHA256(dto.getPassword());
+		newUser.setPassword(hashedPassword);
 		newUser.setRole(dto.getRole());
 		service.create(newUser);
 
-		return new ResponseDto(true, newUser, null, "User created successfully.");
+		return new ResponseDto(true, null, null, "User created successfully.");
 	}
 
 	// UPDATE
-	@PutMapping("user/update/{id}")
-	public ResponseDto updateUser(@RequestBody UpdateUserDto dto, @PathVariable("id") long id) {
+	@PutMapping("user/update")
+	public ResponseDto updateUser(@RequestBody UpdateUserDto dto) {
 
 		// DOES USER EXIST?
-		Optional<User> existingUser = service.findUserById(id);
+		Optional<User> existingUser = service.findUserById(dto.getId());
 		if (existingUser.isEmpty()) {
-			return new ResponseDto(false, existingUser, null, "User doesn't exist.");
+			return new ResponseDto(false, null, null, "User doesn't exist.");
 		}
 
 		// Create SearchDto to search for a user with a certain email
@@ -103,7 +125,7 @@ public class UserController {
 
 		// Check if email is already in use
 		List<User> existingUserEmail = service.searchUser(searchDto);
-		if (!existingUserEmail.isEmpty() && existingUserEmail.get(0).getId() != id) {
+		if (!existingUserEmail.isEmpty() && existingUserEmail.get(0).getId() != dto.getId()) {
 			return new ResponseDto(false, existingUserEmail.get(0).getEmail(), null,
 					"User with the provided email already exists.");
 		}
@@ -114,12 +136,13 @@ public class UserController {
 		dbUser.setFirstName(dto.getFirstName());
 		dbUser.setLastName(dto.getLastName());
 		dbUser.setEmail(dto.getEmail());
-		dbUser.setPassword(dto.getPassword());
+		String hashedPassword = hashSHA256(dto.getPassword());
+		dbUser.setPassword(hashedPassword);
 		dbUser.setRole(dto.getRole());
 
 		// SAVE
 		service.update(dbUser);
-		return new ResponseDto(true, dto, null, "User updated successfully.");
+		return new ResponseDto(true, null, null, "User updated successfully.");
 	}
 
 	// DELETE
@@ -130,6 +153,70 @@ public class UserController {
 			return new ResponseDto(false, user, null, "User doesn't exist.");
 		}
 		service.delete(id);
-		return new ResponseDto(true, null, null, "User deleted successfully.");
+		ResponseDto responseDto = new ResponseDto(true, null, null, "User deleted successfully.");
+		return responseDto;
+	}
+
+	@PostMapping("user/login")
+	public ResponseDto login(@RequestBody LoginRequestDto dto) {
+		String hashedPassword = hashSHA256(dto.getPassword());
+		Optional<User> optionalUser = service.login(dto.getEmail(), hashedPassword);
+		if (optionalUser.isEmpty()) {
+			return new ResponseDto(false, null, null, "Gebruiker niet gevonden");
+		}
+
+		// Dit is de gevonden user
+		User user = optionalUser.get();
+
+		// Generate token -> Maak gebruik van apache commons
+		user.setToken(RandomStringUtils.random(100, true, true));
+
+		// User opslaan
+		service.update(user);
+
+		// Data terug esturen naar de frontend
+		LoginResponseDto loginResponseDto = new LoginResponseDto();
+		loginResponseDto.setName(user.getFirstName() + " " + user.getLastName());
+		loginResponseDto.setToken(user.getToken());
+
+		return new ResponseDto(true, loginResponseDto, null, null);
+	}
+
+	@PostMapping("user/logout")
+	public ResponseDto logout(@RequestBody LogoutDto dto) {
+
+		Optional<User> user = service.getUserByToken(dto.getToken());
+		if (user.isEmpty()) {
+			return new ResponseDto(false, null, null, "Geen gebruiker gevonden.");
+		}
+
+		User dbUser = user.get();
+		dbUser.setToken(null);
+		service.update(dbUser);
+
+		return new ResponseDto(true, null, null, "Gebruiker is uitgelogd.");
+	}
+
+	private String hashSHA256(String input) {
+		try {
+			// Create MessageDigest instance for SHA-256
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+			// Add input string bytes to digest
+			md.update(input.getBytes());
+
+			// Get the hash's bytes
+			byte[] bytes = md.digest();
+
+			// This bytes[] has bytes in decimal format;
+			// Convert it to hexadecimal format
+			StringBuilder sb = new StringBuilder();
+			for (byte b : bytes) {
+				sb.append(String.format("%02x", b));
+			}
+			return sb.toString();
+		} catch (NoSuchAlgorithmException e) {
+			return null;
+		}
 	}
 }

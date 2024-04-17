@@ -21,6 +21,9 @@ import nl.workingtalent.wtacademy.author.AuthorService;
 import nl.workingtalent.wtacademy.category.Category;
 import nl.workingtalent.wtacademy.category.CategoryService;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
+import nl.workingtalent.wtacademy.user.Role;
+import nl.workingtalent.wtacademy.user.User;
+import nl.workingtalent.wtacademy.user.UserService;
 
 @RestController
 @CrossOrigin(maxAge = 3600)
@@ -34,6 +37,9 @@ public class BookController {
 
 	@Autowired
 	private CategoryService categoryService;
+	
+	@Autowired
+	private UserService userService;
 
 	@PostMapping("book/all")
 	public ResponseDto getAllBooks(@RequestBody int pageNr) {
@@ -77,6 +83,11 @@ public class BookController {
 	public ResponseDto addBook(@RequestBody CreateBookDto saveBookDto) {
 		if (saveBookDto == null || saveBookDto.getTitle().isBlank()) {
 			return new ResponseDto(false, null, null, "Title is required.");
+		}
+		
+		Optional<User> user = userService.getUserByToken(saveBookDto.getToken());
+		if (user.isEmpty() || user.get().getRole() != Role.TRAINER) {
+			return new ResponseDto(false, null, null, "Action not allowed.");
 		}
 
 		Book dbBook = new Book();
