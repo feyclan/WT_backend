@@ -51,7 +51,7 @@ public class UserController {
 		return new ResponseDto(false, null, null, "No user with id '" + id + "' found.");
 	}
 
-	@RequestMapping("user/search")
+	@PostMapping("user/search")
 	public ResponseDto searchUser(@RequestBody SearchUserDto dto) {
 		List<User> users = service.searchUser(dto);
 

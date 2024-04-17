@@ -59,7 +59,7 @@ public class ReservationController {
 		return new ResponseDto(false, null, null, "No reservation found.");
 	}
 
-	@RequestMapping("reservation/search")
+	@PostMapping("reservation/search")
 	public ResponseDto searchReservation(@RequestBody SearchReservationDto dto) {
 		List<Reservation> reservations = service.searchReservations(dto);
 		Stream<ReadReservationDto> dtos = reservations.stream().map((reservation) -> {
