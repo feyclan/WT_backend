@@ -2,18 +2,15 @@ package nl.workingtalent.wtacademy.book;
 
 import java.util.List;
 
-
 public class SearchBookDto {
-	
-	private List<String> categories;
-	
-	private String title;
-	
-	private List<String> authors;
-	
-	private String location;
 
-	
+	private List<String> categories;
+
+	private String title;
+
+	private List<String> authors;
+
+	private int pageNr;
 
 	public List<String> getCategories() {
 		return categories;
@@ -39,13 +36,12 @@ public class SearchBookDto {
 		this.authors = authors;
 	}
 
-	public String getLocation() {
-		return location;
+	public int getPageNr() {
+		return pageNr;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
+	public void setPageNr(int pageNr) {
+		this.pageNr = pageNr;
 	}
-	
 
 }

@@ -56,7 +56,6 @@ public class BookCopyController {
 		BookCopy copy = new BookCopy();
 
 		copy.setState(dto.getState());
-		copy.setLocation(dto.getLocation());
 		copy.setBook(book.get());
 		copy.setAvailable(true);
 

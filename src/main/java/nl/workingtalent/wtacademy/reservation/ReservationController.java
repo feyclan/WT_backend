@@ -59,7 +59,7 @@ public class ReservationController {
 		return new ResponseDto(false, null, null, "No reservation found.");
 	}
 
-	@RequestMapping("reservation/search")
+	@PostMapping("reservation/search")
 	public ResponseDto searchReservation(@RequestBody SearchReservationDto dto) {
 		List<Reservation> reservations = service.searchReservations(dto);
 		Stream<ReadReservationDto> dtos = reservations.stream().map((reservation) -> {
@@ -95,7 +95,7 @@ public class ReservationController {
 		newReservation.setUser(user);
 
 		service.create(newReservation);
-		return new ResponseDto(true, newReservation.getId(), null, "Reservation created successfully.");
+		return new ResponseDto(true, null, null, "Reservation created successfully.");
 	}
 
 	// UPDATE
@@ -115,7 +115,7 @@ public class ReservationController {
 
 		// SAVE
 		service.update(dbReservation);
-		return new ResponseDto(true, dbReservation.getReservationRequest(), null, "Reservation updated successfully.");
+		return new ResponseDto(true, null, null, "Reservation updated successfully.");
 	}
 
 	// DELETE

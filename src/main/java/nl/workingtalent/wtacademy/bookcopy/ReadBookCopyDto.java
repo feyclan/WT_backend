@@ -4,15 +4,12 @@ public class ReadBookCopyDto {
 
 	private String state;
 
-	private String location;
-
 	private long id;
 	
 	private boolean isAvailable;
 
 	public ReadBookCopyDto(BookCopy copy) {
 		this.state = copy.getState();
-		this.location = copy.getLocation();
 		this.id = copy.getId();
 		this.isAvailable = copy.isAvailable();
 	}
@@ -23,14 +20,6 @@ public class ReadBookCopyDto {
 
 	public void setState(String state) {
 		this.state = state;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
 	}
 
 	public long getId() {

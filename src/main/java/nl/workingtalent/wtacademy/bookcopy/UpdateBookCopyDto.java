@@ -3,8 +3,6 @@ package nl.workingtalent.wtacademy.bookcopy;
 public class UpdateBookCopyDto {
 	private String state;
 
-	private String location;
-
 	private long id;
 	
 	private boolean isAvailable;
@@ -15,14 +13,6 @@ public class UpdateBookCopyDto {
 
 	public void setState(String state) {
 		this.state = state;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
 	}
 
 	public long getId() {

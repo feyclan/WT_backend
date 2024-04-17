@@ -23,8 +23,6 @@ public class BookCopy {
 
 	private String state;
 
-	private String location;
-
 	@ManyToOne
 	private Book book;
 
@@ -47,14 +45,6 @@ public class BookCopy {
 
 	public void setState(String state) {
 		this.state = state;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
 	}
 
 	public Book getBook() {
