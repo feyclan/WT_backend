@@ -35,7 +35,7 @@ public class BookController {
 	@Autowired
 	private CategoryService categoryService;
 
-	@RequestMapping("book/all")
+	@PostMapping("book/all")
 	public ResponseDto getAllBooks(@RequestBody int pageNr) {
 		Page<Book> books = service.getAllBooks(pageNr);
 		Stream<ReadBookDto> dtos = books.stream().map((book) -> {
@@ -57,7 +57,7 @@ public class BookController {
 		return new ResponseDto(true, new ReadBookDto(book.get()), null, "Book found with id " + id);
 	}
 
-	@RequestMapping("book/search")
+	@PostMapping("book/search")
 	public ResponseDto searchBook(@RequestBody SearchBookDto dto) {
 		Page<Book> books = service.searchBooks(dto);
 		Stream<ReadBookDto> dtos = books.stream().map((book) -> {
