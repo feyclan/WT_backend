@@ -10,8 +10,6 @@ public class SearchBookDto {
 
 	private List<String> authors;
 
-	private String location;
-
 	private int pageNr;
 
 	public List<String> getCategories() {
@@ -36,14 +34,6 @@ public class SearchBookDto {
 
 	public void setAuthors(List<String> authors) {
 		this.authors = authors;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
 	}
 
 	public int getPageNr() {

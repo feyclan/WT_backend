@@ -47,7 +47,6 @@ public class BookService {
 		List<String> categories = searchBookDto.getCategories();
 		String title = searchBookDto.getTitle();
 		List<String> authors = searchBookDto.getAuthors();
-		String location = searchBookDto.getLocation();
 
 		// Constructing the query based on provided criteria
 		Specification<Book> spec = Specification.where(null);
@@ -63,14 +62,10 @@ public class BookService {
 				spec = spec.and(
 						(root, query, builder) -> builder.like(root.join("authors").get("name"), "%" + author + "%"));
 			}
-		}
-		if (location != null && !location.isEmpty()) {
-			spec = spec.and((root, query, builder) -> builder.equal(root.join("bookCopies").get("location"), location));
-		}
-		
+		}		
 
 		Pageable pageable = PageRequest.of(searchBookDto.getPageNr(), pageSize, Sort.by(Sort.Direction.DESC, "title"));
-		
+
 
 		// Fetching books based on the constructed query
 		return repository.findAll(spec, pageable);
