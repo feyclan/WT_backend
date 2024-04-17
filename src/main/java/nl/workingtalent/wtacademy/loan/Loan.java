@@ -25,13 +25,11 @@ public class Loan {
 	@Column(nullable = false)
 	private LocalDate startDate;
 	
-	@Column(nullable = false)
 	private LocalDate endDate;
 	
 	@Column(nullable = false)
 	private String conditionStart;
 	
-	@Column(nullable = false)
 	private String conditionEnd;
 	
 	@ManyToOne
@@ -41,8 +39,7 @@ public class Loan {
 	@JoinColumn(name="reservation_id", referencedColumnName = "id")
 	private Reservation reservation;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="bookcopy_id", referencedColumnName = "id")
+	@ManyToOne()
 	private BookCopy bookCopy;
 
 	public long getId() {

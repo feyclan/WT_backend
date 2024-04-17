@@ -9,6 +9,8 @@ public class CreateLoanDto {
 	private String conditionStart;
 	private String conditionEnd;
 	private long userId;
+	private long reservationId;
+	private long bookCopyId;
 
 	public LocalDate getStartDate() {
 		return startDate;
@@ -49,5 +51,23 @@ public class CreateLoanDto {
 	public void setUserId(long userId) {
 		this.userId = userId;
 	}
+
+	public long getReservationId() {
+		return reservationId;
+	}
+
+	public void setReservationId(long reservationId) {
+		this.reservationId = reservationId;
+	}
+
+	public long getBookCopyId() {
+		return bookCopyId;
+	}
+
+	public void setBookCopyId(long bookCopyId) {
+		this.bookCopyId = bookCopyId;
+	}
+	
+	
 
 }

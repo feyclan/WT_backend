@@ -1,11 +1,14 @@
 package nl.workingtalent.wtacademy.bookcopy;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import nl.workingtalent.wtacademy.book.Book;
 import nl.workingtalent.wtacademy.loan.Loan;
@@ -25,8 +28,10 @@ public class BookCopy {
 	@ManyToOne
 	private Book book;
 
-	@OneToOne(mappedBy = "bookCopy")
-	private Loan loan;
+	@OneToMany(mappedBy = "bookCopy")
+	private List<Loan> loans;
+	
+	private boolean isAvailable;
 
 	public long getId() {
 		return id;
@@ -60,12 +65,22 @@ public class BookCopy {
 		this.book = book;
 	}
 
-	public Loan getLoan() {
-		return loan;
+	public boolean isAvailable() {
+		return isAvailable;
 	}
 
-	public void setLoan(Loan loan) {
-		this.loan = loan;
+	public void setAvailable(boolean isAvailable) {
+		this.isAvailable = isAvailable;
 	}
+
+	public List<Loan> getLoans() {
+		return loans;
+	}
+
+	public void setLoans(List<Loan> loans) {
+		this.loans = loans;
+	}
+	
+	
 
 }

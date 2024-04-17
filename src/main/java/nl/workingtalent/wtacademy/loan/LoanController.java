@@ -14,7 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import nl.workingtalent.wtacademy.bookcopy.BookCopy;
+import nl.workingtalent.wtacademy.bookcopy.BookCopyService;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
+import nl.workingtalent.wtacademy.reservation.Reservation;
+import nl.workingtalent.wtacademy.reservation.ReservationRequest;
+import nl.workingtalent.wtacademy.reservation.ReservationService;
 import nl.workingtalent.wtacademy.user.User;
 import nl.workingtalent.wtacademy.user.UserService;
 
@@ -27,6 +32,12 @@ public class LoanController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private BookCopyService bookCopyService;
+
+	@Autowired
+	private ReservationService reservationService;
 
 	// READ
 	@RequestMapping("loan/all")
@@ -72,8 +83,21 @@ public class LoanController {
 		if (optionalUser.isEmpty()) {
 			return new ResponseDto(false, null, null, "User not found.");
 		}
-
 		User user = optionalUser.get();
+
+//		 DOES BOOKCOPY EXIST?
+		Optional<BookCopy> optionalBookCopy = bookCopyService.getBookCopyById(dto.getBookCopyId());
+		if (optionalBookCopy.isEmpty()) {
+			return new ResponseDto(false, null, null, "BookCopy not found.");
+		}
+		BookCopy copy = optionalBookCopy.get();
+		if (!copy.isAvailable()) {
+			return new ResponseDto(false, null, null, "BookCopy is not available.");
+		}
+
+//		 DOES RESERVATION EXIST?
+		Optional<Reservation> optionalReservation = reservationService.findReservationById(dto.getReservationId());
+		Reservation reservation = optionalReservation.orElse(null);
 
 		Loan newLoan = new Loan();
 		newLoan.setStartDate(dto.getStartDate());
@@ -81,8 +105,18 @@ public class LoanController {
 		newLoan.setConditionStart(dto.getConditionStart());
 		newLoan.setConditionEnd(dto.getConditionEnd());
 		newLoan.setUser(user);
+		newLoan.setBookCopy(copy);
+		newLoan.setReservation(reservation);
 
 		service.create(newLoan);
+		
+		copy.setAvailable(false);
+		bookCopyService.update(copy);
+
+		if (reservation != null) {
+			reservation.setReservationRequest(ReservationRequest.ACCEPTED);
+			reservationService.update(reservation);
+		}
 		return new ResponseDto(true, null, null, "Loan created successfully.");
 	}
 
