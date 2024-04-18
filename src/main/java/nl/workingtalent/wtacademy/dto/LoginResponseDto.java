@@ -6,6 +6,8 @@ public class LoginResponseDto {
 
 	private String name;
 
+	private String Role;
+
 	public String getToken() {
 		return token;
 	}
@@ -20,6 +22,14 @@ public class LoginResponseDto {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public void setRole(String role) {
+		Role = role;
+	}
+
+	public String getRole() {
+		return Role;
 	}
 
 }
