@@ -48,18 +48,36 @@ public class BookCopyController {
 
 	@PostMapping("bookcopy/create")
 	public ResponseDto addBookCopy(@RequestBody CreateBookCopyDto dto) {
+
+		if (dto.getStates() == null) {
+			return new ResponseDto(false, null, null, "No states were given for the copies.");
+		}
+
 		Optional<Book> book = bookService.getBookById(dto.getBookId());
 		if (book.isEmpty()) {
 			return new ResponseDto(false, null, null, "No book exists with book ID " + dto.getBookId());
 		}
 
-		BookCopy copy = new BookCopy();
+		Book dbBook = book.get();
+		long bookId = dbBook.getId();
 
-		copy.setState(dto.getState());
-		copy.setBook(book.get());
+		// Initialized as the amount of book copies already present for a book + 1
+		int bookCopyCounter = service.getAllCopiesForBookId(bookId).size() + 1;
 
-		service.addBookCopy(copy);
-		return new ResponseDto(true, null, null, "Copy added.");
+		for (String state : dto.getStates()) {
+			BookCopy copy = new BookCopy();
+
+			copy.setState(state);
+			copy.setBook(dbBook);
+			copy.setWTId(bookId + "." + bookCopyCounter);
+
+			service.addBookCopy(copy);
+
+			bookCopyCounter++;
+		}
+
+		return new ResponseDto(true, null, null, String.valueOf(dto.getStates().size())
+				+ ((dto.getStates().size() < 2) ? " copy was" : " copies were") + " added");
 	}
 
 	@PutMapping("bookcopy/update")

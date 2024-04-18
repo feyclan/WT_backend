@@ -19,6 +19,7 @@ public class CreateBookDto {
 
 	private List<String> categories;
 
+	private List<String> states;
 	private String token;
 
 	public LocalDate getPublishingDate() {
@@ -77,6 +78,14 @@ public class CreateBookDto {
 		this.categories = categories;
 	}
 
+	public void setStates(List<String> states) {
+		this.states = states;
+	}
+
+	public List<String> getStates() {
+		return states;
+	}
+	
 	public void setToken(String token) {
 		this.token = token;
 	}
