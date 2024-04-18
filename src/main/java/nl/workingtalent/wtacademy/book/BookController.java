@@ -69,8 +69,12 @@ public class BookController {
 
 	@PostMapping("book/create")
 	public ResponseDto addBook(@RequestBody CreateBookDto saveBookDto) {
-		if (saveBookDto == null || saveBookDto.getTitle().isBlank()) {
+		if (saveBookDto.getTitle() == null || saveBookDto.getTitle().isBlank()) {
 			return new ResponseDto(false, null, null, "Title is required.");
+		}
+		
+		if (saveBookDto.getDescription() == null || saveBookDto.getDescription().isBlank()) {
+			return new ResponseDto(false, null, null, "Description is required.");
 		}
 
 		if (saveBookDto.getAuthors() == null || saveBookDto.getAuthors().isEmpty()) {

@@ -26,10 +26,12 @@ public class Book {
 	@Column(length = 450, nullable = false)
 	private String title;
 
+	@Column(nullable = false)
 	private String description;
 
 	private LocalDate publishingDate;
 
+	@Column(length = 13)
 	private String isbn;
 
 	@Column(length = 125)
