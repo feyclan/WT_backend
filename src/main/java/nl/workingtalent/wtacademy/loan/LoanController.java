@@ -134,10 +134,19 @@ public class LoanController {
 		Loan dbLoan = existingLoan.get();
 
 		// OVERWRITE
-		dbLoan.setStartDate(dto.getStartDate());
-		dbLoan.setEndDate(dto.getEndDate());
-		dbLoan.setConditionStart(dto.getConditionStart());
-		dbLoan.setConditionEnd(dto.getConditionEnd());
+		if(dto.getStartDate() != null){
+			dbLoan.setStartDate(dto.getStartDate());
+		}
+		if(dto.getEndDate() != null){
+			dbLoan.setEndDate(dto.getEndDate());
+		}
+		if(dto.getConditionStart() != null){
+			dbLoan.setConditionStart(dto.getConditionStart());
+		}
+		if(dto.getConditionEnd() != null){
+			dbLoan.setConditionEnd(dto.getConditionEnd());
+		}
+
 		dbLoan.setActive(dto.isActive());
 		
 //		BookCopy is available again if loan is ended
