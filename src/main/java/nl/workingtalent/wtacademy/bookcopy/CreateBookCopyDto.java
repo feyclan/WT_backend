@@ -3,6 +3,7 @@ package nl.workingtalent.wtacademy.bookcopy;
 import java.util.List;
 
 public class CreateBookCopyDto {
+	
 	private List<String> states;
 
 	private long bookId;

@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,9 @@ import nl.workingtalent.wtacademy.bookcopy.BookCopyService;
 import nl.workingtalent.wtacademy.category.Category;
 import nl.workingtalent.wtacademy.category.CategoryService;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
+import nl.workingtalent.wtacademy.user.Role;
+import nl.workingtalent.wtacademy.user.User;
+import nl.workingtalent.wtacademy.user.UserService;
 
 @RestController
 @CrossOrigin(maxAge = 3600)
@@ -35,17 +39,21 @@ public class BookController {
 
 	@Autowired
 	private CategoryService categoryService;
-
+	
 	@Autowired
-	private BookCopyService bookCopyService;
+	private UserService userService;
 
-	@RequestMapping("book/all")
-	public ResponseDto getAllBooks() {
-		List<Book> books = service.getAllBooks();
+	@PostMapping("book/all")
+	public ResponseDto getAllBooks(@RequestBody int pageNr) {
+		Page<Book> books = service.getAllBooks(pageNr);
 		Stream<ReadBookDto> dtos = books.stream().map((book) -> {
 			return new ReadBookDto(book);
 		});
-		return new ResponseDto(true, dtos, null, books.size() + " books found.");
+
+		ReadAllBookDto dto = new ReadAllBookDto();
+		dto.setTotalPages(books.getTotalPages());
+		dto.setBooks(dtos);
+		return new ResponseDto(true, dto, null, books.getNumberOfElements() + " books found.");
 	}
 
 	@RequestMapping("book/{id}")
@@ -57,13 +65,19 @@ public class BookController {
 		return new ResponseDto(true, new ReadBookDto(book.get()), null, "Book found with id " + id);
 	}
 
-	@RequestMapping("book/search")
+	@PostMapping("book/search")
 	public ResponseDto searchBook(@RequestBody SearchBookDto dto) {
-		List<Book> books = service.searchBooks(dto);
+		Page<Book> books = service.searchBooks(dto);
 		Stream<ReadBookDto> dtos = books.stream().map((book) -> {
 			return new ReadBookDto(book);
 		});
-		return new ResponseDto(true, dtos, null, books.size() + " books found.");
+		
+		ReadAllBookDto resultDto = new ReadAllBookDto();
+		resultDto.setTotalPages(books.getTotalPages());
+		resultDto.setBooks(dtos);
+		
+		
+		return new ResponseDto(true, resultDto, null, books.getNumberOfElements() + " books found.");
 
 	}
 
@@ -87,6 +101,10 @@ public class BookController {
 
 		if (saveBookDto.getStates() == null || saveBookDto.getStates().isEmpty()) {
 			return new ResponseDto(false, null, null, "At least one book copy with state is required.");
+		}
+		Optional<User> user = userService.getUserByToken(saveBookDto.getToken());
+		if (user.isEmpty() || user.get().getRole() != Role.TRAINER) {
+			return new ResponseDto(false, null, null, "Action not allowed.");
 		}
 
 		Book dbBook = new Book();

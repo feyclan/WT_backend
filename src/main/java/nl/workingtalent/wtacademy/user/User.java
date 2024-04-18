@@ -29,9 +29,10 @@ public class User {
 	@Column(length = 100, nullable = false)
 	private String email;
 	
-	@Column(length = 50, nullable = false)
+	@Column(nullable = false)
 	private String password;
 	
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Role role;
 	
@@ -43,6 +44,9 @@ public class User {
 	
 	@OneToMany(mappedBy = "user")
 	private List<Loan> loans;
+	
+	@Column(length = 100, unique = true)
+	private String token;
 
 	public long getId() {
 		return id;
@@ -115,5 +119,14 @@ public class User {
 	public void setLoans(List<Loan> loans) {
 		this.loans = loans;
 	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
 
 }

@@ -1,9 +1,12 @@
 package nl.workingtalent.wtacademy.user;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import nl.workingtalent.wtacademy.dto.LoginRequestDto;
+import nl.workingtalent.wtacademy.dto.LoginResponseDto;
+import nl.workingtalent.wtacademy.dto.LogoutDto;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
 
 @RestController
@@ -28,86 +34,100 @@ public class UserController {
 	public ResponseDto findAllUsers() {
 		List<User> users = service.findAllUsers();
 
-		return createResponseDtoList(null, users, null);
+		if (users.isEmpty()) {
+			return new ResponseDto(false, null, null, "No users found.");
+		}
+
+		Stream<ReadUserDto> readUserDtoStream = users.stream().map(user -> {
+			return new ReadUserDto(user);
+		});
+
+		return new ResponseDto(true, readUserDtoStream, null, (users.size() < 2) ? "user" : " users " + " found.");
 	}
 
 	@RequestMapping("user/{id}")
 	public ResponseDto findUserById(@PathVariable("id") long id) {
 		Optional<User> userOptional = service.findUserById(id);
 
-		return createResponseDto(id, userOptional, "id");
+		if (userOptional.isPresent()) {
+			User user = userOptional.get();
+			ReadUserDto readUserDto = new ReadUserDto(user);
+			return new ResponseDto(true, readUserDto, null, "User found.");
+		}
+
+		return new ResponseDto(false, null, null, "No user with id '" + id + "' found.");
 	}
 
-	@RequestMapping("user/firstname/{firstName}")
-	public ResponseDto findAllUsersByFirstName(@PathVariable("firstName") String name) {
-		List<User> users = service.findUserByFirstName(name);
+	@PostMapping("user/search")
+	public ResponseDto searchUser(@RequestBody SearchUserDto dto) {
+		List<User> users = service.searchUser(dto);
 
-		return createResponseDtoList(name, users, "first name");
-	}
+		Stream<ReadUserDto> dtos = service.searchUser(dto).stream().map((user) -> {
+			return new ReadUserDto(user);
+		});
 
-	@RequestMapping("user/lastname/{lastName}")
-	public ResponseDto findUserByLastName(@PathVariable("lastName") String name) {
-		List<User> users = service.findUserByLastName(name);
-
-		return createResponseDtoList(name, users, "last name");
-
-	}
-
-	@RequestMapping("user/email/{email}")
-	public ResponseDto findUserByEmail(@PathVariable("email") String email) {
-		Optional<User> userOptional = service.findUserByEmail(email);
-
-		return createResponseDto(email, userOptional, "email");
-	}
-
-	@RequestMapping("user/role/{role}")
-	public ResponseDto findUserByRole(@PathVariable("role") Role role) {
-		List<User> users = service.findUserByRole(role);
-
-		return createResponseDtoList(role, users, "role");
+		return new ResponseDto(true, dtos, null, users.size() + " users " + " found.");
 	}
 
 	// CREATE
 	@PostMapping("user/create")
 	public ResponseDto createUser(@RequestBody CreateUserDto dto) {
 
-		// DOES EMAIL EXIST?
-		Optional<User> existingUserEmail = service.findUserByEmail(dto.getEmail());
-		if (existingUserEmail.isPresent()) {
-			ResponseDto responseDto = new ResponseDto(false, existingUserEmail.get().getEmail(), null,
-					"User with the provided email already exists.");
-			return responseDto;
+		if (dto.getFirstName() == null || dto.getLastName() == null || dto.getFirstName().isBlank()
+				|| dto.getLastName().isBlank()) {
+			return new ResponseDto(false, null, null, "Name is required.");
+		}
+		if (dto.getEmail() == null || dto.getEmail().isBlank()) {
+			return new ResponseDto(false, null, null, "Email is required.");
+		}
+		if (dto.getPassword() == null || dto.getPassword().isBlank()) {
+			return new ResponseDto(false, null, null, "Password is required.");
+		}
+		if (dto.getRole() == null) {
+			return new ResponseDto(false, null, null, "Role is required.");
+		}
+
+		// Create SearchDto to search for a user with a certain email
+		SearchUserDto searchDto = new SearchUserDto();
+		searchDto.setEmail(dto.getEmail());
+
+		// Check if user exists
+		List<User> existingUserEmail = service.searchUser(searchDto);
+		if (!existingUserEmail.isEmpty()) {
+			return new ResponseDto(false, null, null, "User with the provided email already exists.");
 		}
 
 		User newUser = new User();
 		newUser.setFirstName(dto.getFirstName());
 		newUser.setLastName(dto.getLastName());
 		newUser.setEmail(dto.getEmail());
-		newUser.setPassword(dto.getPassword());
+		String hashedPassword = hashSHA256(dto.getPassword());
+		newUser.setPassword(hashedPassword);
 		newUser.setRole(dto.getRole());
 		service.create(newUser);
 
-		ResponseDto responseDto = new ResponseDto(true, newUser, null, "User created successfully.");
-		return responseDto;
+		return new ResponseDto(true, null, null, "User created successfully.");
 	}
 
 	// UPDATE
-	@PutMapping("user/update/{id}")
-	public ResponseDto updateUser(@RequestBody UpdateUserDto dto, @PathVariable("id") long id) {
+	@PutMapping("user/update")
+	public ResponseDto updateUser(@RequestBody UpdateUserDto dto) {
 
 		// DOES USER EXIST?
-		Optional<User> existingUser = service.findUserById(id);
+		Optional<User> existingUser = service.findUserById(dto.getId());
 		if (existingUser.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, existingUser, null, "User doesn't exist.");
-			return responseDto;
+			return new ResponseDto(false, null, null, "User doesn't exist.");
 		}
 
-		// DOES EMAIL EXIST?
-		Optional<User> existingUserEmail = service.findUserByEmail(dto.getEmail());
-		if (existingUserEmail.isPresent() && existingUserEmail.get().getId() != id) {
-			ResponseDto responseDto = new ResponseDto(false, existingUserEmail.get().getEmail(), null,
+		// Create SearchDto to search for a user with a certain email
+		SearchUserDto searchDto = new SearchUserDto();
+		searchDto.setEmail(dto.getEmail());
+
+		// Check if email is already in use
+		List<User> existingUserEmail = service.searchUser(searchDto);
+		if (!existingUserEmail.isEmpty() && existingUserEmail.get(0).getId() != dto.getId()) {
+			return new ResponseDto(false, existingUserEmail.get(0).getEmail(), null,
 					"User with the provided email already exists.");
-			return responseDto;
 		}
 
 		User dbUser = existingUser.get();
@@ -116,13 +136,13 @@ public class UserController {
 		dbUser.setFirstName(dto.getFirstName());
 		dbUser.setLastName(dto.getLastName());
 		dbUser.setEmail(dto.getEmail());
-		dbUser.setPassword(dto.getPassword());
+		String hashedPassword = hashSHA256(dto.getPassword());
+		dbUser.setPassword(hashedPassword);
 		dbUser.setRole(dto.getRole());
 
 		// SAVE
 		service.update(dbUser);
-		ResponseDto responseDto = new ResponseDto(true, dto, null, "User updated successfully.");
-		return responseDto;
+		return new ResponseDto(true, null, null, "User updated successfully.");
 	}
 
 	// DELETE
@@ -130,47 +150,73 @@ public class UserController {
 	public ResponseDto deleteUser(@PathVariable("id") long id) {
 		Optional<User> user = service.findUserById(id);
 		if (user.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, user, null, "User doesn't exist.");
-			return responseDto;
+			return new ResponseDto(false, user, null, "User doesn't exist.");
 		}
 		service.delete(id);
 		ResponseDto responseDto = new ResponseDto(true, null, null, "User deleted successfully.");
 		return responseDto;
 	}
 
-	// Gets a list of users using the DTO
-	private Stream<ReadUserDto> getUsers(List<User> users) {
-		return users.stream().map(user -> {
-			return new ReadUserDto(user);
-		});
+	@PostMapping("user/login")
+	public ResponseDto login(@RequestBody LoginRequestDto dto) {
+		String hashedPassword = hashSHA256(dto.getPassword());
+		Optional<User> optionalUser = service.login(dto.getEmail(), hashedPassword);
+		if (optionalUser.isEmpty()) {
+			return new ResponseDto(false, null, null, "Gebruiker niet gevonden");
+		}
+
+		// Dit is de gevonden user
+		User user = optionalUser.get();
+
+		// Generate token -> Maak gebruik van apache commons
+		user.setToken(RandomStringUtils.random(100, true, true));
+
+		// User opslaan
+		service.update(user);
+
+		// Data terug esturen naar de frontend
+		LoginResponseDto loginResponseDto = new LoginResponseDto();
+		loginResponseDto.setName(user.getFirstName() + " " + user.getLastName());
+		loginResponseDto.setToken(user.getToken());
+
+		return new ResponseDto(true, loginResponseDto, null, null);
 	}
 
-	// Gets the reponseDto for objects who return a single value
-	private ResponseDto createResponseDto(Object pathVal, Optional<User> userOptional, String pathVar) {
-		if (userOptional.isPresent()) {
-			User user = userOptional.get();
-			ReadUserDto readUserDto = new ReadUserDto(user);
-			ResponseDto responseDto = new ResponseDto(true, readUserDto, null, "User found.");
-			return responseDto;
-		}
-		ResponseDto responseDto = new ResponseDto(false, pathVal, null,
-				"No users with " + pathVar + " '" + pathVal + "' found.");
+	@PostMapping("user/logout")
+	public ResponseDto logout(@RequestBody LogoutDto dto) {
 
-		return responseDto;
+		Optional<User> user = service.getUserByToken(dto.getToken());
+		if (user.isEmpty()) {
+			return new ResponseDto(false, null, null, "Geen gebruiker gevonden.");
+		}
+
+		User dbUser = user.get();
+		dbUser.setToken(null);
+		service.update(dbUser);
+
+		return new ResponseDto(true, null, null, "Gebruiker is uitgelogd.");
 	}
 
-	// Gets the responseDto for objects who return a list of values
-	private ResponseDto createResponseDtoList(Object pathVal, List<User> users, String pathVar) {
-		if (users.isEmpty()) {
-			ResponseDto responseDto = new ResponseDto(false, pathVal, null,
-					"No users with the " + pathVar + " '" + pathVal + "' found.");
-			return responseDto;
-		}
-		
-		Stream<ReadUserDto> readUserDtoStream = getUsers(users);
-		ResponseDto responseDto = new ResponseDto(true, readUserDtoStream, null,
-				users.size() + " " + pathVar + " found.");
+	private String hashSHA256(String input) {
+		try {
+			// Create MessageDigest instance for SHA-256
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
 
-		return responseDto;
+			// Add input string bytes to digest
+			md.update(input.getBytes());
+
+			// Get the hash's bytes
+			byte[] bytes = md.digest();
+
+			// This bytes[] has bytes in decimal format;
+			// Convert it to hexadecimal format
+			StringBuilder sb = new StringBuilder();
+			for (byte b : bytes) {
+				sb.append(String.format("%02x", b));
+			}
+			return sb.toString();
+		} catch (NoSuchAlgorithmException e) {
+			return null;
+		}
 	}
 }

@@ -1,21 +1,14 @@
 package nl.workingtalent.wtacademy.user;
 
-public class UpdateUserDto {
-
-	private long id;
+public class SearchUserDto {
+	
 	private String firstName;
+
 	private String lastName;
+
 	private String email;
-	private String password;
-	private Role role;
 
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public long getId() {
-		return id;
-	}
+	private String role;
 
 	public String getFirstName() {
 		return firstName;
@@ -41,19 +34,11 @@ public class UpdateUserDto {
 		this.email = email;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public Role getRole() {
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(Role role) {
+	public void setRole(String role) {
 		this.role = role;
 	}
 
