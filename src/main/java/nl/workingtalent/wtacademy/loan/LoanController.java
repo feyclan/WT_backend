@@ -65,12 +65,24 @@ public class LoanController {
 		return new ResponseDto(false, null, null, "No loan found.");
 	}
 
+	/**
+	 * Endpoint to search for loans based on the criteria provided in the SearchLoanDto.
+	 * The SearchLoanDto is expected to be provided in the body of the POST request.
+	 *
+	 * @param dto The SearchLoanDto object containing the search criteria. This is deserialized from the request body.
+	 * @return A ResponseDto object containing the result of the search. The data field of the ResponseDto contains a stream of ReadLoanDto objects, each representing a loan that matches the search criteria. The message field contains a string indicating the number of loans found.
+	 */
 	@PostMapping("loan/search")
 	public ResponseDto searchLoan(@RequestBody SearchLoanDto dto) {
+		// Call the searchLoans method of the service to get a list of loans that match the search criteria
 		List<Loan> loans = service.searchLoans(dto);
+
+		// Convert each Loan object in the list to a ReadLoanDto object using a stream and map operation
 		Stream<ReadLoanDto> dtos = loans.stream().map((loan) -> {
 			return new ReadLoanDto(loan);
 		});
+
+		// Return a ResponseDto object with the stream of ReadLoanDto objects and a message indicating the number of loans found
 		return new ResponseDto(true, dtos, null, loans.size() + (loans.size() == 1 ? " loan " : " loans ") + "found.");
 	}
 
@@ -99,6 +111,7 @@ public class LoanController {
 		Optional<Reservation> optionalReservation = reservationService.findReservationById(dto.getReservationId());
 		Reservation reservation = optionalReservation.orElse(null);
 
+//		 CREATE LOAN AND SET VALUES
 		Loan newLoan = new Loan();
 		newLoan.setStartDate(dto.getStartDate());
 		newLoan.setEndDate(dto.getEndDate());
@@ -110,10 +123,12 @@ public class LoanController {
 		newLoan.setActive(true);
 
 		service.create(newLoan);
-		
+
+//		BookCopy is not available anymore
 		copy.setAvailable(false);
 		bookCopyService.update(copy);
 
+//		 Reservation is accepted
 		if (reservation != null) {
 			reservation.setReservationRequest(ReservationRequest.ACCEPTED);
 			reservationService.update(reservation);
