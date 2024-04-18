@@ -65,13 +65,13 @@ public class LoanController {
 		return new ResponseDto(false, null, null, "No loan found.");
 	}
 
-	@RequestMapping("loan/search")
+	@PostMapping("loan/search")
 	public ResponseDto searchLoan(@RequestBody SearchLoanDto dto) {
 		List<Loan> loans = service.searchLoans(dto);
 		Stream<ReadLoanDto> dtos = loans.stream().map((loan) -> {
 			return new ReadLoanDto(loan);
 		});
-		return new ResponseDto(true, dtos, null, loans.size() + (loans.size() < 2 ? " loan " : " loans ") + "found.");
+		return new ResponseDto(true, dtos, null, loans.size() + (loans.size() == 1 ? " loan " : " loans ") + "found.");
 	}
 
 	// CREATE

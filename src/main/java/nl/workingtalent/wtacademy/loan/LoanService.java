@@ -33,7 +33,7 @@ public class LoanService {
 		LocalDate endDate = searchLoanDto.getEndDate();
 		String conditionStart = searchLoanDto.getConditionStart();
 		String conditionEnd = searchLoanDto.getConditionEnd();
-		boolean isActive = searchLoanDto.isActive();
+		Boolean isActive = searchLoanDto.getIsActive();
 		return repository.search(startDate, endDate, conditionStart, conditionEnd, isActive);
 	}
 

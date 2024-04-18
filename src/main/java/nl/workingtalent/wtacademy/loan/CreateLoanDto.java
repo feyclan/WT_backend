@@ -67,7 +67,5 @@ public class CreateLoanDto {
 	public void setBookCopyId(long bookCopyId) {
 		this.bookCopyId = bookCopyId;
 	}
-	
-	
 
 }

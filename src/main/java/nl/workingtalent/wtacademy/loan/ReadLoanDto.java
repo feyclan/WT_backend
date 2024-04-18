@@ -15,7 +15,7 @@ public class ReadLoanDto {
 	private long userId;
 	private Long reservationId;
 	private Long bookCopyId;
-	private boolean isActive;
+	private Boolean isActive;
 
 	public ReadLoanDto(Loan loan) {
 		id = loan.getId();
@@ -96,11 +96,11 @@ public class ReadLoanDto {
 		this.bookCopyId = bookCopyId;
 	}
 
-	public boolean isActive() {
+	public Boolean isActive() {
 		return isActive;
 	}
 
-	public void setActive(boolean isActive) {
+	public void setActive(Boolean isActive) {
 		this.isActive = isActive;
 	}
 

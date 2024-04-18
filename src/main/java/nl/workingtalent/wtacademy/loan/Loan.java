@@ -42,7 +42,7 @@ public class Loan {
 	@ManyToOne()
 	private BookCopy bookCopy;
 	
-	private boolean isActive;
+	private Boolean isActive;
 
 	public long getId() {
 		return id;
@@ -108,11 +108,11 @@ public class Loan {
 		this.bookCopy = bookCopy;
 	}
 
-	public boolean isActive() {
+	public Boolean isActive() {
 		return isActive;
 	}
 
-	public void setActive(boolean isActive) {
+	public void setActive(Boolean isActive) {
 		this.isActive = isActive;
 	}	
 	
