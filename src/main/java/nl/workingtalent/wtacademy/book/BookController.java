@@ -42,6 +42,9 @@ public class BookController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private BookCopyService bookCopyService;
 
 	@PostMapping("book/all")
 	public ResponseDto getAllBooks(@RequestBody int pageNr) {
