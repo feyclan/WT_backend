@@ -41,6 +41,8 @@ public class Loan {
 	
 	@ManyToOne()
 	private BookCopy bookCopy;
+	
+	private boolean isActive;
 
 	public long getId() {
 		return id;
@@ -104,6 +106,14 @@ public class Loan {
 
 	public void setBookCopy(BookCopy bookCopy) {
 		this.bookCopy = bookCopy;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}	
 	
 }

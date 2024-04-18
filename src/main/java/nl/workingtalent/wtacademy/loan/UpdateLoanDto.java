@@ -9,6 +9,7 @@ public class UpdateLoanDto {
 	private LocalDate endDate;
 	private String conditionStart;
 	private String conditionEnd;
+	private boolean isActive;
 
 	public long getId() {
 		return id;
@@ -49,5 +50,14 @@ public class UpdateLoanDto {
 	public void setConditionEnd(String conditionEnd) {
 		this.conditionEnd = conditionEnd;
 	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+	
 
 }

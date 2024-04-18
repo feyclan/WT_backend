@@ -8,6 +8,7 @@ public class SearchLoanDto {
 	private LocalDate endDate;
 	private String conditionStart;
 	private String conditionEnd;
+	private boolean isActive;
 
 	public LocalDate getStartDate() {
 		return startDate;
@@ -39,6 +40,14 @@ public class SearchLoanDto {
 
 	public void setConditionEnd(String conditionEnd) {
 		this.conditionEnd = conditionEnd;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
 }

@@ -15,6 +15,7 @@ public class ReadLoanDto {
 	private long userId;
 	private Long reservationId;
 	private Long bookCopyId;
+	private boolean isActive;
 
 	public ReadLoanDto(Loan loan) {
 		id = loan.getId();
@@ -23,6 +24,7 @@ public class ReadLoanDto {
 		conditionStart = loan.getConditionStart();
 		conditionEnd = loan.getConditionEnd();
 		userId = loan.getUser().getId();
+		isActive = loan.isActive();
 		// reservation en bookcopy moeten null kunnen zijn
 		Reservation reservation = loan.getReservation();
 		reservationId = (reservation != null) ? reservation.getId() : null;
@@ -92,6 +94,14 @@ public class ReadLoanDto {
 
 	public void setBookCopyId(Long bookCopyId) {
 		this.bookCopyId = bookCopyId;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
 }

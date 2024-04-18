@@ -14,5 +14,5 @@ public interface ILoanRepository extends JpaRepository<Loan, Long> {
 			+ "(:conditionStart IS NULL OR l.conditionStart = :conditionStart) AND "
 			+ "(:conditionEnd IS NULL OR l.conditionEnd = :conditionEnd)")
 	List<Loan> search(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate,
-			@Param("conditionStart") String conditionStart, @Param("conditionEnd") String conditionEnd);
+			@Param("conditionStart") String conditionStart, @Param("conditionEnd") String conditionEnd, @Param("isActive") boolean isActive);
 }

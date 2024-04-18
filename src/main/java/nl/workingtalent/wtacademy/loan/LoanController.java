@@ -107,6 +107,7 @@ public class LoanController {
 		newLoan.setUser(user);
 		newLoan.setBookCopy(copy);
 		newLoan.setReservation(reservation);
+		newLoan.setActive(true);
 
 		service.create(newLoan);
 		
@@ -137,6 +138,12 @@ public class LoanController {
 		dbLoan.setEndDate(dto.getEndDate());
 		dbLoan.setConditionStart(dto.getConditionStart());
 		dbLoan.setConditionEnd(dto.getConditionEnd());
+		dbLoan.setActive(dto.isActive());
+		
+//		BookCopy is available again if loan is ended
+		if(!dbLoan.isActive()) {
+			dbLoan.getBookCopy().setAvailable(true);
+		}
 
 		// SAVE
 		service.update(dbLoan);
