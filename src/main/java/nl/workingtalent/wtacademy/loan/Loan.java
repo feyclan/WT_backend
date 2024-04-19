@@ -3,6 +3,7 @@ package nl.workingtalent.wtacademy.loan;
 import java.time.LocalDate;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,10 +22,12 @@ public class Loan {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
+	@Column(nullable = false)
 	private LocalDate startDate;
 	
 	private LocalDate endDate;
 	
+	@Column(nullable = false)
 	private String conditionStart;
 	
 	private String conditionEnd;
@@ -36,9 +39,10 @@ public class Loan {
 	@JoinColumn(name="reservation_id", referencedColumnName = "id")
 	private Reservation reservation;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="bookcopy_id", referencedColumnName = "id")
+	@ManyToOne()
 	private BookCopy bookCopy;
+	
+	private boolean isActive;
 
 	public long getId() {
 		return id;
@@ -102,6 +106,14 @@ public class Loan {
 
 	public void setBookCopy(BookCopy bookCopy) {
 		this.bookCopy = bookCopy;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}	
 	
 }

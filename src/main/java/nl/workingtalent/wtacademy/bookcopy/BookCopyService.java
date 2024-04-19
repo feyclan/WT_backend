@@ -31,5 +31,9 @@ public class BookCopyService {
 	public void deleteBookCopyById(long id) {
 		repository.deleteById(id);
 	}
+	
+	public void update(BookCopy copy) {
+		repository.save(copy);
+	}
 
 }
