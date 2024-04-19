@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nl.workingtalent.wtacademy.bookcopy.BookCopy;
 import nl.workingtalent.wtacademy.bookcopy.BookCopyService;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
 import nl.workingtalent.wtacademy.reservation.Reservation;
 import nl.workingtalent.wtacademy.reservation.ReservationRequest;
 import nl.workingtalent.wtacademy.reservation.ReservationService;
+import nl.workingtalent.wtacademy.user.Role;
 import nl.workingtalent.wtacademy.user.User;
 import nl.workingtalent.wtacademy.user.UserService;
 
@@ -41,7 +43,13 @@ public class LoanController {
 
 	// READ
 	@RequestMapping("loan/all")
-	public ResponseDto findAllLoans() {
+	public ResponseDto findAllLoans(HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null || user.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		List<Loan> loans = service.findAllLoans();
 
 		if (loans.isEmpty()) {
@@ -54,7 +62,13 @@ public class LoanController {
 	}
 
 	@RequestMapping("loan/{id}")
-	public ResponseDto findLoanById(@PathVariable("id") long id) {
+	public ResponseDto findLoanById(@PathVariable("id") long id, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null || user.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		Optional<Loan> loanOptional = service.findLoanById(id);
 
 		if (loanOptional.isPresent()) {
@@ -65,30 +79,74 @@ public class LoanController {
 		return new ResponseDto(false, null, null, "No loan found.");
 	}
 
+	//Find all loans for currently logged in user, to be displayed on profile for example
+	@RequestMapping("loan/user/all")
+	public ResponseDto findLoansForUser(HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
+		List<Loan> loans = service.findAllLoansForUser(user.getId());
+		Stream<ReadLoanDto> readLoanDtoStream = getLoans(loans);
+
+		return new ResponseDto(true, readLoanDtoStream, null,
+				loans.size() + (loans.size() < 2 ? " loan " : " loans ") + "found.");
+	}
+
 	/**
-	 * Endpoint to search for loans based on the criteria provided in the SearchLoanDto.
-	 * The SearchLoanDto is expected to be provided in the body of the POST request.
+	 * Endpoint to search for loans based on the criteria provided in the
+	 * SearchLoanDto. The SearchLoanDto is expected to be provided in the body of
+	 * the POST request.
 	 *
-	 * @param dto The SearchLoanDto object containing the search criteria. This is deserialized from the request body.
-	 * @return A ResponseDto object containing the result of the search. The data field of the ResponseDto contains a stream of ReadLoanDto objects, each representing a loan that matches the search criteria. The message field contains a string indicating the number of loans found.
+	 * @param dto The SearchLoanDto object containing the search criteria. This is
+	 *            deserialized from the request body.
+	 * @return A ResponseDto object containing the result of the search. The data
+	 *         field of the ResponseDto contains a stream of ReadLoanDto objects,
+	 *         each representing a loan that matches the search criteria. The
+	 *         message field contains a string indicating the number of loans found.
 	 */
 	@PostMapping("loan/search")
-	public ResponseDto searchLoan(@RequestBody SearchLoanDto dto) {
-		// Call the searchLoans method of the service to get a list of loans that match the search criteria
+	public ResponseDto searchLoan(@RequestBody SearchLoanDto dto, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null || user.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
+		// Call the searchLoans method of the service to get a list of loans that match
+		// the search criteria
 		List<Loan> loans = service.searchLoans(dto);
 
-		// Convert each Loan object in the list to a ReadLoanDto object using a stream and map operation
+		// Convert each Loan object in the list to a ReadLoanDto object using a stream
+		// and map operation
 		Stream<ReadLoanDto> dtos = loans.stream().map((loan) -> {
 			return new ReadLoanDto(loan);
 		});
 
-		// Return a ResponseDto object with the stream of ReadLoanDto objects and a message indicating the number of loans found
+		// Return a ResponseDto object with the stream of ReadLoanDto objects and a
+		// message indicating the number of loans found
 		return new ResponseDto(true, dtos, null, loans.size() + (loans.size() == 1 ? " loan " : " loans ") + "found.");
 	}
 
 	// CREATE
 	@PostMapping("loan/create")
-	public ResponseDto createLoan(@RequestBody CreateLoanDto dto) {
+	public ResponseDto createLoan(@RequestBody CreateLoanDto dto, HttpServletRequest request) {
+
+		User requestUser = (User) request.getAttribute("WT_USER");
+		if (requestUser == null || requestUser.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
+		if (dto.getStartDate() == null) {
+			return new ResponseDto(false, null, null, "Start date is required.");
+		}
+
+		if (dto.getConditionStart() == null || dto.getConditionStart().isBlank()) {
+			return new ResponseDto(false, null, null, "Condition at start is required.");
+		}
+
 		Optional<User> optionalUser = userService.findUserById(dto.getUserId());
 
 		// DOES USER EXIST?
@@ -138,7 +196,12 @@ public class LoanController {
 
 	// UPDATE
 	@PutMapping("loan/update")
-	public ResponseDto updateLoan(@RequestBody UpdateLoanDto dto) {
+	public ResponseDto updateLoan(@RequestBody UpdateLoanDto dto, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null || user.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
 
 		// DOES LOAN EXIST?
 		Optional<Loan> existingLoan = service.findLoanById(dto.getId());
@@ -149,24 +212,24 @@ public class LoanController {
 		Loan dbLoan = existingLoan.get();
 
 		// OVERWRITE
-		if(dto.getStartDate() != null){
+		if (dto.getStartDate() != null) {
 			dbLoan.setStartDate(dto.getStartDate());
 		}
-		if(dto.getEndDate() != null){
+		if (dto.getEndDate() != null) {
 			dbLoan.setEndDate(dto.getEndDate());
 		}
-		if(dto.getConditionStart() != null){
+		if (dto.getConditionStart() != null) {
 			dbLoan.setConditionStart(dto.getConditionStart());
 		}
-		if(dto.getConditionEnd() != null){
+		if (dto.getConditionEnd() != null) {
 			dbLoan.setConditionEnd(dto.getConditionEnd());
 		}
-		if(dto.getIsCurrentlyUsed() != null) {
+		if (dto.getIsCurrentlyUsed() != null) {
 			dbLoan.setActive(dto.getIsCurrentlyUsed());
 		}
-		
+
 //		BookCopy is available again if loan is ended
-		if(!dbLoan.isActive()) {
+		if (!dbLoan.isActive()) {
 			dbLoan.getBookCopy().setAvailable(true);
 		}
 
@@ -177,7 +240,13 @@ public class LoanController {
 
 	// DELETE
 	@DeleteMapping("loan/delete/{id}")
-	public ResponseDto deleteLoan(@PathVariable("id") long id) {
+	public ResponseDto deleteLoan(@PathVariable("id") long id, HttpServletRequest request) {
+
+		User requestUser = (User) request.getAttribute("WT_USER");
+		if (requestUser == null || requestUser.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		Optional<Loan> loan = service.findLoanById(id);
 
 		if (loan.isEmpty()) {

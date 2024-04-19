@@ -73,6 +73,7 @@ public class ReservationController {
 		return new ResponseDto(false, null, null, "No reservation found.");
 	}
 
+	//Find all reservations for currently logged in user, to be displayed on profile for example
 	@RequestMapping("reservation/user/all")
 	public ResponseDto findReservationsForUser(HttpServletRequest request) {
 
