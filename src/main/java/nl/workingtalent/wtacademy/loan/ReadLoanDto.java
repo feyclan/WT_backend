@@ -1,7 +1,7 @@
 package nl.workingtalent.wtacademy.loan;
 
 import java.time.LocalDate;
-
+import nl.workingtalent.wtacademy.book.Book;
 import nl.workingtalent.wtacademy.bookcopy.BookCopy;
 import nl.workingtalent.wtacademy.reservation.Reservation;
 
@@ -15,6 +15,7 @@ public class ReadLoanDto {
 	private long userId;
 	private Long reservationId;
 	private Long bookCopyId;
+	private Long bookId;
 	private Boolean isActive;
 
 	public ReadLoanDto(Loan loan) {
@@ -30,6 +31,8 @@ public class ReadLoanDto {
 		reservationId = (reservation != null) ? reservation.getId() : null;
 		BookCopy bookCopy = loan.getBookCopy();
 		bookCopyId = (bookCopy != null) ? bookCopy.getId() : null;
+		Book book = loan.getBookCopy().getBook();
+		bookId = (book != null) ? book.getId() : null;
 	}
 
 	public long getId() {
@@ -96,12 +99,19 @@ public class ReadLoanDto {
 		this.bookCopyId = bookCopyId;
 	}
 
-	public Boolean isActive() {
+	public Long getBookId() {
+		return bookId;
+	}
+
+	public void setBookId(Long bookId) {
+		this.bookId = bookId;
+	}
+
+	public Boolean getIsActive() {
 		return isActive;
 	}
 
-	public void setActive(Boolean isActive) {
+	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
 	}
-
 }
