@@ -20,9 +20,10 @@ public class Review {
 	@Column(name = "id")
 	private long id;
 	private String reviewText;
-	
+
+	@Column(nullable = false)
 	private byte rating;
-	
+	@Column(nullable = false)
 	private LocalDate date;
 	
 	@ManyToOne

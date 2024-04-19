@@ -96,6 +96,41 @@ public class ReviewController {
         return new ResponseDto(true, null, null, "Review created.");
     }
 
+    @PutMapping("review/update")
+    public ResponseDto updateReview(UpdateReviewDto dto, HttpServletRequest request) {
+        User requestUser = (User) request.getAttribute("WT_USER");
+        if (requestUser == null) {
+            return new ResponseDto(false, null, null, "No user found.");
+        }
+
+        Optional<Review> reviewOptional = service.getReviewById(dto.getReviewId());
+        if (reviewOptional.isEmpty()) {
+            return new ResponseDto(false, null, null, "Review not found.");
+        }
+        Review review = reviewOptional.get();
+
+        if (requestUser.getRole() == Role.TRAINER || review.getUser().getId() == requestUser.getId()) {
+            if (dto.getRating() < 1 || dto.getRating() > 5) {
+                return new ResponseDto(false, null, null, "Rating must be between 1 and 5.");
+            } else {
+                review.setRating(dto.getRating());
+            }
+
+            if (dto.getDate() != null) {
+                review.setDate(dto.getDate());
+            }
+
+            if (dto.getReviewText() != null) {
+                review.setReviewText(dto.getReviewText());
+            }
+
+            service.updateReview(review);
+            return new ResponseDto(true, null, null, "Review updated.");
+        } else {
+            return new ResponseDto(false, null, null, "You are not allowed to update this review.");
+        }
+    }
+
     @DeleteMapping("review/delete/{id}")
     public ResponseDto deleteReview(@PathVariable("id") long id, HttpServletRequest request) {
         User requestUser = (User) request.getAttribute("WT_USER");
