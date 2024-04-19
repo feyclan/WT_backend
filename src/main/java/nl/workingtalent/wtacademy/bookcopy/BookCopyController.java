@@ -70,6 +70,7 @@ public class BookCopyController {
 			copy.setState(state);
 			copy.setBook(dbBook);
 			copy.setWTId(bookId + "." + bookCopyCounter);
+			copy.setAvailable(true);
 
 			service.addBookCopy(copy);
 
@@ -88,6 +89,7 @@ public class BookCopyController {
 		BookCopy dbCopy = service.getBookCopyById(dto.getId()).get();
 
 		dbCopy.setState(dto.getState());
+		dbCopy.setAvailable(dto.isAvailable());
 
 		service.addBookCopy(dbCopy);
 		return new ResponseDto(true, null, null, "Copy succesfully updated.");
