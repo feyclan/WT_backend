@@ -1,14 +1,8 @@
 package nl.workingtalent.wtacademy.user;
 
 import java.util.List;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+
+import jakarta.persistence.*;
 import nl.workingtalent.wtacademy.loan.Loan;
 import nl.workingtalent.wtacademy.reservation.Reservation;
 import nl.workingtalent.wtacademy.review.Review;
@@ -42,7 +36,7 @@ public class User {
 	@OneToMany(mappedBy = "user")
 	private List<Reservation> reservations;
 	
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
 	private List<Loan> loans;
 	
 	@Column(length = 100, unique = true)

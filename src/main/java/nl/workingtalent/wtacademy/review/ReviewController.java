@@ -27,7 +27,7 @@ public class ReviewController {
     @Autowired
     private BookService bookService;
 
-    @GetMapping("review/book/all/{bookId}")
+    @GetMapping("review/book/{bookId}")
     public ResponseDto getAllReviews(@PathVariable("bookId") long bookId, HttpServletRequest request, @RequestBody int pageNr) {
         Optional<Book> bookOptional = bookService.getBookById(bookId);
         if (bookOptional.isEmpty()) {
@@ -46,7 +46,7 @@ public class ReviewController {
             return new ReadReviewDto(review);
         });
 
-        return new ResponseDto(true, null, null, "Reviews found.");
+        return new ResponseDto(true, dtos, null, "Reviews found.");
     }
 
     @PostMapping("review/create")
@@ -64,7 +64,7 @@ public class ReviewController {
 
 //		Check if user has borrowed and returned the book
         boolean hasReturnedBook = requestUser.getLoans().stream()
-                .anyMatch(loan -> loan.getBookCopy().getBook().getId() == book.getId() && loan.getEndDate() != null);
+                .anyMatch(loan -> loan.getBookCopy().getBook().getId() == book.getId() && !loan.isActive());
 
         if (!hasReturnedBook) {
             return new ResponseDto(false, null, null, "You have not returned the book yet.");
@@ -85,12 +85,12 @@ public class ReviewController {
             review.setDate(LocalDate.now());
         }
 
-
         if (dto.getReviewText() != null) {
             review.setReviewText(dto.getReviewText());
         }
 
         review.setBook(book);
+        review.setUser(requestUser);
         service.addReview(review);
 
         return new ResponseDto(true, null, null, "Review created.");
