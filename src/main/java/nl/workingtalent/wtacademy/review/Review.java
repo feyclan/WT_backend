@@ -19,9 +19,7 @@ public class Review {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private long id;
-	
-	
-	private String review;
+	private String reviewText;
 	
 	private byte rating;
 	
@@ -41,12 +39,12 @@ public class Review {
 		this.id = id;
 	}
 
-	public String getReview() {
-		return review;
+	public String getReviewText() {
+		return reviewText;
 	}
 
-	public void setReview(String review) {
-		this.review = review;
+	public void setReviewText(String reviewText) {
+		this.reviewText = reviewText;
 	}
 
 	public byte getRating() {
