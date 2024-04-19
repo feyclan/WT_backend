@@ -161,8 +161,9 @@ public class LoanController {
 		if(dto.getConditionEnd() != null){
 			dbLoan.setConditionEnd(dto.getConditionEnd());
 		}
-
-		dbLoan.setActive(dto.isActive());
+		if(dto.getIsCurrentlyUsed() != null) {
+			dbLoan.setActive(dto.getIsCurrentlyUsed());
+		}
 		
 //		BookCopy is available again if loan is ended
 		if(!dbLoan.isActive()) {
