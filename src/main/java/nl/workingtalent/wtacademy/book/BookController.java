@@ -22,6 +22,7 @@ import nl.workingtalent.wtacademy.author.Author;
 import nl.workingtalent.wtacademy.author.AuthorService;
 import nl.workingtalent.wtacademy.bookcopy.BookCopy;
 import nl.workingtalent.wtacademy.bookcopy.BookCopyService;
+import nl.workingtalent.wtacademy.bookcopy.ReadBookCopyDto;
 import nl.workingtalent.wtacademy.category.Category;
 import nl.workingtalent.wtacademy.category.CategoryService;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
@@ -121,6 +122,7 @@ public class BookController {
 		if (saveBookDto.getStates() == null || saveBookDto.getStates().isEmpty()) {
 			return new ResponseDto(false, null, null, "At least one book copy with state is required.");
 		}
+
 		User user = (User) request.getAttribute("WT_USER");
 		if (user == null || user.getRole() != Role.TRAINER) {
 			return ResponseDto.createPermissionDeniedResponse();
@@ -142,18 +144,24 @@ public class BookController {
 		// Initialized at 1, assumed that when adding a book we start counting copies
 		// from 1
 		int bookCopyCounter = 1;
-		// For each state given add a book copy with a unique id and that given state
+
+		
+		List<ReadBookCopyDto> bookCopyList = new ArrayList<>();
+		//For each state given add a book copy with a unique id and that given state
+
 		for (String state : saveBookDto.getStates()) {
 			BookCopy copy = new BookCopy();
 			copy.setBook(dbBook);
 			copy.setState(state);
 			copy.setWTId(dbBook.getId() + "." + bookCopyCounter);
-
+			copy.setAvailable(true);
+			
 			bookCopyService.addBookCopy(copy);
 			bookCopyCounter++;
+			bookCopyList.add(new ReadBookCopyDto(copy));
 		}
 
-		return new ResponseDto(true, null, null, "Book created.");
+		return new ResponseDto(true, bookCopyList, null, "Book created.");
 	}
 
 	@PutMapping("book/update")
