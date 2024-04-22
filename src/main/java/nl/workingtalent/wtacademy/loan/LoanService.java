@@ -52,4 +52,8 @@ public class LoanService {
 		repository.deleteById(id);
 	}
 
+	public List<Loan> findAllLoansForUser(long id) {
+		return repository.findByUserId(id);
+	}
+
 }

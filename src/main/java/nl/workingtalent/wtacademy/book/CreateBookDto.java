@@ -20,7 +20,6 @@ public class CreateBookDto {
 	private List<String> categories;
 
 	private List<String> states;
-	private String token;
 
 	public LocalDate getPublishingDate() {
 		return publishingDate;
@@ -84,14 +83,6 @@ public class CreateBookDto {
 
 	public List<String> getStates() {
 		return states;
-	}
-	
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-	public String getToken() {
-		return token;
 	}
 
 }

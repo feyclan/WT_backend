@@ -14,4 +14,6 @@ public interface IReservationRepository extends JpaRepository<Reservation, Long>
 			+ "AND (:date is null OR r.requestDate = :date)")
 	List<Reservation> search(@Param("request") ReservationRequest request, @Param("date") LocalDate date);
 
+	List<Reservation> findByUserId(long userId);
+
 }

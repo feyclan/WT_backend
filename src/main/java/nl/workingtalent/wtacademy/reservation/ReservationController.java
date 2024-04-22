@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nl.workingtalent.wtacademy.book.Book;
 import nl.workingtalent.wtacademy.book.BookService;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
+import nl.workingtalent.wtacademy.user.Role;
 import nl.workingtalent.wtacademy.user.User;
 import nl.workingtalent.wtacademy.user.UserService;
 
@@ -35,7 +37,13 @@ public class ReservationController {
 
 	// READ
 	@RequestMapping("reservation/all")
-	public ResponseDto findAllReservations() {
+	public ResponseDto findAllReservations(HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null || user.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		List<Reservation> reservations = service.findAllReservations();
 
 		if (reservations.isEmpty()) {
@@ -48,7 +56,13 @@ public class ReservationController {
 	}
 
 	@RequestMapping("reservation/{id}")
-	public ResponseDto findReservationById(@PathVariable("id") long id) {
+	public ResponseDto findReservationById(@PathVariable("id") long id, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null || user.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		Optional<Reservation> reservationOptional = service.findReservationById(id);
 
 		if (reservationOptional.isPresent()) {
@@ -59,8 +73,30 @@ public class ReservationController {
 		return new ResponseDto(false, null, null, "No reservation found.");
 	}
 
+	//Find all reservations for currently logged in user, to be displayed on profile for example
+	@RequestMapping("reservation/user/all")
+	public ResponseDto findReservationsForUser(HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
+		List<Reservation> reservations = service.findAllReservationsForUser(user.getId());
+		Stream<ReadReservationDto> readReservationDtoStream = getReservations(reservations);
+
+		return new ResponseDto(true, readReservationDtoStream, null,
+				reservations.size() + (reservations.size() < 2 ? " reservation " : " reservations ") + "found.");
+	}
+
 	@PostMapping("reservation/search")
-	public ResponseDto searchReservation(@RequestBody SearchReservationDto dto) {
+	public ResponseDto searchReservation(@RequestBody SearchReservationDto dto, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null || user.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		List<Reservation> reservations = service.searchReservations(dto);
 		Stream<ReadReservationDto> dtos = reservations.stream().map((reservation) -> {
 			return new ReadReservationDto(reservation);
@@ -71,22 +107,29 @@ public class ReservationController {
 
 	// CREATE
 	@PostMapping("reservation/create")
-	public ResponseDto createReservation(@RequestBody CreateReservationDto dto) {
+	public ResponseDto createReservation(@RequestBody CreateReservationDto dto, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
+		if (dto.getRequestDate() == null) {
+			return new ResponseDto(false, null, null, "Date required.");
+		}
+
+		if (dto.getReservationRequest() == null) {
+			return new ResponseDto(false, null, null, "Reservation status is required.");
+		}
+
 		Optional<Book> optionalBook = bookService.getBookById(dto.getBookId());
-		Optional<User> optionalUser = userService.findUserById(dto.getUserId());
 
 		// DOES BOOK EXIST?
 		if (optionalBook.isEmpty()) {
 			return new ResponseDto(false, null, null, "Book not found.");
 		}
 
-		// DOES USER EXIST?
-		if (optionalUser.isEmpty()) {
-			return new ResponseDto(false, null, null, "User not found.");
-		}
-
 		Book book = optionalBook.get();
-		User user = optionalUser.get();
 
 		Reservation newReservation = new Reservation();
 		newReservation.setReservationRequest(dto.getReservationRequest());
@@ -100,7 +143,16 @@ public class ReservationController {
 
 	// UPDATE
 	@PutMapping("reservation/update")
-	public ResponseDto updateReservation(@RequestBody UpdateReservationDto dto) {
+	public ResponseDto updateReservation(@RequestBody UpdateReservationDto dto, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null || user.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
+		if (dto.getReservationRequest() == null) {
+			return new ResponseDto(false, null, null, "Reservation status is required.");
+		}
 
 		// DOES RESERVATION EXIST?
 		Optional<Reservation> existingReservation = service.findReservationById(dto.getId());
@@ -120,7 +172,13 @@ public class ReservationController {
 
 	// DELETE
 	@DeleteMapping("reservation/delete/{id}")
-	public ResponseDto deleteReservation(@PathVariable("id") long id) {
+	public ResponseDto deleteReservation(@PathVariable("id") long id, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null || user.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		Optional<Reservation> reservation = service.findReservationById(id);
 
 		if (reservation.isEmpty()) {

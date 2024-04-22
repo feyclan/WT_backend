@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
 import nl.workingtalent.wtacademy.dto.LoginRequestDto;
 import nl.workingtalent.wtacademy.dto.LoginResponseDto;
-import nl.workingtalent.wtacademy.dto.LogoutDto;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
 
 @RestController
@@ -31,7 +31,13 @@ public class UserController {
 
 	// READ
 	@RequestMapping("user/all")
-	public ResponseDto findAllUsers() {
+	public ResponseDto findAllUsers(HttpServletRequest request) {
+
+		User requestUser = (User) request.getAttribute("WT_USER");
+		if (requestUser == null || requestUser.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		List<User> users = service.findAllUsers();
 
 		if (users.isEmpty()) {
@@ -46,7 +52,13 @@ public class UserController {
 	}
 
 	@RequestMapping("user/{id}")
-	public ResponseDto findUserById(@PathVariable("id") long id) {
+	public ResponseDto findUserById(@PathVariable("id") long id, HttpServletRequest request) {
+
+		User requestUser = (User) request.getAttribute("WT_USER");
+		if (requestUser == null || requestUser.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		Optional<User> userOptional = service.findUserById(id);
 
 		if (userOptional.isPresent()) {
@@ -59,7 +71,13 @@ public class UserController {
 	}
 
 	@PostMapping("user/search")
-	public ResponseDto searchUser(@RequestBody SearchUserDto dto) {
+	public ResponseDto searchUser(@RequestBody SearchUserDto dto, HttpServletRequest request) {
+
+		User requestUser = (User) request.getAttribute("WT_USER");
+		if (requestUser == null || requestUser.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		List<User> users = service.searchUser(dto);
 
 		Stream<ReadUserDto> dtos = service.searchUser(dto).stream().map((user) -> {
@@ -71,7 +89,12 @@ public class UserController {
 
 	// CREATE
 	@PostMapping("user/create")
-	public ResponseDto createUser(@RequestBody CreateUserDto dto) {
+	public ResponseDto createUser(@RequestBody CreateUserDto dto, HttpServletRequest request) {
+
+		User requestUser = (User) request.getAttribute("WT_USER");
+		if (requestUser == null || requestUser.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
 
 		if (dto.getFirstName() == null || dto.getLastName() == null || dto.getFirstName().isBlank()
 				|| dto.getLastName().isBlank()) {
@@ -111,7 +134,12 @@ public class UserController {
 
 	// UPDATE
 	@PutMapping("user/update")
-	public ResponseDto updateUser(@RequestBody UpdateUserDto dto) {
+	public ResponseDto updateUser(@RequestBody UpdateUserDto dto, HttpServletRequest request) {
+
+		User requestUser = (User) request.getAttribute("WT_USER");
+		if (requestUser == null || requestUser.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
 
 		// DOES USER EXIST?
 		Optional<User> existingUser = service.findUserById(dto.getId());
@@ -133,12 +161,26 @@ public class UserController {
 		User dbUser = existingUser.get();
 
 		// OVERWRITE
-		dbUser.setFirstName(dto.getFirstName());
-		dbUser.setLastName(dto.getLastName());
-		dbUser.setEmail(dto.getEmail());
-		String hashedPassword = hashSHA256(dto.getPassword());
-		dbUser.setPassword(hashedPassword);
-		dbUser.setRole(dto.getRole());
+		if (dto.getFirstName() != null && !dto.getFirstName().isBlank()) {
+			dbUser.setFirstName(dto.getFirstName());
+		}
+
+		if (dto.getLastName() != null && !dto.getLastName().isBlank()) {
+			dbUser.setLastName(dto.getLastName());
+		}
+
+		if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
+			dbUser.setEmail(dto.getEmail());
+		}
+
+		if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+			String hashedPassword = hashSHA256(dto.getPassword());
+			dbUser.setPassword(hashedPassword);
+		}
+
+		if (dto.getRole() != null) {
+			dbUser.setRole(dto.getRole());
+		}
 
 		// SAVE
 		service.update(dbUser);
@@ -147,7 +189,13 @@ public class UserController {
 
 	// DELETE
 	@DeleteMapping("user/delete/{id}")
-	public ResponseDto deleteUser(@PathVariable("id") long id) {
+	public ResponseDto deleteUser(@PathVariable("id") long id, HttpServletRequest request) {
+
+		User requestUser = (User) request.getAttribute("WT_USER");
+		if (requestUser == null || requestUser.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		Optional<User> user = service.findUserById(id);
 		if (user.isEmpty()) {
 			return new ResponseDto(false, user, null, "User doesn't exist.");
@@ -162,39 +210,39 @@ public class UserController {
 		String hashedPassword = hashSHA256(dto.getPassword());
 		Optional<User> optionalUser = service.login(dto.getEmail(), hashedPassword);
 		if (optionalUser.isEmpty()) {
-			return new ResponseDto(false, null, null, "Gebruiker niet gevonden");
+			return new ResponseDto(false, null, null, "User not found.");
 		}
 
-		// Dit is de gevonden user
+		// Found user
 		User user = optionalUser.get();
 
-		// Generate token -> Maak gebruik van apache commons
+		// Generate token -> uses apache commons
 		user.setToken(RandomStringUtils.random(100, true, true));
 
-		// User opslaan
+		// Store user
 		service.update(user);
 
-		// Data terug esturen naar de frontend
+		// Send response to backend
 		LoginResponseDto loginResponseDto = new LoginResponseDto();
 		loginResponseDto.setName(user.getFirstName() + " " + user.getLastName());
 		loginResponseDto.setToken(user.getToken());
+		loginResponseDto.setRole(user.getRole().name());
 
 		return new ResponseDto(true, loginResponseDto, null, null);
 	}
 
 	@PostMapping("user/logout")
-	public ResponseDto logout(@RequestBody LogoutDto dto) {
-
-		Optional<User> user = service.getUserByToken(dto.getToken());
-		if (user.isEmpty()) {
-			return new ResponseDto(false, null, null, "Geen gebruiker gevonden.");
+	public ResponseDto logout(HttpServletRequest request) {
+		
+		User requestUser = (User) request.getAttribute("WT_USER");
+		if (requestUser == null) {
+			return ResponseDto.createPermissionDeniedResponse();
 		}
 
-		User dbUser = user.get();
-		dbUser.setToken(null);
-		service.update(dbUser);
+		requestUser.setToken(null);
+		service.update(requestUser);
 
-		return new ResponseDto(true, null, null, "Gebruiker is uitgelogd.");
+		return new ResponseDto(true, null, null, "User is logged out.");
 	}
 
 	private String hashSHA256(String input) {
