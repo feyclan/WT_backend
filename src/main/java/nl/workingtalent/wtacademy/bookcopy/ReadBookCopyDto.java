@@ -2,7 +2,7 @@ package nl.workingtalent.wtacademy.bookcopy;
 
 public class ReadBookCopyDto {
 
-	private State state;
+	private String state;
 
 	private long id;
 	
@@ -11,7 +11,7 @@ public class ReadBookCopyDto {
 	private boolean isAvailable;
 
 	public ReadBookCopyDto(BookCopy copy) {
-		this.state = copy.getState();
+		this.state = copy.getState().name(); 
 		this.id = copy.getId();
 		this.WTId = copy.getWTId();		
 		this.isAvailable = copy.isAvailable();
@@ -25,11 +25,11 @@ public class ReadBookCopyDto {
 		WTId = wTId;
 	}
 
-	public State getState() {
+	public String getState() {
 		return state;
 	}
 
-	public void setState(State state) {
+	public void setState(String state) {
 		this.state = state;
 	}
 
