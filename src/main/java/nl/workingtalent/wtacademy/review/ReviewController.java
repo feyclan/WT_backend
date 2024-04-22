@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -27,33 +28,33 @@ public class ReviewController {
     @Autowired
     private BookService bookService;
 
-    @GetMapping("review/book/{bookId}")
+    @PostMapping("review/book/{bookId}")
     public ResponseDto getAllReviews(@PathVariable("bookId") long bookId, HttpServletRequest request, @RequestBody int pageNr) {
+        User requestUser = (User) request.getAttribute("WT_USER");
+        if (requestUser == null) {
+            return ResponseDto.createPermissionDeniedResponse();
+        }
+
         Optional<Book> bookOptional = bookService.getBookById(bookId);
         if (bookOptional.isEmpty()) {
             return new ResponseDto(false, null, null, "Book not found.");
         }
-        Book book = bookOptional.get();
-
-        User requestUser = (User) request.getAttribute("WT_USER");
-        if (requestUser == null) {
-            return new ResponseDto(false, null, null, "No user found.");
-        }
 
         Pageable pageable = PageRequest.of(pageNr, pageSize);
         Page<Review> reviews = service.getAllReviewsForBook(bookId, pageable);
-        Stream<ReadReviewDto> dtos = reviews.stream().map((review) -> {
-            return new ReadReviewDto(review);
-        });
+        Stream<ReadReviewDto> dtos = reviews.stream().map(ReadReviewDto::new).sorted(Comparator.comparing(ReadReviewDto::getDate).reversed());
+        ReadAllReviewDto readAllDto = new ReadAllReviewDto();
+        readAllDto.setDto(dtos);
+        readAllDto.setTotalPages(reviews.getTotalPages());
 
-        return new ResponseDto(true, dtos, null, "Reviews found.");
+        return new ResponseDto(true, readAllDto, null, reviews.getTotalElements() + " reviews found.");
     }
 
     @PostMapping("review/create")
     public ResponseDto createReview(@RequestBody CreateReviewDto dto, HttpServletRequest request) {
         User requestUser = (User) request.getAttribute("WT_USER");
         if (requestUser == null) {
-            return new ResponseDto(false, null, null, "No user found.");
+            return ResponseDto.createPermissionDeniedResponse();
         }
 
         Optional<Book> bookOptional = bookService.getBookById(dto.getBookId());
