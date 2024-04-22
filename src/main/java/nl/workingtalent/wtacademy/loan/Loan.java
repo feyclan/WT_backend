@@ -23,7 +23,7 @@ public class Loan {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private State conditionStart;
-	
+
 	@Enumerated(EnumType.STRING)
 	private State conditionEnd;
 	
