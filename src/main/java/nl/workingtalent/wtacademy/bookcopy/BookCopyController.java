@@ -83,7 +83,7 @@ public class BookCopyController {
 		Book dbBook = book.get();
 		long bookId = dbBook.getId();
 
-		// List to return information to front-end
+		// Initialize list to return information to front-end
 		List<ReadBookCopyDto> bookCopyList = new ArrayList<>();
 		
 		// Initialized as the amount of book copies already present for a book + 1
