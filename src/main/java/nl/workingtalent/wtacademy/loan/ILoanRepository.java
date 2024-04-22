@@ -3,6 +3,7 @@ package nl.workingtalent.wtacademy.loan;
 import java.time.LocalDate;
 import java.util.List;
 
+import nl.workingtalent.wtacademy.bookcopy.State;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,8 +16,8 @@ public interface ILoanRepository extends JpaRepository<Loan, Long> {
 			+ "(:conditionEnd IS NULL OR l.conditionEnd = :conditionEnd) AND "
 			+ "(:isActive IS NULL OR l.isActive = :isActive)")
 	List<Loan> search(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate,
-			@Param("conditionStart") String conditionStart, @Param("conditionEnd") String conditionEnd,
-			@Param("isActive") Boolean isActive);
+					  @Param("conditionStart") State conditionStart, @Param("conditionEnd") State conditionEnd,
+					  @Param("isActive") Boolean isActive);
 	
 	List<Loan> findByUserId(long userId);
 }

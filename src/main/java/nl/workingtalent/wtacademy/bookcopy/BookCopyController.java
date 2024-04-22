@@ -85,7 +85,7 @@ public class BookCopyController {
 		// Initialized as the amount of book copies already present for a book + 1
 		int bookCopyCounter = service.getAllCopiesForBookId(bookId).size() + 1;
 
-		for (String state : dto.getStates()) {
+		for (State state : dto.getStates()) {
 			BookCopy copy = new BookCopy();
 
 			copy.setState(state);
@@ -115,14 +115,14 @@ public class BookCopyController {
 			return new ResponseDto(false, null, null, "Copy does not exist with id " + dto.getId());
 		BookCopy dbCopy = service.getBookCopyById(dto.getId()).get();
 
-		if (dto.getState() != null && !dto.getState().isBlank()) {
+		if (dto.getState() != null) {
 			dbCopy.setState(dto.getState());
 		}
 
 		dbCopy.setAvailable(dto.isAvailable());
 
 		service.addBookCopy(dbCopy);
-		return new ResponseDto(true, null, null, "Copy succesfully updated.");
+		return new ResponseDto(true, null, null, "Copy successfully updated.");
 	}
 
 	@DeleteMapping("bookcopy/delete/{bookCopyId}")

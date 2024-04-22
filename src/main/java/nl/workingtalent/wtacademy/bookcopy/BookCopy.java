@@ -2,14 +2,7 @@ package nl.workingtalent.wtacademy.bookcopy;
 
 import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import nl.workingtalent.wtacademy.book.Book;
 import nl.workingtalent.wtacademy.loan.Loan;
 
@@ -21,7 +14,8 @@ public class BookCopy {
 	@Column(name = "id")
 	private long id;
 
-	private String state;
+	@Enumerated(EnumType.STRING)
+	private State state;
 
 	private String WTId;
 
@@ -41,11 +35,11 @@ public class BookCopy {
 		this.id = id;
 	}
 
-	public String getState() {
+	public State getState() {
 		return state;
 	}
 
-	public void setState(String state) {
+	public void setState(State state) {
 		this.state = state;
 	}
 

@@ -3,6 +3,7 @@ package nl.workingtalent.wtacademy.loan;
 import java.time.LocalDate;
 import nl.workingtalent.wtacademy.book.Book;
 import nl.workingtalent.wtacademy.bookcopy.BookCopy;
+import nl.workingtalent.wtacademy.bookcopy.State;
 import nl.workingtalent.wtacademy.reservation.Reservation;
 
 public class ReadLoanDto {
@@ -10,8 +11,8 @@ public class ReadLoanDto {
 	private long id;
 	private LocalDate startDate;
 	private LocalDate endDate;
-	private String conditionStart;
-	private String conditionEnd;
+	private State conditionStart;
+	private State conditionEnd;
 	private long userId;
 	private Long reservationId;
 	private Long bookCopyId;
@@ -59,20 +60,28 @@ public class ReadLoanDto {
 		this.endDate = endDate;
 	}
 
-	public String getConditionStart() {
+	public State getConditionStart() {
 		return conditionStart;
 	}
 
-	public void setConditionStart(String conditionStart) {
+	public void setConditionStart(State conditionStart) {
 		this.conditionStart = conditionStart;
 	}
 
-	public String getConditionEnd() {
+	public State getConditionEnd() {
 		return conditionEnd;
 	}
 
-	public void setConditionEnd(String conditionEnd) {
+	public void setConditionEnd(State conditionEnd) {
 		this.conditionEnd = conditionEnd;
+	}
+
+	public Boolean getActive() {
+		return isActive;
+	}
+
+	public void setActive(Boolean active) {
+		isActive = active;
 	}
 
 	public long getUserId() {

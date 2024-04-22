@@ -1,5 +1,7 @@
 package nl.workingtalent.wtacademy.book;
 
+import nl.workingtalent.wtacademy.bookcopy.State;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class CreateBookDto {
 
 	private List<String> categories;
 
-	private List<String> states;
+	private List<State> states;
 
 	public LocalDate getPublishingDate() {
 		return publishingDate;
@@ -77,12 +79,11 @@ public class CreateBookDto {
 		this.categories = categories;
 	}
 
-	public void setStates(List<String> states) {
-		this.states = states;
-	}
-
-	public List<String> getStates() {
+	public List<State> getStates() {
 		return states;
 	}
 
+	public void setStates(List<State> states) {
+		this.states = states;
+	}
 }

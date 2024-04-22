@@ -4,15 +4,15 @@ import java.util.List;
 
 public class CreateBookCopyDto {
 	
-	private List<String> states;
+	private List<State> states;
 
 	private long bookId;
 
-	public List<String> getStates() {
+	public List<State> getStates() {
 		return states;
 	}
 
-	public void setStates(List<String> states) {
+	public void setStates(List<State> states) {
 		this.states = states;
 	}
 

@@ -143,7 +143,7 @@ public class LoanController {
 			return new ResponseDto(false, null, null, "Start date is required.");
 		}
 
-		if (dto.getConditionStart() == null || dto.getConditionStart().isBlank()) {
+		if (dto.getConditionStart() == null ) {
 			return new ResponseDto(false, null, null, "Condition at start is required.");
 		}
 

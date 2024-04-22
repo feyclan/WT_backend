@@ -2,16 +2,9 @@ package nl.workingtalent.wtacademy.loan;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import nl.workingtalent.wtacademy.bookcopy.BookCopy;
+import nl.workingtalent.wtacademy.bookcopy.State;
 import nl.workingtalent.wtacademy.reservation.Reservation;
 import nl.workingtalent.wtacademy.user.User;
 
@@ -28,9 +21,11 @@ public class Loan {
 	private LocalDate endDate;
 	
 	@Column(nullable = false)
-	private String conditionStart;
+	@Enumerated(EnumType.STRING)
+	private State conditionStart;
 	
-	private String conditionEnd;
+	@Enumerated(EnumType.STRING)
+	private State conditionEnd;
 	
 	@ManyToOne
 	private User user;
@@ -68,19 +63,19 @@ public class Loan {
 		this.endDate = endDate;
 	}
 
-	public String getConditionStart() {
+	public State getConditionStart() {
 		return conditionStart;
 	}
 
-	public void setConditionStart(String conditionStart) {
+	public void setConditionStart(State conditionStart) {
 		this.conditionStart = conditionStart;
 	}
 
-	public String getConditionEnd() {
+	public State getConditionEnd() {
 		return conditionEnd;
 	}
 
-	public void setConditionEnd(String conditionEnd) {
+	public void setConditionEnd(State conditionEnd) {
 		this.conditionEnd = conditionEnd;
 	}
 
