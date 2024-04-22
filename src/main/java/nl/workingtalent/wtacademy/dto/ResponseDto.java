@@ -49,6 +49,10 @@ public class ResponseDto {
 	public void setValidationMessage(String validationMessage) {
 		this.validationMessage = validationMessage;
 	}
+	
+	public static ResponseDto createPermissionDeniedResponse() {
+		return new ResponseDto(false, null, Arrays.asList("Permission denied"), null);
+	}
 
 	public static ResponseDto createPermissionDeniedResponse() {
 		return new ResponseDto(false, null, Arrays.asList("Permission denied"), null);

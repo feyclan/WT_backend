@@ -17,31 +17,31 @@ import nl.workingtalent.wtacademy.user.User;
 @Component
 public class CheckTokenFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private IUserRepository userRepository;
+	@Autowired
+	private IUserRepository userRepository;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
 
-        String token = request.getHeader("Authorization");
+		String token = request.getHeader("Authorization");
 
-        if (token != null) {
+		if (token != null) {
 
-            token = token.substring(7);
+			token = token.substring(7);
 
-            Optional<User> optionalUser = userRepository.findByToken(token);
+			Optional<User> optionalUser = userRepository.findByToken(token);
 
-            if (optionalUser.isEmpty()) {
-                response.sendError(401);
-                return;
-            } else {
-
-                request.setAttribute("WT_USER", optionalUser.get());
-
-            }
-        }
-
-        filterChain.doFilter(request, response);
-    }
+			if (optionalUser.isEmpty()) {
+				response.sendError(401);
+				return;
+			} else {
+				
+				request.setAttribute("WT_USER", optionalUser.get());
+				
+			}
+		}
+		
+		filterChain.doFilter(request, response);
+	}
 }

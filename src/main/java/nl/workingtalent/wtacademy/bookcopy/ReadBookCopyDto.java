@@ -6,12 +6,23 @@ public class ReadBookCopyDto {
 
 	private long id;
 	
+	private String WTId;
+	
 	private boolean isAvailable;
 
 	public ReadBookCopyDto(BookCopy copy) {
 		this.state = copy.getState();
 		this.id = copy.getId();
+		this.WTId = copy.getWTId();		
 		this.isAvailable = copy.isAvailable();
+	}
+
+	public String getWTId() {
+		return WTId;
+	}
+
+	public void setWTId(String wTId) {
+		WTId = wTId;
 	}
 
 	public String getState() {

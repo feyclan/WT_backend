@@ -17,4 +17,6 @@ public interface ILoanRepository extends JpaRepository<Loan, Long> {
 	List<Loan> search(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate,
 			@Param("conditionStart") String conditionStart, @Param("conditionEnd") String conditionEnd,
 			@Param("isActive") Boolean isActive);
+	
+	List<Loan> findByUserId(long userId);
 }

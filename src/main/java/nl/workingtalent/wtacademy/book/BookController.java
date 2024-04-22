@@ -15,11 +15,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.servlet.http.HttpServletRequest;
 import nl.workingtalent.wtacademy.author.Author;
 
 import nl.workingtalent.wtacademy.author.AuthorService;
 import nl.workingtalent.wtacademy.bookcopy.BookCopy;
 import nl.workingtalent.wtacademy.bookcopy.BookCopyService;
+import nl.workingtalent.wtacademy.bookcopy.ReadBookCopyDto;
 import nl.workingtalent.wtacademy.category.Category;
 import nl.workingtalent.wtacademy.category.CategoryService;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
@@ -39,15 +42,18 @@ public class BookController {
 
 	@Autowired
 	private CategoryService categoryService;
-	
-	@Autowired
-	private UserService userService;
-	
+
 	@Autowired
 	private BookCopyService bookCopyService;
 
 	@PostMapping("book/all")
-	public ResponseDto getAllBooks(@RequestBody int pageNr) {
+	public ResponseDto getAllBooks(@RequestBody int pageNr, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		Page<Book> books = service.getAllBooks(pageNr);
 		Stream<ReadBookDto> dtos = books.stream().map((book) -> {
 			return new ReadBookDto(book);
@@ -60,7 +66,13 @@ public class BookController {
 	}
 
 	@RequestMapping("book/{id}")
-	public ResponseDto getBookById(@PathVariable("id") int id) {
+	public ResponseDto getBookById(@PathVariable("id") int id, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		Optional<Book> book = service.getBookById(id);
 		if (book.isEmpty()) {
 			return new ResponseDto(false, null, null, "No book with id " + id + " found.");
@@ -69,27 +81,32 @@ public class BookController {
 	}
 
 	@PostMapping("book/search")
-	public ResponseDto searchBook(@RequestBody SearchBookDto dto) {
+	public ResponseDto searchBook(@RequestBody SearchBookDto dto, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		Page<Book> books = service.searchBooks(dto);
 		Stream<ReadBookDto> dtos = books.stream().map((book) -> {
 			return new ReadBookDto(book);
 		});
-		
+
 		ReadAllBookDto resultDto = new ReadAllBookDto();
 		resultDto.setTotalPages(books.getTotalPages());
 		resultDto.setBooks(dtos);
-		
-		
+
 		return new ResponseDto(true, resultDto, null, books.getNumberOfElements() + " books found.");
 
 	}
 
 	@PostMapping("book/create")
-	public ResponseDto addBook(@RequestBody CreateBookDto saveBookDto) {
+	public ResponseDto addBook(@RequestBody CreateBookDto saveBookDto, HttpServletRequest request) {
 		if (saveBookDto.getTitle() == null || saveBookDto.getTitle().isBlank()) {
 			return new ResponseDto(false, null, null, "Title is required.");
 		}
-		
+
 		if (saveBookDto.getDescription() == null || saveBookDto.getDescription().isBlank()) {
 			return new ResponseDto(false, null, null, "Description is required.");
 		}
@@ -105,9 +122,10 @@ public class BookController {
 		if (saveBookDto.getStates() == null || saveBookDto.getStates().isEmpty()) {
 			return new ResponseDto(false, null, null, "At least one book copy with state is required.");
 		}
-		Optional<User> user = userService.getUserByToken(saveBookDto.getToken());
-		if (user.isEmpty() || user.get().getRole() != Role.TRAINER) {
-			return new ResponseDto(false, null, null, "Action not allowed.");
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null || user.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
 		}
 
 		Book dbBook = new Book();
@@ -123,24 +141,36 @@ public class BookController {
 
 		service.addBook(dbBook);
 
-		// Initialized at 1, assumed that when adding a book we start counting copies from 1
+		// Initialized at 1, assumed that when adding a book we start counting copies
+		// from 1
 		int bookCopyCounter = 1;
+
+		
+		List<ReadBookCopyDto> bookCopyList = new ArrayList<>();
 		//For each state given add a book copy with a unique id and that given state
+
 		for (String state : saveBookDto.getStates()) {
 			BookCopy copy = new BookCopy();
 			copy.setBook(dbBook);
 			copy.setState(state);
 			copy.setWTId(dbBook.getId() + "." + bookCopyCounter);
-
+			copy.setAvailable(true);
+			
 			bookCopyService.addBookCopy(copy);
 			bookCopyCounter++;
+			bookCopyList.add(new ReadBookCopyDto(copy));
 		}
 
-		return new ResponseDto(true, null, null, "Book created.");
+		return new ResponseDto(true, bookCopyList, null, "Book created.");
 	}
 
 	@PutMapping("book/update")
-	public ResponseDto updateBook(@RequestBody UpdateBookDto dto) {
+	public ResponseDto updateBook(@RequestBody UpdateBookDto dto, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null || user.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
 
 		Optional<Book> optional = service.getBookById(dto.getId());
 
@@ -151,18 +181,31 @@ public class BookController {
 		Book book = optional.get();
 
 		// Check whether all data is filled
+		if (dto.getDescription() != null && !dto.getDescription().isBlank()) {
+			book.setDescription(dto.getDescription());
+		}
 
-		book.setDescription(dto.getDescription());
-		book.setImageLink(dto.getImageLink());
-		book.setPublishingDate(dto.getPublishingDate());
-		book.setTitle(dto.getTitle());
-		book.setIsbn(dto.getIsbn());
+		if (dto.getImageLink() != null && !dto.getImageLink().isBlank()) {
+			book.setImageLink(dto.getImageLink());
+		}
 
-		if (dto.getAuthors() != null) {
+		if (dto.getPublishingDate() != null) {
+			book.setPublishingDate(dto.getPublishingDate());
+		}
+
+		if (dto.getTitle() != null && !dto.getTitle().isBlank()) {
+			book.setTitle(dto.getTitle());
+		}
+
+		if (dto.getIsbn() != null && !dto.getIsbn().isBlank()) {
+			book.setIsbn(dto.getIsbn());
+		}
+
+		if (dto.getAuthors() != null && !dto.getAuthors().isEmpty()) {
 			book.setAuthors(createAuthorsAndAddToDB(dto.getAuthors()));
 		}
 
-		if (dto.getCategories() != null) {
+		if (dto.getCategories() != null && !dto.getCategories().isEmpty()) {
 			book.setCategories(createCategoriesAndAddToDB(dto.getCategories()));
 		}
 
@@ -171,7 +214,13 @@ public class BookController {
 	}
 
 	@DeleteMapping("books/delete/{id}")
-	public ResponseDto deleteBookById(@PathVariable("id") int id) {
+	public ResponseDto deleteBookById(@PathVariable("id") int id, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null || user.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
 		Optional<Book> book = service.getBookById(id);
 		if (book.isEmpty()) {
 			return new ResponseDto(false, null, null, "No book with id " + id + " found");
