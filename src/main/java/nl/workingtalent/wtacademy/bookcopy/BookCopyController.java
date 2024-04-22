@@ -1,5 +1,6 @@
 package nl.workingtalent.wtacademy.bookcopy;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,6 +83,9 @@ public class BookCopyController {
 		Book dbBook = book.get();
 		long bookId = dbBook.getId();
 
+		// List to return information to front-end
+		List<ReadBookCopyDto> bookCopyList = new ArrayList<>();
+		
 		// Initialized as the amount of book copies already present for a book + 1
 		int bookCopyCounter = service.getAllCopiesForBookId(bookId).size() + 1;
 
@@ -96,9 +100,10 @@ public class BookCopyController {
 			service.addBookCopy(copy);
 
 			bookCopyCounter++;
+			bookCopyList.add(new ReadBookCopyDto(copy));
 		}
 
-		return new ResponseDto(true, null, null, String.valueOf(dto.getStates().size())
+		return new ResponseDto(true, bookCopyList, null, String.valueOf(dto.getStates().size())
 				+ ((dto.getStates().size() < 2) ? " copy was" : " copies were") + " added");
 	}
 
