@@ -54,8 +54,5 @@ public class ResponseDto {
 		return new ResponseDto(false, null, Arrays.asList("Permission denied"), null);
 	}
 
-	public static ResponseDto createPermissionDeniedResponse() {
-		return new ResponseDto(false, null, Arrays.asList("Permission denied"), null);
-	}
 
 }
