@@ -30,6 +30,7 @@ public class ReadLoanDto {
 		userId = loan.getUser().getId();
 		isActive = loan.isActive();
 		bookCopyId = loan.getBookCopy().getId();
+		bookId = loan.getBookCopy().getBook().getId();
 		bookTitle = loan.getBookCopy().getBook().getTitle();
 		bookAuthors = loan.getBookCopy().getBook().getAuthors().stream().map(author -> author.getName())
 				.collect(Collectors.toList());
