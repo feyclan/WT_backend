@@ -41,18 +41,19 @@ public class UserService {
 
 		// Constructing the query based on provided criteria
 		Specification<User> spec = Specification.where(null);
-		Pageable pageable = PageRequest.of(searchUserDto.getPageNr(), pageSize, Sort.by(Sort.Direction.ASC, "lastName"));
-		
-		if(searchUserDto.getFullName() != null && !searchUserDto.getFullName().isBlank()) {
-			
+		Pageable pageable = PageRequest.of(searchUserDto.getPageNr(), pageSize,
+				Sort.by(Sort.Direction.ASC, "lastName"));
+
+		if (searchUserDto.getFullName() != null && !searchUserDto.getFullName().isBlank()) {
+
 			String[] parts = searchUserDto.getFullName().split("\\s+");
-			
-			for (int index = 0; index < parts.length; index++) {
-				final int currentIndex = index;
-				spec = spec.or((root, query, builder) -> builder.like(root.get("firstName"), "%" + parts[currentIndex] + "%"));
-				spec = spec.or((root, query, builder) -> builder.like(root.get("lastName"), "%" + parts[currentIndex] + "%"));
+
+			for (String part : parts) {
+				spec = spec
+						.and((root, query, builder) -> builder.or(builder.like(root.get("firstName"), "%" + part + "%"),
+								builder.like(root.get("lastName"), "%" + part + "%")));
 			}
-			
+
 			return repository.findAll(spec, pageable);
 		}
 
@@ -71,8 +72,6 @@ public class UserService {
 		if (role != null && !role.isEmpty()) {
 			spec = spec.and((root, query, builder) -> builder.equal(root.get("role"), role));
 		}
-
-		
 
 		// Fetching users based on the constructed query
 		return repository.findAll(spec, pageable);
