@@ -94,6 +94,22 @@ public class LoanController {
 		return new ResponseDto(true, readLoanDtoStream, null,
 				loans.size() + (loans.size() < 2 ? " loan " : " loans ") + "found.");
 	}
+	
+	@RequestMapping("loan/user/{id}")
+	public ResponseDto findUserLoansById(@PathVariable("id") long id, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null || user.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+		
+		List<Loan> loans = service.findAllLoansForUser(id);
+
+		Stream<ReadLoanDto> readLoanDtoStream = getLoans(loans);
+
+		return new ResponseDto(true, readLoanDtoStream, null,
+				loans.size() + (loans.size() < 2 ? " loan " : " loans ") + "found.");
+	}
 
 	/**
 	 * Endpoint to search for loans based on the criteria provided in the
