@@ -14,16 +14,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReservationService {
 
-	private final int pageSize = 20;
-
 	@Autowired
 	private IReservationRepository repository;
 
 	// READ
 	public List<Reservation> findAllReservations() {
-		Pageable pageable = PageRequest.of(0, pageSize, Sort.by(Sort.Direction.ASC, "requestDate"));
-		Page<Reservation> page = repository.findAll(pageable);
-		return page.toList();
+		return repository.findAll();
 	}
 
 	public Optional<Reservation> findReservationById(long id) {
