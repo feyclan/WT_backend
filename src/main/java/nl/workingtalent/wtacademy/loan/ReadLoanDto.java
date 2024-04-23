@@ -1,8 +1,8 @@
 package nl.workingtalent.wtacademy.loan;
 
 import java.time.LocalDate;
-import nl.workingtalent.wtacademy.book.Book;
-import nl.workingtalent.wtacademy.bookcopy.BookCopy;
+import java.util.List;
+import java.util.stream.Collectors;
 import nl.workingtalent.wtacademy.bookcopy.State;
 import nl.workingtalent.wtacademy.reservation.Reservation;
 
@@ -13,6 +13,8 @@ public class ReadLoanDto {
 	private LocalDate endDate;
 	private State conditionStart;
 	private State conditionEnd;
+	private String bookTitle;
+	private List<String> bookAuthors;
 	private long userId;
 	private Long reservationId;
 	private Long bookCopyId;
@@ -27,13 +29,14 @@ public class ReadLoanDto {
 		conditionEnd = loan.getConditionEnd();
 		userId = loan.getUser().getId();
 		isActive = loan.isActive();
-		// reservation en bookcopy moeten null kunnen zijn
+		bookCopyId = loan.getBookCopy().getId();
+		bookTitle = loan.getBookCopy().getBook().getTitle();
+		bookAuthors = loan.getBookCopy().getBook().getAuthors().stream().map(author -> author.getName())
+				.collect(Collectors.toList());
+		
+		// Reservation is null if the book has never been reserved before
 		Reservation reservation = loan.getReservation();
-		reservationId = (reservation != null) ? reservation.getId() : null;
-		BookCopy bookCopy = loan.getBookCopy();
-		bookCopyId = (bookCopy != null) ? bookCopy.getId() : null;
-		Book book = loan.getBookCopy().getBook();
-		bookId = (book != null) ? book.getId() : null;
+		reservationId = reservation != null ? reservation.getId() : null;
 	}
 
 	public long getId() {
@@ -76,12 +79,20 @@ public class ReadLoanDto {
 		this.conditionEnd = conditionEnd;
 	}
 
-	public Boolean getActive() {
-		return isActive;
+	public String getBookTitle() {
+		return bookTitle;
 	}
 
-	public void setActive(Boolean active) {
-		isActive = active;
+	public void setBookTitle(String bookTitle) {
+		this.bookTitle = bookTitle;
+	}
+
+	public List<String> getBookAuthors() {
+		return bookAuthors;
+	}
+
+	public void setBookAuthors(List<String> bookAuthors) {
+		this.bookAuthors = bookAuthors;
 	}
 
 	public long getUserId() {
