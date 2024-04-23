@@ -4,18 +4,29 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
+	private final int pageSize = 5;
+
 	@Autowired
 	private IUserRepository repository;
 
 	// READ
-	public List<User> findAllUsers() {
-		return repository.findAll();
+	public Page<User> findAllUsers(int pageNr) {
+
+		// Get a page of certain size, sorted by last name
+		Pageable pageable = PageRequest.of(pageNr, pageSize, Sort.by(Sort.Direction.ASC, "lastName"));
+		Page<User> page = repository.findAll(pageable);
+
+		return page;
 	}
 
 	public Optional<User> findUserById(long id) {
