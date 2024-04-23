@@ -33,7 +33,7 @@ public class UserService {
 		return repository.findById(id);
 	}
 
-	public List<User> searchUser(SearchUserDto searchUserDto) {
+	public Page<User> searchUser(SearchUserDto searchUserDto) {
 		String firstName = searchUserDto.getFirstName();
 		String lastName = searchUserDto.getLastName();
 		String email = searchUserDto.getEmail();
@@ -41,6 +41,20 @@ public class UserService {
 
 		// Constructing the query based on provided criteria
 		Specification<User> spec = Specification.where(null);
+		Pageable pageable = PageRequest.of(searchUserDto.getPageNr(), pageSize, Sort.by(Sort.Direction.ASC, "lastName"));
+		
+		if(searchUserDto.getFullName() != null && !searchUserDto.getFullName().isBlank()) {
+			
+			String[] parts = searchUserDto.getFullName().split("\\s+");
+			
+			for (int index = 0; index < parts.length; index++) {
+				final int currentIndex = index;
+				spec = spec.or((root, query, builder) -> builder.like(root.get("firstName"), "%" + parts[currentIndex] + "%"));
+				spec = spec.or((root, query, builder) -> builder.like(root.get("lastName"), "%" + parts[currentIndex] + "%"));
+			}
+			
+			return repository.findAll(spec, pageable);
+		}
 
 		if (firstName != null && !firstName.isEmpty()) {
 			spec = spec.and((root, query, builder) -> builder.like(root.get("firstName"), "%" + firstName + "%"));
@@ -58,8 +72,10 @@ public class UserService {
 			spec = spec.and((root, query, builder) -> builder.equal(root.get("role"), role));
 		}
 
+		
+
 		// Fetching users based on the constructed query
-		return repository.findAll(spec);
+		return repository.findAll(spec, pageable);
 	}
 
 	public void create(User user) {
