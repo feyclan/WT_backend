@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
+import nl.workingtalent.wtacademy.book.ReadAllBookDto;
 import nl.workingtalent.wtacademy.dto.LoginRequestDto;
 import nl.workingtalent.wtacademy.dto.LoginResponseDto;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
@@ -30,15 +32,15 @@ public class UserController {
 	private UserService service;
 
 	// READ
-	@RequestMapping("user/all")
-	public ResponseDto findAllUsers(HttpServletRequest request) {
+	@PostMapping("user/all")
+	public ResponseDto findAllUsers(@RequestBody int pageNr, HttpServletRequest request) {
 
 		User requestUser = (User) request.getAttribute("WT_USER");
 		if (requestUser == null || requestUser.getRole() != Role.TRAINER) {
 			return ResponseDto.createPermissionDeniedResponse();
 		}
 
-		List<User> users = service.findAllUsers();
+		Page<User> users = service.findAllUsers(pageNr);
 
 		if (users.isEmpty()) {
 			return new ResponseDto(false, null, null, "No users found.");
@@ -47,8 +49,12 @@ public class UserController {
 		Stream<ReadUserDto> readUserDtoStream = users.stream().map(user -> {
 			return new ReadUserDto(user);
 		});
+		
+		ReadAllUserDto dto = new ReadAllUserDto();
+		dto.setTotalPages(users.getTotalPages());
+		dto.setUsers(readUserDtoStream);
 
-		return new ResponseDto(true, readUserDtoStream, null, (users.size() < 2) ? "user" : " users " + " found.");
+		return new ResponseDto(true, dto, null, (users.getNumberOfElements() < 2) ? "user" : " users " + " found.");
 	}
 
 	@RequestMapping("user/{id}")
