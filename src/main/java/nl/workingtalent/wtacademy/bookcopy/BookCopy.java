@@ -15,6 +15,7 @@ public class BookCopy {
 	private long id;
 
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private State state;
 
 	private String WTId;
