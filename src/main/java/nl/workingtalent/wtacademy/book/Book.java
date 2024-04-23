@@ -26,7 +26,7 @@ public class Book {
 	@Column(length = 450, nullable = false)
 	private String title;
 
-	@Column(nullable = false)
+	@Column(length = 500, nullable = false)
 	private String description;
 
 	private LocalDate publishingDate;

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import nl.workingtalent.wtacademy.bookcopy.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,8 +32,8 @@ public class LoanService {
 	public List<Loan> searchLoans(SearchLoanDto searchLoanDto) {
 		LocalDate startDate = searchLoanDto.getStartDate();
 		LocalDate endDate = searchLoanDto.getEndDate();
-		String conditionStart = searchLoanDto.getConditionStart();
-		String conditionEnd = searchLoanDto.getConditionEnd();
+		State conditionStart = searchLoanDto.getConditionStart();
+		State conditionEnd = searchLoanDto.getConditionEnd();
 		Boolean isActive = searchLoanDto.getIsActive();
 		return repository.search(startDate, endDate, conditionStart, conditionEnd, isActive);
 	}

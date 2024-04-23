@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import nl.workingtalent.wtacademy.bookcopy.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -149,7 +150,7 @@ public class BookController {
 		List<ReadBookCopyDto> bookCopyList = new ArrayList<>();
 		//For each state given add a book copy with a unique id and that given state
 
-		for (String state : saveBookDto.getStates()) {
+		for (State state : saveBookDto.getStates()) {
 			BookCopy copy = new BookCopy();
 			copy.setBook(dbBook);
 			copy.setState(state);

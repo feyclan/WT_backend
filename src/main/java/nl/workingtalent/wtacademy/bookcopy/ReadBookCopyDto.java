@@ -11,7 +11,7 @@ public class ReadBookCopyDto {
 	private boolean isAvailable;
 
 	public ReadBookCopyDto(BookCopy copy) {
-		this.state = copy.getState();
+		this.state = copy.getState().name(); 
 		this.id = copy.getId();
 		this.WTId = copy.getWTId();		
 		this.isAvailable = copy.isAvailable();

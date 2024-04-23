@@ -19,9 +19,7 @@ public class ReservationService {
 
 	// READ
 	public List<Reservation> findAllReservations() {
-		Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.ASC, "requestDate"));
-		Page<Reservation> page = repository.findAll(pageable);
-		return page.toList();
+		return repository.findAll();
 	}
 
 	public Optional<Reservation> findReservationById(long id) {

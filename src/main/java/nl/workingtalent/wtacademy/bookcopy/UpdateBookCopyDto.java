@@ -1,17 +1,17 @@
 package nl.workingtalent.wtacademy.bookcopy;
 
 public class UpdateBookCopyDto {
-	private String state;
+	private State state;
 
 	private long id;
 	
 	private boolean isAvailable;
 
-	public String getState() {
+	public State getState() {
 		return state;
 	}
 
-	public void setState(String state) {
+	public void setState(State state) {
 		this.state = state;
 	}
 
