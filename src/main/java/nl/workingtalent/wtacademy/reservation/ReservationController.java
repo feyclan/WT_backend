@@ -1,5 +1,6 @@
 package nl.workingtalent.wtacademy.reservation;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -179,6 +180,8 @@ public class ReservationController {
 
 		// OVERWRITE
 		dbReservation.setReservationRequest(dto.getReservationRequest());
+		dbReservation.setHandleDate(LocalDateTime.now());
+		dbReservation.setHandledBy(user);
 
 		// SAVE
 		service.update(dbReservation);

@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import nl.workingtalent.wtacademy.bookcopy.BookCopy;
 import nl.workingtalent.wtacademy.loan.Loan;
 import nl.workingtalent.wtacademy.reservation.Reservation;
 import nl.workingtalent.wtacademy.review.Review;
@@ -47,6 +48,12 @@ public class User {
 	
 	@Column(length = 100, unique = true)
 	private String token;
+
+	@OneToMany(mappedBy = "addedBy")
+	private List<BookCopy> copiesAdded;
+
+	@OneToMany(mappedBy = "handledBy")
+	private List<Reservation> reservationsHandled;
 
 	public long getId() {
 		return id;
@@ -127,6 +134,21 @@ public class User {
 	public void setToken(String token) {
 		this.token = token;
 	}
-	
 
+	public List<BookCopy> getCopiesAdded() {
+		return copiesAdded;
+	}
+
+	public void setCopiesAdded(List<BookCopy> copiesAdded) {
+		this.copiesAdded = copiesAdded;
+	}
+
+
+	public List<Reservation> getReservationsHandled() {
+		return reservationsHandled;
+	}
+
+	public void setReservationsHandled(List<Reservation> reservationsHandled) {
+		this.reservationsHandled = reservationsHandled;
+	}
 }

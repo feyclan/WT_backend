@@ -1,6 +1,7 @@
 package nl.workingtalent.wtacademy.reservation;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import nl.workingtalent.wtacademy.loan.Loan;
 

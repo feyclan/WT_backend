@@ -1,10 +1,12 @@
 package nl.workingtalent.wtacademy.bookcopy;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.*;
 import nl.workingtalent.wtacademy.book.Book;
 import nl.workingtalent.wtacademy.loan.Loan;
+import nl.workingtalent.wtacademy.user.User;
 
 @Entity
 public class BookCopy {
@@ -27,6 +29,11 @@ public class BookCopy {
 	private List<Loan> loans;
 	
 	private boolean isAvailable;
+
+	private LocalDateTime dateAdded;
+
+	@ManyToOne
+	private User addedBy;
 
 	public long getId() {
 		return id;
@@ -77,4 +84,19 @@ public class BookCopy {
 		WTId = wTId;
 	}
 
+	public LocalDateTime getDateAdded() {
+		return dateAdded;
+	}
+
+	public void setDateAdded(LocalDateTime dateAdded) {
+		this.dateAdded = dateAdded;
+	}
+
+	public User getAddedBy() {
+		return addedBy;
+	}
+
+	public void setAddedBy(User addedBy) {
+		this.addedBy = addedBy;
+	}
 }
