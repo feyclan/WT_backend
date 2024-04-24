@@ -4,37 +4,49 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import nl.workingtalent.wtacademy.bookcopy.BookCopy;
+
 public class ReadBookDto {
 
 	private long id;
-	
+
 	private String description;
-	
+
 	private String isbn;
-	
+
 	private String title;
-	
+
 	private String imageLink;
-	
+
 	private List<String> authors;
-	
+
 	private List<String> categories;
-	
+
 	private int copyCount;
-	
+
+	private int availableCopyCount;
+
 	private LocalDate publishingDate;
-	
+
 	public ReadBookDto(Book book) {
 		id = book.getId();
 		title = book.getTitle();
-		authors = book.getAuthors().stream().map(author -> author.getName()).collect(Collectors.toList());                 
+		authors = book.getAuthors().stream().map(author -> author.getName()).collect(Collectors.toList());
 		copyCount = book.getBookCopies().size();
 		description = book.getDescription();
 		isbn = book.getIsbn();
 		imageLink = book.getImageLink();
 		publishingDate = book.getPublishingDate();
-		categories = book.getCategories().stream().map(category -> category.getCategory()).collect(Collectors.toList()); 
-		
+		categories = book.getCategories().stream().map(category -> category.getCategory()).collect(Collectors.toList());
+
+		availableCopyCount = 0;
+		List<BookCopy> copies = book.getBookCopies();
+		for (BookCopy copy : copies) {
+			if (copy.isAvailable()) {
+				availableCopyCount++;
+			}
+		}
+
 	}
 
 	public long getId() {
@@ -108,7 +120,13 @@ public class ReadBookDto {
 	public void setCategories(List<String> categories) {
 		this.categories = categories;
 	}
-	
-	
-	
+
+	public void setAvailableCopyCount(int availableCopyCount) {
+		this.availableCopyCount = availableCopyCount;
+	}
+
+	public int getAvailableCopyCount() {
+		return availableCopyCount;
+	}
+
 }
