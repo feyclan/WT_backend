@@ -20,9 +20,7 @@ public class LoanService {
 
 	// READ
 	public List<Loan> findAllLoans() {
-		Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.ASC, "endDate"));
-		Page<Loan> page = repository.findAll(pageable);
-		return page.toList();
+		return repository.findAll();
 	}
 
 	public Optional<Loan> findLoanById(long id) {
