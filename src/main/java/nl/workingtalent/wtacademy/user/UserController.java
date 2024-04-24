@@ -49,7 +49,7 @@ public class UserController {
 		Stream<ReadUserDto> readUserDtoStream = users.stream().map(user -> {
 			return new ReadUserDto(user);
 		});
-		
+
 		ReadAllUserDto dto = new ReadAllUserDto();
 		dto.setTotalPages(users.getTotalPages());
 		dto.setUsers(readUserDtoStream);
@@ -84,13 +84,17 @@ public class UserController {
 			return ResponseDto.createPermissionDeniedResponse();
 		}
 
-		List<User> users = service.searchUser(dto);
+		Page<User> users = service.searchUser(dto);
 
 		Stream<ReadUserDto> dtos = service.searchUser(dto).stream().map((user) -> {
 			return new ReadUserDto(user);
 		});
 
-		return new ResponseDto(true, dtos, null, users.size() + " users " + " found.");
+		ReadAllUserDto resultDto = new ReadAllUserDto();
+		resultDto.setTotalPages(users.getTotalPages());
+		resultDto.setUsers(dtos);
+
+		return new ResponseDto(true, resultDto, null, users.getNumberOfElements() + " users " + " found.");
 	}
 
 	// CREATE
@@ -121,7 +125,7 @@ public class UserController {
 		searchDto.setEmail(dto.getEmail());
 
 		// Check if user exists
-		List<User> existingUserEmail = service.searchUser(searchDto);
+		List<User> existingUserEmail = service.searchUser(searchDto).toList(); 
 		if (!existingUserEmail.isEmpty()) {
 			return new ResponseDto(false, null, null, "User with the provided email already exists.");
 		}
@@ -158,7 +162,7 @@ public class UserController {
 		searchDto.setEmail(dto.getEmail());
 
 		// Check if email is already in use
-		List<User> existingUserEmail = service.searchUser(searchDto);
+		List<User> existingUserEmail = service.searchUser(searchDto).toList();
 		if (!existingUserEmail.isEmpty() && existingUserEmail.get(0).getId() != dto.getId()) {
 			return new ResponseDto(false, existingUserEmail.get(0).getEmail(), null,
 					"User with the provided email already exists.");
@@ -239,7 +243,7 @@ public class UserController {
 
 	@PostMapping("user/logout")
 	public ResponseDto logout(HttpServletRequest request) {
-		
+
 		User requestUser = (User) request.getAttribute("WT_USER");
 		if (requestUser == null) {
 			return ResponseDto.createPermissionDeniedResponse();

@@ -1,7 +1,7 @@
 package nl.workingtalent.wtacademy.user;
 
 public class SearchUserDto {
-	
+
 	private String firstName;
 
 	private String lastName;
@@ -9,6 +9,10 @@ public class SearchUserDto {
 	private String email;
 
 	private String role;
+
+	private int pageNr;
+	
+	private String fullName;
 
 	public String getFirstName() {
 		return firstName;
@@ -40,6 +44,22 @@ public class SearchUserDto {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public void setPageNr(int pageNr) {
+		this.pageNr = pageNr;
+	}
+
+	public int getPageNr() {
+		return pageNr;
+	}
+	
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+	
+	public String getFullName() {
+		return fullName;
 	}
 
 }
