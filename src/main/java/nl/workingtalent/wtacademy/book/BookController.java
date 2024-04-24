@@ -1,5 +1,6 @@
 package nl.workingtalent.wtacademy.book;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -156,6 +157,8 @@ public class BookController {
 			copy.setState(state);
 			copy.setWTId(dbBook.getId() + "." + bookCopyCounter);
 			copy.setAvailable(true);
+			copy.setDateAdded(LocalDateTime.now());
+			copy.setAddedBy(user);
 			
 			bookCopyService.addBookCopy(copy);
 			bookCopyCounter++;

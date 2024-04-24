@@ -1,6 +1,7 @@
 package nl.workingtalent.wtacademy.reservation;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,6 +38,11 @@ public class Reservation {
 
 	@OneToOne(mappedBy = "reservation")
 	private Loan loan;
+
+	private LocalDateTime handleDate;
+
+	@ManyToOne
+	private User handledBy;
 
 	public long getId() {
 		return id;
@@ -86,4 +92,19 @@ public class Reservation {
 		this.loan = loan;
 	}
 
+	public LocalDateTime getHandleDate() {
+		return handleDate;
+	}
+
+	public void setHandleDate(LocalDateTime handleDate) {
+		this.handleDate = handleDate;
+	}
+
+	public User getHandledBy() {
+		return handledBy;
+	}
+
+	public void setHandledBy(User handledBy) {
+		this.handledBy = handledBy;
+	}
 }

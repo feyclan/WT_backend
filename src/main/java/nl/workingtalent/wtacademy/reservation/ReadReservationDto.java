@@ -1,6 +1,7 @@
 package nl.workingtalent.wtacademy.reservation;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import nl.workingtalent.wtacademy.loan.Loan;
 
@@ -13,12 +14,18 @@ public class ReadReservationDto {
 	private long userId;
 	private Long loanId;
 
+	private LocalDateTime handleDate;
+
+	private long handledBy;
+
 	public ReadReservationDto(Reservation reservation) {
 		id = reservation.getId();
 		reservationRequest = reservation.getReservationRequest().toString();
 		requestDate = reservation.getRequestDate();
 		bookId = reservation.getBook().getId();
 		userId = reservation.getUser().getId();
+		handleDate = reservation.getHandleDate();
+		handledBy = reservation.getHandledBy().getId();
 		// loan moet null kunnen zijn
 		Loan reservationLoan = reservation.getLoan();
 		loanId = (reservationLoan != null) ? reservationLoan.getId() : null;
@@ -72,4 +79,19 @@ public class ReadReservationDto {
 		this.loanId = loanId;
 	}
 
+	public LocalDateTime getHandleDate() {
+		return handleDate;
+	}
+
+	public void setHandleDate(LocalDateTime handleDate) {
+		this.handleDate = handleDate;
+	}
+
+	public long getHandledBy() {
+		return handledBy;
+	}
+
+	public void setHandledBy(long handledBy) {
+		this.handledBy = handledBy;
+	}
 }
