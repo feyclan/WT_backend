@@ -11,7 +11,7 @@ public class UpdateLoanDto {
 	private LocalDate endDate;
 	private State conditionStart;
 	private State conditionEnd;
-	private Boolean isCurrentlyUsed;
+	private Boolean isActive;
 
 	public long getId() {
 		return id;
@@ -53,20 +53,11 @@ public class UpdateLoanDto {
 		this.conditionEnd = conditionEnd;
 	}
 
-	public Boolean getCurrentlyUsed() {
-		return isCurrentlyUsed;
+	public Boolean getIsActive() {
+		return isActive;
 	}
 
-	public void setCurrentlyUsed(Boolean currentlyUsed) {
-		isCurrentlyUsed = currentlyUsed;
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
-
-	public Boolean getIsCurrentlyUsed() {
-		return isCurrentlyUsed;
-	}
-
-	public void setIsCurrentlyUsed(Boolean isCurrentlyUsed) {
-		this.isCurrentlyUsed = isCurrentlyUsed;
-	}
-
 }

@@ -89,6 +89,21 @@ public class ReservationController {
 		return new ResponseDto(true, readReservationDtoStream, null,
 				reservations.size() + (reservations.size() < 2 ? " reservation " : " reservations ") + "found.");
 	}
+	
+	@RequestMapping("reservation/user/{id}")
+	public ResponseDto findReservationsForUser(@PathVariable("id") long id, HttpServletRequest request) {
+
+		User user = (User) request.getAttribute("WT_USER");
+		if (user == null || user.getRole() != Role.TRAINER) {
+			return ResponseDto.createPermissionDeniedResponse();
+		}
+
+		List<Reservation> reservations = service.findAllReservationsForUser(id);
+		Stream<ReadReservationDto> readReservationDtoStream = getReservations(reservations);
+
+		return new ResponseDto(true, readReservationDtoStream, null,
+				reservations.size() + (reservations.size() < 2 ? " reservation " : " reservations ") + "found.");
+	}
 
 	@PostMapping("reservation/search")
 	public ResponseDto searchReservation(@RequestBody SearchReservationDto dto, HttpServletRequest request) {
