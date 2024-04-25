@@ -19,9 +19,20 @@ public class BookService {
 
 	private final int pageSize = 5;
 
+	/**
+	 * This method is used to fetch all books from the database in a paginated manner.
+	 * The books are sorted by their title in descending order.
+	 * The size of the page is determined by the 'pageSize' field of this class.
+	 *
+	 * @param pageNr The page number to fetch. Page numbers start from 0.
+	 * @return A Page object containing a list of Book objects for the requested page.
+	 *         The Page object also contains additional information about the pagination such as total number of pages, total number of elements etc.
+	 */
 	public Page<Book> getAllBooks(int pageNr) {
 		//Get a page of certain size, sorted by title 
 		Pageable pageable = PageRequest.of(pageNr, pageSize, Sort.by(Sort.Direction.DESC, "title"));
+
+		// Fetch the page from the repository
 		Page<Book> page = repository.findAll(pageable);
 
 		return page;
@@ -43,6 +54,16 @@ public class BookService {
 		repository.deleteById(id);
 	}
 
+	/**
+	 * This method is used to search for books based on certain criteria.
+	 * The search criteria include categories, title, and authors.
+	 * The search results are fetched in a paginated manner, sorted by title in descending order.
+	 * The size of the page is determined by the 'pageSize' field of this class.
+	 *
+	 * @param searchBookDto The SearchBookDto object that contains the search criteria.
+	 * @return A Page object containing a list of Book objects that match the search criteria for the requested page.
+	 *         The Page object also contains additional information about the pagination such as total number of pages, total number of elements etc.
+	 */
 	public Page<Book> searchBooks(SearchBookDto searchBookDto) {
 		List<String> categories = searchBookDto.getCategories();
 		String title = searchBookDto.getTitle();

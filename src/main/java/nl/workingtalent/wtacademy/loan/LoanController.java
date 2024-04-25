@@ -41,7 +41,11 @@ public class LoanController {
 	@Autowired
 	private ReservationService reservationService;
 
-	// READ
+	/**
+	 * Endpoint to get all loans.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing a list of loans and additional information.
+	 */
 	@RequestMapping("loan/all")
 	public ResponseDto findAllLoans(HttpServletRequest request) {
 
@@ -61,6 +65,12 @@ public class LoanController {
 				loans.size() + (loans.size() < 2 ? " loan " : " loans ") + "found.");
 	}
 
+	/**
+	 * Endpoint to get a loan by its id.
+	 * @param id The id of the loan to fetch.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the requested loan and additional information.
+	 */
 	@RequestMapping("loan/{id}")
 	public ResponseDto findLoanById(@PathVariable("id") long id, HttpServletRequest request) {
 
@@ -79,7 +89,11 @@ public class LoanController {
 		return new ResponseDto(false, null, null, "No loan found.");
 	}
 
-	//Find all loans for currently logged in user, to be displayed on profile for example
+	/**
+	 * Endpoint to get all loans for a specific user.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing a list of loans for the requested user and additional information.
+	 */
 	@RequestMapping("loan/user/all")
 	public ResponseDto findLoansForUser(HttpServletRequest request) {
 
@@ -94,7 +108,13 @@ public class LoanController {
 		return new ResponseDto(true, readLoanDtoStream, null,
 				loans.size() + (loans.size() < 2 ? " loan " : " loans ") + "found.");
 	}
-	
+
+	/**
+	 * Endpoint to get all loans for a specific user by user id.
+	 * @param id The id of the user to fetch loans for.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing a list of loans for the requested user and additional information.
+	 */
 	@RequestMapping("loan/user/{id}")
 	public ResponseDto findUserLoansById(@PathVariable("id") long id, HttpServletRequest request) {
 
@@ -146,7 +166,12 @@ public class LoanController {
 		return new ResponseDto(true, dtos, null, loans.size() + (loans.size() == 1 ? " loan " : " loans ") + "found.");
 	}
 
-	// CREATE
+	/**
+	 * Endpoint to add a new loan.
+	 * @param dto The CreateLoanDto object that contains the details of the loan to be added.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the added loan and additional information.
+	 */
 	@PostMapping("loan/create")
 	public ResponseDto createLoan(@RequestBody CreateLoanDto dto, HttpServletRequest request) {
 
@@ -210,7 +235,12 @@ public class LoanController {
 		return new ResponseDto(true, null, null, "Loan created successfully.");
 	}
 
-	// UPDATE
+	/**
+	 * Endpoint to update an existing loan.
+	 * @param dto The UpdateLoanDto object that contains the updated details of the loan.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the updated loan and additional information.
+	 */
 	@PutMapping("loan/update")
 	public ResponseDto updateLoan(@RequestBody UpdateLoanDto dto, HttpServletRequest request) {
 
@@ -254,7 +284,12 @@ public class LoanController {
 		return new ResponseDto(true, null, null, "Loan updated successfully.");
 	}
 
-	// DELETE
+	/**
+	 * Endpoint to delete a loan by its id.
+	 * @param id The id of the loan to be deleted.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the deleted loan and additional information.
+	 */
 	@DeleteMapping("loan/delete/{id}")
 	public ResponseDto deleteLoan(@PathVariable("id") long id, HttpServletRequest request) {
 

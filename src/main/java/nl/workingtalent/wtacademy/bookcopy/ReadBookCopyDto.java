@@ -1,20 +1,34 @@
 package nl.workingtalent.wtacademy.bookcopy;
 
+import nl.workingtalent.wtacademy.loan.Loan;
+
 public class ReadBookCopyDto {
 
 	private String state;
 
 	private long id;
-	
+
 	private String WTId;
-	
+
 	private boolean isAvailable;
 
+	private String loanUserName;
+
+	private long userLoanId;
+
 	public ReadBookCopyDto(BookCopy copy) {
-		this.state = copy.getState().name(); 
+		this.state = copy.getState().name();
 		this.id = copy.getId();
-		this.WTId = copy.getWTId();		
+		this.WTId = copy.getWTId();
 		this.isAvailable = copy.isAvailable();
+		if (!copy.isAvailable()) {
+			for (Loan loan : copy.getLoans()) {
+				if (loan.isActive()) {
+					this.loanUserName = loan.getUser().getFirstName() + " " + loan.getUser().getLastName();
+					this.userLoanId = loan.getUser().getId();
+				}
+			}
+		}
 	}
 
 	public String getWTId() {
@@ -48,7 +62,20 @@ public class ReadBookCopyDto {
 	public void setAvailable(boolean isAvailable) {
 		this.isAvailable = isAvailable;
 	}
-	
-	
 
+	public void setLoanUserName(String loanUserName) {
+		this.loanUserName = loanUserName;
+	}
+
+	public String getLoanUserName() {
+		return loanUserName;
+	}
+
+	public void setUserLoanId(long userLoanId) {
+		this.userLoanId = userLoanId;
+	}
+
+	public long getUserLoanId() {
+		return userLoanId;
+	}
 }

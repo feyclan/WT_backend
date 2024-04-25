@@ -42,7 +42,12 @@ public class ReservationController {
 	@Autowired
 	private LoanService loanService;
 
-	// READ
+	/**
+	 * Endpoint to get all reservations.
+	 * Only users with the 'TRAINER' role can access this endpoint.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing a list of reservations and additional information.
+	 */
 	@RequestMapping("reservation/all")
 	public ResponseDto findAllReservations(HttpServletRequest request) {
 
@@ -62,6 +67,13 @@ public class ReservationController {
 				reservations.size() + (reservations.size() < 2 ? " reservation " : " reservations ") + "found.");
 	}
 
+	/**
+	 * Endpoint to get a reservation by its id.
+	 * Only users with the 'TRAINER' role can access this endpoint.
+	 * @param id The id of the reservation to fetch.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the requested reservation and additional information.
+	 */
 	@RequestMapping("reservation/{id}")
 	public ResponseDto findReservationById(@PathVariable("id") long id, HttpServletRequest request) {
 
@@ -80,8 +92,12 @@ public class ReservationController {
 		return new ResponseDto(false, null, null, "No reservation found.");
 	}
 
-	// Find all reservations for currently logged in user, to be displayed on
-	// profile for example
+
+	/**
+	 * Endpoint to get all reservations for the currently logged in user.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing a list of reservations for the requested user and additional information.
+	 */
 	@RequestMapping("reservation/user/all")
 	public ResponseDto findReservationsForUser(HttpServletRequest request) {
 
@@ -97,6 +113,14 @@ public class ReservationController {
 				reservations.size() + (reservations.size() < 2 ? " reservation " : " reservations ") + "found.");
 	}
 
+
+	/**
+	 * Endpoint to get all reservations for a specific user by user id.
+	 * Only users with the 'TRAINER' role can access this endpoint.
+	 * @param id The id of the user to fetch reservations for.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing a list of reservations for the requested user and additional information.
+	 */
 	@RequestMapping("reservation/user/{id}")
 	public ResponseDto findReservationsForUser(@PathVariable("id") long id, HttpServletRequest request) {
 
@@ -112,6 +136,13 @@ public class ReservationController {
 				reservations.size() + (reservations.size() < 2 ? " reservation " : " reservations ") + "found.");
 	}
 
+	/**
+	 * Endpoint to search for reservations based on certain criteria.
+	 * Only users with the 'TRAINER' role can access this endpoint.
+	 * @param dto The SearchReservationDto object that contains the search criteria.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the search results and additional information.
+	 */
 	@PostMapping("reservation/search")
 	public ResponseDto searchReservation(@RequestBody SearchReservationDto dto, HttpServletRequest request) {
 
@@ -128,7 +159,12 @@ public class ReservationController {
 				reservations.size() + (reservations.size() < 2 ? " reservation " : " reservations ") + "found.");
 	}
 
-	// CREATE
+	/**
+	 * Endpoint to add a new reservation.
+	 * @param dto The CreateReservationDto object that contains the details of the reservation to be added.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the added reservation and additional information.
+	 */
 	@PostMapping("reservation/create")
 	public ResponseDto createReservation(@RequestBody CreateReservationDto dto, HttpServletRequest request) {
 
@@ -184,7 +220,13 @@ public class ReservationController {
 		return new ResponseDto(true, null, null, "Reservation created successfully.");
 	}
 
-	// UPDATE
+	/**
+	 * Endpoint to update an existing reservation.
+	 * Only users with the 'TRAINER' role can access this endpoint.
+	 * @param dto The UpdateReservationDto object that contains the updated details of the reservation.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the updated reservation and additional information.
+	 */
 	@PutMapping("reservation/update")
 	public ResponseDto updateReservation(@RequestBody UpdateReservationDto dto, HttpServletRequest request) {
 
@@ -215,7 +257,13 @@ public class ReservationController {
 		return new ResponseDto(true, null, null, "Reservation updated successfully.");
 	}
 
-	// DELETE
+	/**
+	 * Endpoint to delete a reservation by its id.
+	 * Only users with the 'TRAINER' role can access this endpoint.
+	 * @param id The id of the reservation to be deleted.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the deleted reservation and additional information.
+	 */
 	@DeleteMapping("reservation/delete/{id}")
 	public ResponseDto deleteReservation(@PathVariable("id") long id, HttpServletRequest request) {
 
@@ -233,7 +281,11 @@ public class ReservationController {
 		return new ResponseDto(true, null, null, "Reservation deleted successfully.");
 	}
 
-	// Gets a list of users using the DTO
+	/**
+	 * This method is used to map a list of Reservation objects to a stream of ReadReservationDto objects.
+	 * @param reservations The list of Reservation objects to be mapped.
+	 * @return A stream of ReadReservationDto objects.
+	 */
 	private Stream<ReadReservationDto> getReservations(List<Reservation> reservations) {
 		return reservations.stream().map(reservation -> {
 			return new ReadReservationDto(reservation);
