@@ -1,6 +1,7 @@
 package nl.workingtalent.wtacademy.reservation;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -74,7 +75,8 @@ public class ReservationController {
 		return new ResponseDto(false, null, null, "No reservation found.");
 	}
 
-	//Find all reservations for currently logged in user, to be displayed on profile for example
+	// Find all reservations for currently logged in user, to be displayed on
+	// profile for example
 	@RequestMapping("reservation/user/all")
 	public ResponseDto findReservationsForUser(HttpServletRequest request) {
 
@@ -89,7 +91,7 @@ public class ReservationController {
 		return new ResponseDto(true, readReservationDtoStream, null,
 				reservations.size() + (reservations.size() < 2 ? " reservation " : " reservations ") + "found.");
 	}
-	
+
 	@RequestMapping("reservation/user/{id}")
 	public ResponseDto findReservationsForUser(@PathVariable("id") long id, HttpServletRequest request) {
 
@@ -146,6 +148,16 @@ public class ReservationController {
 		}
 
 		Book book = optionalBook.get();
+
+		List<Reservation> reservations = service.findAllReservationsForUser(user.getId());
+		
+		for (Reservation reservation : reservations) {
+			if (book.getId() == reservation.getBook().getId()) {
+				return new ResponseDto(false, null,
+						Arrays.asList("Je hebt al een reservering voor dit boek."),
+						"Already reservation present from this user.");
+			}
+		}
 
 		Reservation newReservation = new Reservation();
 		newReservation.setReservationRequest(dto.getReservationRequest());
