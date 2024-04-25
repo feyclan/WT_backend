@@ -30,7 +30,7 @@ public class BookService {
 	 */
 	public Page<Book> getAllBooks(int pageNr) {
 		//Get a page of certain size, sorted by title 
-		Pageable pageable = PageRequest.of(pageNr, pageSize, Sort.by(Sort.Direction.DESC, "title"));
+		Pageable pageable = PageRequest.of(pageNr, pageSize, Sort.by(Sort.Direction.ASC, "title"));
 
 		// Fetch the page from the repository
 		Page<Book> page = repository.findAll(pageable);
