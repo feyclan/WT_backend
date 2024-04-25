@@ -35,6 +35,11 @@ public class BookCopyController {
 	@Autowired
 	private BookCopyMapper mapper;
 
+	/**
+	 * Endpoint to get all book copies.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing a list of book copies and additional information.
+	 */
 	@RequestMapping("bookcopy/all")
 	public ResponseDto getAllBooks(HttpServletRequest request) {
 
@@ -47,6 +52,12 @@ public class BookCopyController {
 				String.valueOf(copies.size()) + ((copies.size() < 2) ? " copy" : " copies") + " found");
 	}
 
+	/**
+	 * Endpoint to get all copies for a specific book.
+	 * @param bookId The id of the book to fetch copies for.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing a list of book copies for the requested book and additional information.
+	 */
 	@RequestMapping("bookcopy/all/{bookId}")
 	public ResponseDto getAllCopiesForBookId(@PathVariable("bookId") long bookId, HttpServletRequest request) {
 
@@ -64,6 +75,12 @@ public class BookCopyController {
 				String.valueOf(copies.size()) + ((copies.size() < 2) ? " copy" : " copies") + " found");
 	}
 
+	/**
+	 * Endpoint to add a new book copy.
+	 * @param dto The CreateBookCopyDto object that contains the details of the book copy to be added.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the added book copy and additional information.
+	 */
 	@PostMapping("bookcopy/create")
 	public ResponseDto addBookCopy(@RequestBody CreateBookCopyDto dto, HttpServletRequest request) {
 
@@ -110,6 +127,12 @@ public class BookCopyController {
 				+ ((dto.getStates().size() < 2) ? " copy was" : " copies were") + " added");
 	}
 
+	/**
+	 * Endpoint to update an existing book copy.
+	 * @param dto The UpdateBookCopyDto object that contains the updated details of the book copy.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the updated book copy and additional information.
+	 */
 	@PutMapping("bookcopy/update")
 	public ResponseDto updateBookCopy(@RequestBody UpdateBookCopyDto dto, HttpServletRequest request) {
 
@@ -133,6 +156,12 @@ public class BookCopyController {
 		return new ResponseDto(true, null, null, "Copy successfully updated.");
 	}
 
+	/**
+	 * Endpoint to delete a book copy by its id.
+	 * @param bookCopyId The id of the book copy to be deleted.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the deleted book copy and additional information.
+	 */
 	@DeleteMapping("bookcopy/delete/{bookCopyId}")
 	public ResponseDto deleteBookById(@PathVariable("bookCopyId") int bookCopyId, HttpServletRequest request) {
 
