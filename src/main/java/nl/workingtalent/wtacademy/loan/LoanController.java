@@ -268,6 +268,9 @@ public class LoanController {
 			dbLoan.setConditionStart(dto.getConditionStart());
 		}
 		if (dto.getConditionEnd() != null) {
+			BookCopy copy = dbLoan.getBookCopy();
+			copy.setState(dto.getConditionEnd());
+			bookCopyService.update(copy);
 			dbLoan.setConditionEnd(dto.getConditionEnd());
 		}
 		if (dto.getIsActive() != null) {
