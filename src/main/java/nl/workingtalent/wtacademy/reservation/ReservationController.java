@@ -21,6 +21,7 @@ import nl.workingtalent.wtacademy.book.Book;
 import nl.workingtalent.wtacademy.book.BookService;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
 import nl.workingtalent.wtacademy.loan.Loan;
+import nl.workingtalent.wtacademy.loan.LoanService;
 import nl.workingtalent.wtacademy.user.Role;
 import nl.workingtalent.wtacademy.user.User;
 import nl.workingtalent.wtacademy.user.UserService;
@@ -37,6 +38,9 @@ public class ReservationController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private LoanService loanService;
 
 	// READ
 	@RequestMapping("reservation/all")
@@ -159,7 +163,10 @@ public class ReservationController {
 						"Already reservation present from this user.");
 			}
 		}
-		for (Loan loan: user.getLoans()) {
+		
+		List<Loan> loans = loanService.findAllLoansForUser(user.getId());
+		
+		for (Loan loan: loans) {
 			if(loan.getBookCopy().getBook().getId() == book.getId() && loan.isActive()) {
 				return new ResponseDto(false, null,
 						Arrays.asList("Je hebt dit boek al in lening."),
