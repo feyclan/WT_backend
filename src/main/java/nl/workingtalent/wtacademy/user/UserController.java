@@ -31,7 +31,13 @@ public class UserController {
 	@Autowired
 	private UserService service;
 
-	// READ
+	/**
+	 * Endpoint to get all users.
+	 * Only users with the 'TRAINER' role can access this endpoint.
+	 * @param pageNr The page number for pagination.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing a list of users and additional information.
+	 */
 	@PostMapping("user/all")
 	public ResponseDto findAllUsers(@RequestBody int pageNr, HttpServletRequest request) {
 
@@ -57,6 +63,13 @@ public class UserController {
 		return new ResponseDto(true, dto, null, (users.getNumberOfElements() < 2) ? "user" : " users " + " found.");
 	}
 
+	/**
+	 * Endpoint to get a user by its id.
+	 * Only users with the 'TRAINER' role can access this endpoint.
+	 * @param id The id of the user to fetch.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the requested user and additional information.
+	 */
 	@RequestMapping("user/{id}")
 	public ResponseDto findUserById(@PathVariable("id") long id, HttpServletRequest request) {
 
@@ -76,6 +89,13 @@ public class UserController {
 		return new ResponseDto(false, null, null, "No user with id '" + id + "' found.");
 	}
 
+	/**
+	 * Endpoint to search for users based on certain criteria.
+	 * Only users with the 'TRAINER' role can access this endpoint.
+	 * @param dto The SearchUserDto object that contains the search criteria.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the search results and additional information.
+	 */
 	@PostMapping("user/search")
 	public ResponseDto searchUser(@RequestBody SearchUserDto dto, HttpServletRequest request) {
 
@@ -97,7 +117,13 @@ public class UserController {
 		return new ResponseDto(true, resultDto, null, users.getNumberOfElements() + " users " + " found.");
 	}
 
-	// CREATE
+	/**
+	 * Endpoint to add a new user.
+	 * Only users with the 'TRAINER' role can access this endpoint.
+	 * @param dto The CreateUserDto object that contains the details of the user to be added.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the added user and additional information.
+	 */
 	@PostMapping("user/create")
 	public ResponseDto createUser(@RequestBody CreateUserDto dto, HttpServletRequest request) {
 
@@ -142,7 +168,13 @@ public class UserController {
 		return new ResponseDto(true, null, null, "User created successfully.");
 	}
 
-	// UPDATE
+	/**
+	 * Endpoint to update an existing user.
+	 * Only users with the 'TRAINER' role can access this endpoint.
+	 * @param dto The UpdateUserDto object that contains the updated details of the user.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the updated user and additional information.
+	 */
 	@PutMapping("user/update")
 	public ResponseDto updateUser(@RequestBody UpdateUserDto dto, HttpServletRequest request) {
 
@@ -197,7 +229,13 @@ public class UserController {
 		return new ResponseDto(true, null, null, "User updated successfully.");
 	}
 
-	// DELETE
+	/**
+	 * Endpoint to delete a user by its id.
+	 * Only users with the 'TRAINER' role can access this endpoint.
+	 * @param id The id of the user to be deleted.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the deleted user and additional information.
+	 */
 	@DeleteMapping("user/delete/{id}")
 	public ResponseDto deleteUser(@PathVariable("id") long id, HttpServletRequest request) {
 
@@ -215,6 +253,11 @@ public class UserController {
 		return responseDto;
 	}
 
+	/**
+	 * Endpoint to login a user.
+	 * @param dto The LoginRequestDto object that contains the login details of the user.
+	 * @return A ResponseDto object containing the login response and additional information.
+	 */
 	@PostMapping("user/login")
 	public ResponseDto login(@RequestBody LoginRequestDto dto) {
 		String hashedPassword = hashSHA256(dto.getPassword());
@@ -241,6 +284,11 @@ public class UserController {
 		return new ResponseDto(true, loginResponseDto, null, null);
 	}
 
+	/**
+	 * Endpoint to logout a user.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the logout response and additional information.
+	 */
 	@PostMapping("user/logout")
 	public ResponseDto logout(HttpServletRequest request) {
 
@@ -255,6 +303,11 @@ public class UserController {
 		return new ResponseDto(true, null, null, "User is logged out.");
 	}
 
+	/**
+	 * This method is used to hash a password using SHA-256.
+	 * @param input The password to be hashed.
+	 * @return The hashed password.
+	 */
 	private String hashSHA256(String input) {
 		try {
 			// Create MessageDigest instance for SHA-256
