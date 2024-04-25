@@ -85,7 +85,7 @@ public class BookService {
 			}
 		}		
 
-		Pageable pageable = PageRequest.of(searchBookDto.getPageNr(), pageSize, Sort.by(Sort.Direction.DESC, "title"));
+		Pageable pageable = PageRequest.of(searchBookDto.getPageNr(), pageSize, Sort.by(Sort.Direction.ASC, "title"));
 
 
 		// Fetching books based on the constructed query
