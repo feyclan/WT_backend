@@ -1,6 +1,7 @@
 package nl.workingtalent.wtacademy.reservation;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -19,6 +20,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import nl.workingtalent.wtacademy.book.Book;
 import nl.workingtalent.wtacademy.book.BookService;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
+import nl.workingtalent.wtacademy.loan.Loan;
+import nl.workingtalent.wtacademy.loan.LoanService;
 import nl.workingtalent.wtacademy.user.Role;
 import nl.workingtalent.wtacademy.user.User;
 import nl.workingtalent.wtacademy.user.UserService;
@@ -35,6 +38,9 @@ public class ReservationController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private LoanService loanService;
 
 	/**
 	 * Endpoint to get all reservations.
@@ -86,6 +92,7 @@ public class ReservationController {
 		return new ResponseDto(false, null, null, "No reservation found.");
 	}
 
+
 	/**
 	 * Endpoint to get all reservations for the currently logged in user.
 	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
@@ -105,6 +112,7 @@ public class ReservationController {
 		return new ResponseDto(true, readReservationDtoStream, null,
 				reservations.size() + (reservations.size() < 2 ? " reservation " : " reservations ") + "found.");
 	}
+
 
 	/**
 	 * Endpoint to get all reservations for a specific user by user id.
@@ -181,6 +189,26 @@ public class ReservationController {
 		}
 
 		Book book = optionalBook.get();
+
+		List<Reservation> reservations = service.findAllReservationsForUser(user.getId());
+		
+		for (Reservation reservation : reservations) {
+			if (book.getId() == reservation.getBook().getId() && reservation.getReservationRequest() == ReservationRequest.PENDING) {
+				return new ResponseDto(false, null,
+						Arrays.asList("Je hebt al een reservering voor dit boek."),
+						"Already reservation present from this user.");
+			}
+		}
+		
+		List<Loan> loans = loanService.findAllLoansForUser(user.getId());
+		
+		for (Loan loan: loans) {
+			if(loan.getBookCopy().getBook().getId() == book.getId() && loan.isActive()) {
+				return new ResponseDto(false, null,
+						Arrays.asList("Je hebt dit boek al in lening."),
+						"Already loan present from this user.");
+			}
+		}
 
 		Reservation newReservation = new Reservation();
 		newReservation.setReservationRequest(dto.getReservationRequest());
