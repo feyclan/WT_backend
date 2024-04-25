@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import nl.workingtalent.wtacademy.book.Book;
 import nl.workingtalent.wtacademy.book.BookService;
 import nl.workingtalent.wtacademy.dto.ResponseDto;
+import nl.workingtalent.wtacademy.loan.Loan;
 import nl.workingtalent.wtacademy.user.Role;
 import nl.workingtalent.wtacademy.user.User;
 import nl.workingtalent.wtacademy.user.UserService;
@@ -152,10 +153,17 @@ public class ReservationController {
 		List<Reservation> reservations = service.findAllReservationsForUser(user.getId());
 		
 		for (Reservation reservation : reservations) {
-			if (book.getId() == reservation.getBook().getId()) {
+			if (book.getId() == reservation.getBook().getId() && reservation.getReservationRequest() == ReservationRequest.PENDING) {
 				return new ResponseDto(false, null,
 						Arrays.asList("Je hebt al een reservering voor dit boek."),
 						"Already reservation present from this user.");
+			}
+		}
+		for (Loan loan: user.getLoans()) {
+			if(loan.getBookCopy().getBook().getId() == book.getId() && loan.isActive()) {
+				return new ResponseDto(false, null,
+						Arrays.asList("Je hebt dit boek al in lening."),
+						"Already loan present from this user.");
 			}
 		}
 
