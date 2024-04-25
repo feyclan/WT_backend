@@ -48,6 +48,12 @@ public class BookController {
 	@Autowired
 	private BookCopyService bookCopyService;
 
+	/**
+	 * Endpoint to get all books in a paginated manner.
+	 * @param pageNr The page number to fetch. Page numbers start from 0.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing a list of books for the requested page and additional information.
+	 */
 	@PostMapping("book/all")
 	public ResponseDto getAllBooks(@RequestBody int pageNr, HttpServletRequest request) {
 
@@ -67,6 +73,12 @@ public class BookController {
 		return new ResponseDto(true, dto, null, books.getNumberOfElements() + " books found.");
 	}
 
+	/**
+	 * Endpoint to get a book by its id.
+	 * @param id The id of the book to fetch.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the requested book and additional information.
+	 */
 	@RequestMapping("book/{id}")
 	public ResponseDto getBookById(@PathVariable("id") int id, HttpServletRequest request) {
 
@@ -82,6 +94,12 @@ public class BookController {
 		return new ResponseDto(true, new ReadBookDto(book.get()), null, "Book found with id " + id);
 	}
 
+	/**
+	 * Endpoint to search for books based on certain criteria.
+	 * @param dto The SearchBookDto object that contains the search criteria.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the search results and additional information.
+	 */
 	@PostMapping("book/search")
 	public ResponseDto searchBook(@RequestBody SearchBookDto dto, HttpServletRequest request) {
 
@@ -103,6 +121,12 @@ public class BookController {
 
 	}
 
+	/**
+	 * Endpoint to add a new book.
+	 * @param saveBookDto The CreateBookDto object that contains the details of the book to be added.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the added book and additional information.
+	 */
 	@PostMapping("book/create")
 	public ResponseDto addBook(@RequestBody CreateBookDto saveBookDto, HttpServletRequest request) {
 		if (saveBookDto.getTitle() == null || saveBookDto.getTitle().isBlank()) {
@@ -168,6 +192,12 @@ public class BookController {
 		return new ResponseDto(true, bookCopyList, null, "Book created.");
 	}
 
+	/**
+	 * Endpoint to update an existing book.
+	 * @param dto The UpdateBookDto object that contains the updated details of the book.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the updated book and additional information.
+	 */
 	@PutMapping("book/update")
 	public ResponseDto updateBook(@RequestBody UpdateBookDto dto, HttpServletRequest request) {
 
@@ -217,6 +247,12 @@ public class BookController {
 		return new ResponseDto(true, null, null, "Book updated with id " + String.valueOf(dto.getId()));
 	}
 
+	/**
+	 * Endpoint to delete a book by its id.
+	 * @param id The id of the book to be deleted.
+	 * @param request The HttpServletRequest object that contains the request the client made of the servlet.
+	 * @return A ResponseDto object containing the details of the deleted book and additional information.
+	 */
 	@DeleteMapping("books/delete/{id}")
 	public ResponseDto deleteBookById(@PathVariable("id") int id, HttpServletRequest request) {
 
