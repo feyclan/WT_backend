@@ -27,6 +27,14 @@ public class LoanService {
 		return repository.findById(id);
 	}
 
+	/**
+	 * This method is used to search for loans based on certain criteria.
+	 * The search criteria include start date, end date, start condition, end condition, and active status.
+	 * The search results are fetched from the repository using the provided criteria.
+	 *
+	 * @param searchLoanDto The SearchLoanDto object that contains the search criteria.
+	 * @return A list of Loan objects that match the search criteria.
+	 */
 	public List<Loan> searchLoans(SearchLoanDto searchLoanDto) {
 		LocalDate startDate = searchLoanDto.getStartDate();
 		LocalDate endDate = searchLoanDto.getEndDate();
