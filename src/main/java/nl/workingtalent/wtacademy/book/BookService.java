@@ -67,7 +67,8 @@ public class BookService {
 	public Page<Book> searchBooks(SearchBookDto searchBookDto) {
 		List<String> categories = searchBookDto.getCategories();
 		String title = searchBookDto.getTitle();
-		List<String> authors = searchBookDto.getAuthors();
+		String authors = searchBookDto.getAuthors();
+		String description = searchBookDto.getDescription();
 
 		// Constructing the query based on provided criteria
 		Specification<Book> spec = Specification.where(null);
@@ -79,11 +80,11 @@ public class BookService {
 			spec = spec.and((root, query, builder) -> builder.like(root.get("title"), "%" + title + "%"));
 		}
 		if (authors != null && !authors.isEmpty()) {
-			for (String author : authors) {
-				spec = spec.and(
-						(root, query, builder) -> builder.like(root.join("authors").get("name"), "%" + author + "%"));
+				spec = spec.and((root, query, builder) -> builder.like(root.join("authors").get("name"), "%" + authors + "%"));
+		}
+		if (description != null && !description.isEmpty()) {
+			spec = spec.and((root, query, builder) -> builder.like(root.join("description").get("description"), "%" + description + "%"));
 			}
-		}		
 
 		Pageable pageable = PageRequest.of(searchBookDto.getPageNr(), pageSize, Sort.by(Sort.Direction.ASC, "title"));
 

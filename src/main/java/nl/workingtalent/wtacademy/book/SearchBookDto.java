@@ -8,9 +8,11 @@ public class SearchBookDto {
 
 	private String title;
 
-	private List<String> authors;
+	private String authors;
 
 	private int pageNr;
+	
+	private String description;
 
 	public List<String> getCategories() {
 		return categories;
@@ -28,11 +30,11 @@ public class SearchBookDto {
 		this.title = title;
 	}
 
-	public List<String> getAuthors() {
+	public String getAuthors() {
 		return authors;
 	}
 
-	public void setAuthors(List<String> authors) {
+	public void setAuthors(String authors) {
 		this.authors = authors;
 	}
 
@@ -42,6 +44,14 @@ public class SearchBookDto {
 
 	public void setPageNr(int pageNr) {
 		this.pageNr = pageNr;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }
