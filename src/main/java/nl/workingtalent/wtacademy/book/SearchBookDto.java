@@ -13,6 +13,8 @@ public class SearchBookDto {
 	private int pageNr;
 	
 	private String description;
+	
+	private String SearchTerm;
 
 	public List<String> getCategories() {
 		return categories;
@@ -52,6 +54,14 @@ public class SearchBookDto {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getSearchTerm() {
+		return SearchTerm;
+	}
+
+	public void setSearchTerm(String searchTerm) {
+		SearchTerm = searchTerm;
 	}
 
 }

@@ -65,31 +65,29 @@ public class BookService {
 	 *         The Page object also contains additional information about the pagination such as total number of pages, total number of elements etc.
 	 */
 	public Page<Book> searchBooks(SearchBookDto searchBookDto) {
-		List<String> categories = searchBookDto.getCategories();
-		String title = searchBookDto.getTitle();
-		String authors = searchBookDto.getAuthors();
-		String description = searchBookDto.getDescription();
+	    List<String> categories = searchBookDto.getCategories();
+	    String searchTerm = searchBookDto.getSearchTerm();
 
-		// Constructing the query based on provided criteria
-		Specification<Book> spec = Specification.where(null);
+	    // Constructing the query based on provided criteria
+	    Specification<Book> spec = Specification.where(null);
 
-		if (categories != null && !categories.isEmpty()) {
-			spec = spec.and((root, query, builder) -> root.join("categories").get("category").in(categories));
-		}
-		if (title != null && !title.isEmpty()) {
-			spec = spec.and((root, query, builder) -> builder.like(root.get("title"), "%" + title + "%"));
-		}
-		if (authors != null && !authors.isEmpty()) {
-				spec = spec.and((root, query, builder) -> builder.like(root.join("authors").get("name"), "%" + authors + "%"));
-		}
-		if (description != null && !description.isEmpty()) {
-			spec = spec.and((root, query, builder) -> builder.like(root.join("description").get("description"), "%" + description + "%"));
-			}
+	    if (categories != null && !categories.isEmpty()) {
+	        spec = spec.and((root, query, builder) -> root.join("categories").get("category").in(categories));
+	    }
+	    if (searchTerm != null && !searchTerm.isEmpty()) {
+	        spec = spec.and((root, query, builder) -> builder.or(
+	                builder.like(root.get("title"), "%" + searchTerm + "%"),
+	                builder.like(root.join("authors").get("name"), "%" + searchTerm + "%"),
+	                builder.like(root.get("description"), "%" + searchTerm + "%")
+	        ));
+	    } else {
+	    	spec = Specification.where(null);
+	    }
 
-		Pageable pageable = PageRequest.of(searchBookDto.getPageNr(), pageSize, Sort.by(Sort.Direction.ASC, "title"));
+	    Pageable pageable = PageRequest.of(searchBookDto.getPageNr(), pageSize, Sort.by(Sort.Direction.ASC, "title"));
 
-
-		// Fetching books based on the constructed query
-		return repository.findAll(spec, pageable);
+	    // Fetching books based on the constructed query
+	    return repository.findAll(spec, pageable);
 	}
+
 }
