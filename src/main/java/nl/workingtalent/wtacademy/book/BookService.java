@@ -78,7 +78,8 @@ public class BookService {
 	        spec = spec.and((root, query, builder) -> builder.or(
 	                builder.like(root.get("title"), "%" + searchTerm + "%"),
 	                builder.like(root.join("authors").get("name"), "%" + searchTerm + "%"),
-	                builder.like(root.get("description"), "%" + searchTerm + "%")
+	                builder.like(root.get("description"), "%" + searchTerm + "%"),
+	                builder.like(root.get("isbn"), "%" + searchTerm + "%")
 	        ));
 	    } else {
 	    	spec = Specification.where(null);
