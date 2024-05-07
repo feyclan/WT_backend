@@ -17,7 +17,7 @@ public class BookService {
 	@Autowired
 	private IBookRepository repository;
 
-	private final int pageSize = 5;
+	private final int pageSize = 100;
 
 	/**
 	 * This method is used to fetch all books from the database in a paginated manner.
@@ -79,7 +79,8 @@ public class BookService {
 	                builder.like(root.get("title"), "%" + searchTerm + "%"),
 	                builder.like(root.join("authors").get("name"), "%" + searchTerm + "%"),
 	                builder.like(root.get("description"), "%" + searchTerm + "%"),
-	                builder.like(root.get("isbn"), "%" + searchTerm + "%")
+	                builder.like(root.get("isbn"), "%" + searchTerm + "%"),
+	                builder.like(root.join("categories").get("category"), "%" + searchTerm + "%")
 	        ));
 	    } else {
 	    	spec = Specification.where(null);
