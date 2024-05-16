@@ -108,7 +108,7 @@ public class BookController {
 			return ResponseDto.createPermissionDeniedResponse();
 		}
 
-		Page<Book> books = service.searchBooks(dto);
+		Page<Book> books = service.searchBooks(dto.getCategories(), dto.getSearchTerm(), dto.getPageNr());
 		Stream<ReadBookDto> dtos = books.stream().map((book) -> {
 			return new ReadBookDto(book);
 		});

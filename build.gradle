@@ -38,3 +38,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+javadoc {
+    destinationDir = file("${buildDir}/docs/javadoc")
+    include 'nl/workingtalent/**'
+}

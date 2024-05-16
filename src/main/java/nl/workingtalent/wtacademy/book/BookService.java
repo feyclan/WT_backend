@@ -64,10 +64,16 @@ public class BookService {
 	 * @return A Page object containing a list of Book objects that match the search criteria for the requested page.
 	 *         The Page object also contains additional information about the pagination such as total number of pages, total number of elements etc.
 	 */
-	public Page<Book> searchBooks(SearchBookDto searchBookDto) {
-	    List<String> categories = searchBookDto.getCategories();
-	    String searchTerm = searchBookDto.getSearchTerm();
+	public Page<Book> searchBooks(List<String> categories, String searchTerm, int pageNr) {
+		Specification<Book> spec = this.searchSpecification(categories, searchTerm);
+		
+	    Pageable pageable = PageRequest.of(pageNr, pageSize, Sort.by(Sort.Direction.ASC, "title"));
 
+	    // Fetching books based on the constructed query
+	    return repository.findAll(spec, pageable);
+	}
+	
+	public Specification<Book> searchSpecification(List<String> categories, String searchTerm) {
 	    // Constructing the query based on provided criteria
 	    Specification<Book> spec = Specification.where(null);
 
@@ -85,11 +91,8 @@ public class BookService {
 	    } else {
 	    	spec = Specification.where(null);
 	    }
-
-	    Pageable pageable = PageRequest.of(searchBookDto.getPageNr(), pageSize, Sort.by(Sort.Direction.ASC, "title"));
-
-	    // Fetching books based on the constructed query
-	    return repository.findAll(spec, pageable);
+	    
+	    return spec;
 	}
 
 }
