@@ -13,7 +13,7 @@ public class AuthorService {
 	private IAuthorRepository repository;
 
 	public void addAuthor(String author) {
-		Optional<Author> dbAuthor = getAuthorByName(author);
+		Optional<Author> dbAuthor = repository.findOneByName(author);
 		if (dbAuthor.isEmpty()) {
 			Author newAuthor = new Author();
 			newAuthor.setName(author);

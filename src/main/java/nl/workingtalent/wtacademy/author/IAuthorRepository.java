@@ -8,5 +8,4 @@ public interface IAuthorRepository extends JpaRepository<Author, Long>{
 
 	Optional<Author> findOneByName(String author);
 	
-
 }
